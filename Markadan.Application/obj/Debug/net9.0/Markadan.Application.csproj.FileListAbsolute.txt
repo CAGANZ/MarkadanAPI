@@ -13,3 +13,19 @@ C:\Users\CaganZ\Desktop\Markadan App\MarkadanAPI\Markadan.Application\obj\Debug\
 C:\Users\CaganZ\Desktop\Markadan App\MarkadanAPI\Markadan.Application\obj\Debug\net9.0\refint\Markadan.Application.dll
 C:\Users\CaganZ\Desktop\Markadan App\MarkadanAPI\Markadan.Application\obj\Debug\net9.0\Markadan.Application.pdb
 C:\Users\CaganZ\Desktop\Markadan App\MarkadanAPI\Markadan.Application\obj\Debug\net9.0\ref\Markadan.Application.dll
+C:\Users\CaganZ\Desktop\GitHub\MarkadanAPI\Markadan.Application\bin\Debug\net9.0\Markadan.Application.deps.json
+C:\Users\CaganZ\Desktop\GitHub\MarkadanAPI\Markadan.Application\bin\Debug\net9.0\Markadan.Application.dll
+C:\Users\CaganZ\Desktop\GitHub\MarkadanAPI\Markadan.Application\bin\Debug\net9.0\Markadan.Application.pdb
+C:\Users\CaganZ\Desktop\GitHub\MarkadanAPI\Markadan.Application\bin\Debug\net9.0\Markadan.Domain.dll
+C:\Users\CaganZ\Desktop\GitHub\MarkadanAPI\Markadan.Application\bin\Debug\net9.0\Markadan.Domain.pdb
+C:\Users\CaganZ\Desktop\GitHub\MarkadanAPI\Markadan.Application\obj\Debug\net9.0\Markadan.Application.csproj.AssemblyReference.cache
+C:\Users\CaganZ\Desktop\GitHub\MarkadanAPI\Markadan.Application\obj\Debug\net9.0\Markadan.Application.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\CaganZ\Desktop\GitHub\MarkadanAPI\Markadan.Application\obj\Debug\net9.0\Markadan.Application.AssemblyInfoInputs.cache
+C:\Users\CaganZ\Desktop\GitHub\MarkadanAPI\Markadan.Application\obj\Debug\net9.0\Markadan.Application.AssemblyInfo.cs
+C:\Users\CaganZ\Desktop\GitHub\MarkadanAPI\Markadan.Application\obj\Debug\net9.0\Markadan.Application.csproj.CoreCompileInputs.cache
+C:\Users\CaganZ\Desktop\GitHub\MarkadanAPI\Markadan.Application\obj\Debug\net9.0\Markadan.Application.sourcelink.json
+C:\Users\CaganZ\Desktop\GitHub\MarkadanAPI\Markadan.Application\obj\Debug\net9.0\Markadan.B664642D.Up2Date
+C:\Users\CaganZ\Desktop\GitHub\MarkadanAPI\Markadan.Application\obj\Debug\net9.0\Markadan.Application.dll
+C:\Users\CaganZ\Desktop\GitHub\MarkadanAPI\Markadan.Application\obj\Debug\net9.0\refint\Markadan.Application.dll
+C:\Users\CaganZ\Desktop\GitHub\MarkadanAPI\Markadan.Application\obj\Debug\net9.0\Markadan.Application.pdb
+C:\Users\CaganZ\Desktop\GitHub\MarkadanAPI\Markadan.Application\obj\Debug\net9.0\ref\Markadan.Application.dll

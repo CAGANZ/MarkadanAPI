@@ -9,3 +9,15 @@ C:\Users\CaganZ\Desktop\Markadan App\MarkadanAPI\Markadan.Domain\obj\Debug\net9.
 C:\Users\CaganZ\Desktop\Markadan App\MarkadanAPI\Markadan.Domain\obj\Debug\net9.0\refint\Markadan.Domain.dll
 C:\Users\CaganZ\Desktop\Markadan App\MarkadanAPI\Markadan.Domain\obj\Debug\net9.0\Markadan.Domain.pdb
 C:\Users\CaganZ\Desktop\Markadan App\MarkadanAPI\Markadan.Domain\obj\Debug\net9.0\ref\Markadan.Domain.dll
+C:\Users\CaganZ\Desktop\GitHub\MarkadanAPI\Markadan.Domain\bin\Debug\net9.0\Markadan.Domain.deps.json
+C:\Users\CaganZ\Desktop\GitHub\MarkadanAPI\Markadan.Domain\bin\Debug\net9.0\Markadan.Domain.dll
+C:\Users\CaganZ\Desktop\GitHub\MarkadanAPI\Markadan.Domain\bin\Debug\net9.0\Markadan.Domain.pdb
+C:\Users\CaganZ\Desktop\GitHub\MarkadanAPI\Markadan.Domain\obj\Debug\net9.0\Markadan.Domain.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\CaganZ\Desktop\GitHub\MarkadanAPI\Markadan.Domain\obj\Debug\net9.0\Markadan.Domain.AssemblyInfoInputs.cache
+C:\Users\CaganZ\Desktop\GitHub\MarkadanAPI\Markadan.Domain\obj\Debug\net9.0\Markadan.Domain.AssemblyInfo.cs
+C:\Users\CaganZ\Desktop\GitHub\MarkadanAPI\Markadan.Domain\obj\Debug\net9.0\Markadan.Domain.csproj.CoreCompileInputs.cache
+C:\Users\CaganZ\Desktop\GitHub\MarkadanAPI\Markadan.Domain\obj\Debug\net9.0\Markadan.Domain.sourcelink.json
+C:\Users\CaganZ\Desktop\GitHub\MarkadanAPI\Markadan.Domain\obj\Debug\net9.0\Markadan.Domain.dll
+C:\Users\CaganZ\Desktop\GitHub\MarkadanAPI\Markadan.Domain\obj\Debug\net9.0\refint\Markadan.Domain.dll
+C:\Users\CaganZ\Desktop\GitHub\MarkadanAPI\Markadan.Domain\obj\Debug\net9.0\Markadan.Domain.pdb
+C:\Users\CaganZ\Desktop\GitHub\MarkadanAPI\Markadan.Domain\obj\Debug\net9.0\ref\Markadan.Domain.dll
