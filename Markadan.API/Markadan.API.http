@@ -1,0 +1,6 @@
+@Markadan.API_HostAddress = http://localhost:5277
+
+GET {{Markadan.API_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
