@@ -44,7 +44,7 @@ public class ProductsController : ControllerBase
         {
             "price_asc" => query.OrderBy(p => p.Price).ThenBy(p => p.Id),
             "price_desc" => query.OrderByDescending(p => p.Price).ThenByDescending(p => p.Id),
-            "newest" => query.OrderByDescending(p => p.Id), // CreatedAt olmadığı için Id ~ newest
+            "newest" => query.OrderByDescending(p => p.Id),
             _ => query.OrderBy(p => p.Id)
         };
 
