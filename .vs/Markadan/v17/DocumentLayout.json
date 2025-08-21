@@ -11,6 +11,10 @@
       "RelativeMoniker": "D:0:0:{2260B596-9065-4959-8B03-DFCE540AF5A7}|Markadan.API\\Markadan.API.csproj|solutionrelative:markadan.api\\controllers\\categoriescontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
+      "AbsoluteMoniker": "D:0:0:{2260B596-9065-4959-8B03-DFCE540AF5A7}|Markadan.API\\Markadan.API.csproj|c:\\users\\caganz\\desktop\\github\\markadanapi\\markadan.api\\controllers\\brandscontroller .cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2260B596-9065-4959-8B03-DFCE540AF5A7}|Markadan.API\\Markadan.API.csproj|solutionrelative:markadan.api\\controllers\\brandscontroller .cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{2260B596-9065-4959-8B03-DFCE540AF5A7}|Markadan.API\\Markadan.API.csproj|c:\\users\\caganz\\desktop\\github\\markadanapi\\markadan.api\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
       "RelativeMoniker": "D:0:0:{2260B596-9065-4959-8B03-DFCE540AF5A7}|Markadan.API\\Markadan.API.csproj|solutionrelative:markadan.api\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
     },
@@ -25,10 +29,6 @@
     {
       "AbsoluteMoniker": "D:0:0:{2260B596-9065-4959-8B03-DFCE540AF5A7}|Markadan.API\\Markadan.API.csproj|c:\\users\\caganz\\desktop\\github\\markadanapi\\markadan.api\\controllers\\debugcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{2260B596-9065-4959-8B03-DFCE540AF5A7}|Markadan.API\\Markadan.API.csproj|solutionrelative:markadan.api\\controllers\\debugcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{2260B596-9065-4959-8B03-DFCE540AF5A7}|Markadan.API\\Markadan.API.csproj|c:\\users\\caganz\\desktop\\github\\markadanapi\\markadan.api\\controllers\\brandscontroller .cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{2260B596-9065-4959-8B03-DFCE540AF5A7}|Markadan.API\\Markadan.API.csproj|solutionrelative:markadan.api\\controllers\\brandscontroller .cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{2260B596-9065-4959-8B03-DFCE540AF5A7}|Markadan.API\\Markadan.API.csproj|c:\\users\\caganz\\desktop\\github\\markadanapi\\markadan.api\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -84,7 +84,7 @@
               "RelativeDocumentMoniker": "Markadan.API\\Controllers\\ProductsController.cs",
               "ToolTip": "C:\\Users\\CaganZ\\Desktop\\GitHub\\MarkadanAPI\\Markadan.API\\Controllers\\ProductsController.cs",
               "RelativeToolTip": "Markadan.API\\Controllers\\ProductsController.cs",
-              "ViewState": "AgIAAEIAAAAAAAAAAAAYwE4AAAAZAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAC4AAAA7AAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-08-20T23:34:32.043Z",
               "EditorCaption": ""
@@ -97,25 +97,27 @@
               "RelativeDocumentMoniker": "Markadan.API\\Controllers\\CategoriesController.cs",
               "ToolTip": "C:\\Users\\CaganZ\\Desktop\\GitHub\\MarkadanAPI\\Markadan.API\\Controllers\\CategoriesController.cs",
               "RelativeToolTip": "Markadan.API\\Controllers\\CategoriesController.cs",
-              "ViewState": "AgIAAAsAAAAAAAAAAAAAwBkAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAABAAAAAAAAAAAAAiwBcAAAAWAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-08-20T23:33:15.423Z"
+              "WhenOpened": "2025-08-20T23:33:15.423Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 6,
+              "DocumentIndex": 2,
               "Title": "BrandsController .cs",
               "DocumentMoniker": "C:\\Users\\CaganZ\\Desktop\\GitHub\\MarkadanAPI\\Markadan.API\\Controllers\\BrandsController .cs",
               "RelativeDocumentMoniker": "Markadan.API\\Controllers\\BrandsController .cs",
               "ToolTip": "C:\\Users\\CaganZ\\Desktop\\GitHub\\MarkadanAPI\\Markadan.API\\Controllers\\BrandsController .cs",
               "RelativeToolTip": "Markadan.API\\Controllers\\BrandsController .cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAYAAAAPAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAwAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-08-20T23:30:41.368Z"
+              "WhenOpened": "2025-08-20T23:30:41.368Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 5,
               "Title": "MarkadanDbContext.cs",
               "DocumentMoniker": "C:\\Users\\CaganZ\\Desktop\\GitHub\\MarkadanAPI\\Markadan.Infrastructure\\Data\\MarkadanDbContext.cs",
               "RelativeDocumentMoniker": "Markadan.Infrastructure\\Data\\MarkadanDbContext.cs",
@@ -127,7 +129,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 4,
               "Title": "DependencyInjection.cs",
               "DocumentMoniker": "C:\\Users\\CaganZ\\Desktop\\GitHub\\MarkadanAPI\\Markadan.Infrastructure\\DependencyInjection.cs",
               "RelativeDocumentMoniker": "Markadan.Infrastructure\\DependencyInjection.cs",
@@ -139,7 +141,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 3,
               "Title": "appsettings.json",
               "DocumentMoniker": "C:\\Users\\CaganZ\\Desktop\\GitHub\\MarkadanAPI\\Markadan.API\\appsettings.json",
               "RelativeDocumentMoniker": "Markadan.API\\appsettings.json",
@@ -151,7 +153,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 5,
+              "DocumentIndex": 6,
               "Title": "DebugController.cs",
               "DocumentMoniker": "C:\\Users\\CaganZ\\Desktop\\GitHub\\MarkadanAPI\\Markadan.API\\Controllers\\DebugController.cs",
               "RelativeDocumentMoniker": "Markadan.API\\Controllers\\DebugController.cs",

@@ -16,3 +16,15 @@ packages/
 
 # Diğer
 ReSharper.user
+
+# Visual Studio / Visual Studio Code
+.vs/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+.vscode/
+
+# Diğer
+*.log
+*.bak
