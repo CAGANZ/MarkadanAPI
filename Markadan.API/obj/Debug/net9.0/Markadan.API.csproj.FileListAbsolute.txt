@@ -171,9 +171,9 @@ C:\Users\CaganZ\Desktop\Markadan App\MarkadanAPI\Markadan.API\obj\Debug\net9.0\r
 C:\Users\CaganZ\Desktop\Markadan App\MarkadanAPI\Markadan.API\obj\Debug\net9.0\Markadan.API.pdb
 C:\Users\CaganZ\Desktop\Markadan App\MarkadanAPI\Markadan.API\obj\Debug\net9.0\Markadan.API.genruntimeconfig.cache
 C:\Users\CaganZ\Desktop\Markadan App\MarkadanAPI\Markadan.API\obj\Debug\net9.0\ref\Markadan.API.dll
-C:\Users\CaganZ\Desktop\GitHub\MarkadanAPI\Markadan.API\bin\Debug\net9.0\Markadan.API.staticwebassets.endpoints.json
 C:\Users\CaganZ\Desktop\GitHub\MarkadanAPI\Markadan.API\bin\Debug\net9.0\appsettings.Development.json
 C:\Users\CaganZ\Desktop\GitHub\MarkadanAPI\Markadan.API\bin\Debug\net9.0\appsettings.json
+C:\Users\CaganZ\Desktop\GitHub\MarkadanAPI\Markadan.API\bin\Debug\net9.0\Markadan.API.staticwebassets.endpoints.json
 C:\Users\CaganZ\Desktop\GitHub\MarkadanAPI\Markadan.API\bin\Debug\net9.0\Markadan.API.exe
 C:\Users\CaganZ\Desktop\GitHub\MarkadanAPI\Markadan.API\bin\Debug\net9.0\Markadan.API.deps.json
 C:\Users\CaganZ\Desktop\GitHub\MarkadanAPI\Markadan.API\bin\Debug\net9.0\Markadan.API.runtimeconfig.json
