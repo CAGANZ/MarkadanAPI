@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Markadan.API")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+239d0b86f977db904c65c659bee15276f0335dfd")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+6ffa349ab11a445a2b59b77d3b9458410a0f74b6")]
 [assembly: System.Reflection.AssemblyProductAttribute("Markadan.API")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Markadan.API")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

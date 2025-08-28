@@ -76,7 +76,7 @@ public class ProductsController : ControllerBase
             .Include(x => x.Category)
             .Where(x => x.Id == id)
             .Select(x => new {
-                x.Id,//14
+                x.Id,
                 x.Title,
                 x.Price,
                 x.Stock,

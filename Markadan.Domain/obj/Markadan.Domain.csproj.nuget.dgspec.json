@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\CaganZ\\Desktop\\GitHub\\MarkadanAPI\\Markadan.Domain\\Markadan.Domain.csproj": {}
+    "C:\\Users\\CaganZ\\Desktop\\MarkadanAPI\\Markadan.Domain\\Markadan.Domain.csproj": {}
   },
   "projects": {
-    "C:\\Users\\CaganZ\\Desktop\\GitHub\\MarkadanAPI\\Markadan.Domain\\Markadan.Domain.csproj": {
+    "C:\\Users\\CaganZ\\Desktop\\MarkadanAPI\\Markadan.Domain\\Markadan.Domain.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\CaganZ\\Desktop\\GitHub\\MarkadanAPI\\Markadan.Domain\\Markadan.Domain.csproj",
+        "projectUniqueName": "C:\\Users\\CaganZ\\Desktop\\MarkadanAPI\\Markadan.Domain\\Markadan.Domain.csproj",
         "projectName": "Markadan.Domain",
-        "projectPath": "C:\\Users\\CaganZ\\Desktop\\GitHub\\MarkadanAPI\\Markadan.Domain\\Markadan.Domain.csproj",
+        "projectPath": "C:\\Users\\CaganZ\\Desktop\\MarkadanAPI\\Markadan.Domain\\Markadan.Domain.csproj",
         "packagesPath": "C:\\Users\\CaganZ\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\CaganZ\\Desktop\\GitHub\\MarkadanAPI\\Markadan.Domain\\obj\\",
+        "outputPath": "C:\\Users\\CaganZ\\Desktop\\MarkadanAPI\\Markadan.Domain\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"

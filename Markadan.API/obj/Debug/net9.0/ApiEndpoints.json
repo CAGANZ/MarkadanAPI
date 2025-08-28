@@ -1,7 +1,7 @@
 [
   {
     "ContainingType": "Markadan.API.Controllers.BrandsController",
-    "Method": "GetAll",
+    "Method": "GetList",
     "RelativePath": "brands",
     "HttpMethod": "GET",
     "IsController": true,
@@ -10,13 +10,45 @@
     "ReturnTypes": []
   },
   {
+    "ContainingType": "Markadan.API.Controllers.BrandsController",
+    "Method": "GetById",
+    "RelativePath": "brands/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
     "ContainingType": "Markadan.API.Controllers.CategoriesController",
-    "Method": "GetAll",
+    "Method": "GetList",
     "RelativePath": "categories",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
     "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Markadan.API.Controllers.CategoriesController",
+    "Method": "GetById",
+    "RelativePath": "categories/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
     "ReturnTypes": []
   },
   {
