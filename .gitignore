@@ -32,3 +32,11 @@ ReSharper.user
 /Markadan.API/obj/Markadan.API.csproj.nuget.dgspec.json
 /Markadan.API/obj/project.assets.json
 /Markadan.API/obj/project.nuget.cache
+
+
+.vs/
+**/.vs/
+
+# Derleme çıktıları (önerilir)
+[Bb]in/
+[Oo]bj/
