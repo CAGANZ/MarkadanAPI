@@ -28,3 +28,7 @@ ReSharper.user
 # Diğer
 *.log
 *.bak
+/Markadan.API/obj/Debug/net9.0/rpswa.dswa.cache.json
+/Markadan.API/obj/Markadan.API.csproj.nuget.dgspec.json
+/Markadan.API/obj/project.assets.json
+/Markadan.API/obj/project.nuget.cache

@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Markadan.Domain")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+6ffa349ab11a445a2b59b77d3b9458410a0f74b6")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+b2141c876f752a9cd477261441483e1aa42687aa")]
 [assembly: System.Reflection.AssemblyProductAttribute("Markadan.Domain")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Markadan.Domain")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
