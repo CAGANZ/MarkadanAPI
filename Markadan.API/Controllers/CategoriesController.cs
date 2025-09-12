@@ -11,6 +11,10 @@ public class CategoriesController : ControllerBase
     private readonly MarkadanDbContext _db;
     public CategoriesController(MarkadanDbContext db) => _db = db;
 
+    /// <summary>
+    /// Tüm kategorileri listeler.
+    /// </summary>
+    /// <returns>Kategori listesi</returns>
     [HttpGet]
     public async Task<IActionResult> GetList()
     {

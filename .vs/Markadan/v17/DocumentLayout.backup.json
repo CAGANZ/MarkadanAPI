@@ -3,32 +3,140 @@
   "WorkspaceRootPath": "C:\\Users\\CaganZ\\Desktop\\MarkadanAPI\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{1E30A51C-6FDC-4CEF-890F-4B7BF2765F4F}|Markadan.Infrastructure\\Markadan.Infrastructure.csproj|c:\\users\\caganz\\desktop\\markadanapi\\markadan.infrastructure\\data\\markadandbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{1E30A51C-6FDC-4CEF-890F-4B7BF2765F4F}|Markadan.Infrastructure\\Markadan.Infrastructure.csproj|solutionrelative:markadan.infrastructure\\data\\markadandbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{50575E92-088D-4030-8126-0208D26F00C0}|Markadan.Application\\Markadan.Application.csproj|c:\\users\\caganz\\desktop\\markadanapi\\markadan.application\\dtos\\brands\\branddto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{50575E92-088D-4030-8126-0208D26F00C0}|Markadan.Application\\Markadan.Application.csproj|solutionrelative:markadan.application\\dtos\\brands\\branddto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{50575E92-088D-4030-8126-0208D26F00C0}|Markadan.Application\\Markadan.Application.csproj|c:\\users\\caganz\\desktop\\markadanapi\\markadan.application\\dtos\\carts\\cartdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{50575E92-088D-4030-8126-0208D26F00C0}|Markadan.Application\\Markadan.Application.csproj|solutionrelative:markadan.application\\dtos\\carts\\cartdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{50575E92-088D-4030-8126-0208D26F00C0}|Markadan.Application\\Markadan.Application.csproj|c:\\users\\caganz\\desktop\\markadanapi\\markadan.application\\dtos\\carts\\cartitemdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{50575E92-088D-4030-8126-0208D26F00C0}|Markadan.Application\\Markadan.Application.csproj|solutionrelative:markadan.application\\dtos\\carts\\cartitemdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{50575E92-088D-4030-8126-0208D26F00C0}|Markadan.Application\\Markadan.Application.csproj|c:\\users\\caganz\\desktop\\markadanapi\\markadan.application\\dtos\\categories\\categorydto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{50575E92-088D-4030-8126-0208D26F00C0}|Markadan.Application\\Markadan.Application.csproj|solutionrelative:markadan.application\\dtos\\categories\\categorydto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{50575E92-088D-4030-8126-0208D26F00C0}|Markadan.Application\\Markadan.Application.csproj|c:\\users\\caganz\\desktop\\markadanapi\\markadan.application\\dtos\\common\\pagedresultdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{50575E92-088D-4030-8126-0208D26F00C0}|Markadan.Application\\Markadan.Application.csproj|solutionrelative:markadan.application\\dtos\\common\\pagedresultdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{50575E92-088D-4030-8126-0208D26F00C0}|Markadan.Application\\Markadan.Application.csproj|c:\\users\\caganz\\desktop\\markadanapi\\markadan.application\\dtos\\products\\productcreatedto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{50575E92-088D-4030-8126-0208D26F00C0}|Markadan.Application\\Markadan.Application.csproj|solutionrelative:markadan.application\\dtos\\products\\productcreatedto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{50575E92-088D-4030-8126-0208D26F00C0}|Markadan.Application\\Markadan.Application.csproj|c:\\users\\caganz\\desktop\\markadanapi\\markadan.application\\dtos\\products\\productdetaildto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{50575E92-088D-4030-8126-0208D26F00C0}|Markadan.Application\\Markadan.Application.csproj|solutionrelative:markadan.application\\dtos\\products\\productdetaildto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{50575E92-088D-4030-8126-0208D26F00C0}|Markadan.Application\\Markadan.Application.csproj|c:\\users\\caganz\\desktop\\markadanapi\\markadan.application\\dtos\\products\\productlistdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{50575E92-088D-4030-8126-0208D26F00C0}|Markadan.Application\\Markadan.Application.csproj|solutionrelative:markadan.application\\dtos\\products\\productlistdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{50575E92-088D-4030-8126-0208D26F00C0}|Markadan.Application\\Markadan.Application.csproj|c:\\users\\caganz\\desktop\\markadanapi\\markadan.application\\dtos\\products\\productupdatedto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{50575E92-088D-4030-8126-0208D26F00C0}|Markadan.Application\\Markadan.Application.csproj|solutionrelative:markadan.application\\dtos\\products\\productupdatedto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{50575E92-088D-4030-8126-0208D26F00C0}|Markadan.Application\\Markadan.Application.csproj|c:\\users\\caganz\\desktop\\markadanapi\\markadan.application\\dtos\\users\\addressdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{50575E92-088D-4030-8126-0208D26F00C0}|Markadan.Application\\Markadan.Application.csproj|solutionrelative:markadan.application\\dtos\\users\\addressdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{50575E92-088D-4030-8126-0208D26F00C0}|Markadan.Application\\Markadan.Application.csproj|c:\\users\\caganz\\desktop\\markadanapi\\markadan.application\\dtos\\users\\medto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{50575E92-088D-4030-8126-0208D26F00C0}|Markadan.Application\\Markadan.Application.csproj|solutionrelative:markadan.application\\dtos\\users\\medto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{50575E92-088D-4030-8126-0208D26F00C0}|Markadan.Application\\Markadan.Application.csproj|c:\\users\\caganz\\desktop\\markadanapi\\markadan.application\\dtos\\auth\\loginresultdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{50575E92-088D-4030-8126-0208D26F00C0}|Markadan.Application\\Markadan.Application.csproj|solutionrelative:markadan.application\\dtos\\auth\\loginresultdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{50575E92-088D-4030-8126-0208D26F00C0}|Markadan.Application\\Markadan.Application.csproj|c:\\users\\caganz\\desktop\\markadanapi\\markadan.application\\dtos\\auth\\loginrequestdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{50575E92-088D-4030-8126-0208D26F00C0}|Markadan.Application\\Markadan.Application.csproj|solutionrelative:markadan.application\\dtos\\auth\\loginrequestdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{50575E92-088D-4030-8126-0208D26F00C0}|Markadan.Application\\Markadan.Application.csproj|c:\\users\\caganz\\desktop\\markadanapi\\markadan.application\\dtos\\auth\\registerrequestdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{50575E92-088D-4030-8126-0208D26F00C0}|Markadan.Application\\Markadan.Application.csproj|solutionrelative:markadan.application\\dtos\\auth\\registerrequestdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{50575E92-088D-4030-8126-0208D26F00C0}|Markadan.Application\\Markadan.Application.csproj|c:\\users\\caganz\\desktop\\markadanapi\\markadan.application\\dtos\\auth\\refreshrequesttokendto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{50575E92-088D-4030-8126-0208D26F00C0}|Markadan.Application\\Markadan.Application.csproj|solutionrelative:markadan.application\\dtos\\auth\\refreshrequesttokendto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{DB0BBA08-52EF-4AC0-9ACA-0343295BE8FD}|Markadan.Domain\\Markadan.Domain.csproj|c:\\users\\caganz\\desktop\\markadanapi\\markadan.domain\\models\\category.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{DB0BBA08-52EF-4AC0-9ACA-0343295BE8FD}|Markadan.Domain\\Markadan.Domain.csproj|solutionrelative:markadan.domain\\models\\category.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{DB0BBA08-52EF-4AC0-9ACA-0343295BE8FD}|Markadan.Domain\\Markadan.Domain.csproj|c:\\users\\caganz\\desktop\\markadanapi\\markadan.domain\\models\\cartitem.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{DB0BBA08-52EF-4AC0-9ACA-0343295BE8FD}|Markadan.Domain\\Markadan.Domain.csproj|solutionrelative:markadan.domain\\models\\cartitem.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{DB0BBA08-52EF-4AC0-9ACA-0343295BE8FD}|Markadan.Domain\\Markadan.Domain.csproj|c:\\users\\caganz\\desktop\\markadanapi\\markadan.domain\\models\\cart.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{DB0BBA08-52EF-4AC0-9ACA-0343295BE8FD}|Markadan.Domain\\Markadan.Domain.csproj|solutionrelative:markadan.domain\\models\\cart.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{DB0BBA08-52EF-4AC0-9ACA-0343295BE8FD}|Markadan.Domain\\Markadan.Domain.csproj|c:\\users\\caganz\\desktop\\markadanapi\\markadan.domain\\models\\product.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{DB0BBA08-52EF-4AC0-9ACA-0343295BE8FD}|Markadan.Domain\\Markadan.Domain.csproj|solutionrelative:markadan.domain\\models\\product.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{2260B596-9065-4959-8B03-DFCE540AF5A7}|Markadan.API\\Markadan.API.csproj|c:\\users\\caganz\\desktop\\markadanapi\\markadan.api\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{2260B596-9065-4959-8B03-DFCE540AF5A7}|Markadan.API\\Markadan.API.csproj|solutionrelative:markadan.api\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{DB0BBA08-52EF-4AC0-9ACA-0343295BE8FD}|Markadan.Domain\\Markadan.Domain.csproj|c:\\users\\caganz\\desktop\\markadanapi\\markadan.domain\\models\\enums\\cartstatus.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{DB0BBA08-52EF-4AC0-9ACA-0343295BE8FD}|Markadan.Domain\\Markadan.Domain.csproj|solutionrelative:markadan.domain\\models\\enums\\cartstatus.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{2260B596-9065-4959-8B03-DFCE540AF5A7}|Markadan.API\\Markadan.API.csproj|c:\\users\\caganz\\desktop\\markadanapi\\markadan.api\\controllers\\productscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{2260B596-9065-4959-8B03-DFCE540AF5A7}|Markadan.API\\Markadan.API.csproj|solutionrelative:markadan.api\\controllers\\productscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{1E30A51C-6FDC-4CEF-890F-4B7BF2765F4F}|Markadan.Infrastructure\\Markadan.Infrastructure.csproj|c:\\users\\caganz\\desktop\\markadanapi\\markadan.infrastructure\\configurations\\cartitem_cfg.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{1E30A51C-6FDC-4CEF-890F-4B7BF2765F4F}|Markadan.Infrastructure\\Markadan.Infrastructure.csproj|solutionrelative:markadan.infrastructure\\configurations\\cartitem_cfg.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{2260B596-9065-4959-8B03-DFCE540AF5A7}|Markadan.API\\Markadan.API.csproj|c:\\users\\caganz\\desktop\\markadanapi\\markadan.api\\properties\\launchsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
-      "RelativeMoniker": "D:0:0:{2260B596-9065-4959-8B03-DFCE540AF5A7}|Markadan.API\\Markadan.API.csproj|solutionrelative:markadan.api\\properties\\launchsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+      "AbsoluteMoniker": "D:0:0:{1E30A51C-6FDC-4CEF-890F-4B7BF2765F4F}|Markadan.Infrastructure\\Markadan.Infrastructure.csproj|c:\\users\\caganz\\desktop\\markadanapi\\markadan.infrastructure\\configurations\\cart_cfg.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{1E30A51C-6FDC-4CEF-890F-4B7BF2765F4F}|Markadan.Infrastructure\\Markadan.Infrastructure.csproj|solutionrelative:markadan.infrastructure\\configurations\\cart_cfg.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{1E30A51C-6FDC-4CEF-890F-4B7BF2765F4F}|Markadan.Infrastructure\\Markadan.Infrastructure.csproj|c:\\users\\caganz\\desktop\\markadanapi\\markadan.infrastructure\\configurations\\address_cfg.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{1E30A51C-6FDC-4CEF-890F-4B7BF2765F4F}|Markadan.Infrastructure\\Markadan.Infrastructure.csproj|solutionrelative:markadan.infrastructure\\configurations\\address_cfg.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{1E30A51C-6FDC-4CEF-890F-4B7BF2765F4F}|Markadan.Infrastructure\\Markadan.Infrastructure.csproj|c:\\users\\caganz\\desktop\\markadanapi\\markadan.infrastructure\\configurations\\approle_cfg.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{1E30A51C-6FDC-4CEF-890F-4B7BF2765F4F}|Markadan.Infrastructure\\Markadan.Infrastructure.csproj|solutionrelative:markadan.infrastructure\\configurations\\approle_cfg.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{1E30A51C-6FDC-4CEF-890F-4B7BF2765F4F}|Markadan.Infrastructure\\Markadan.Infrastructure.csproj|c:\\users\\caganz\\desktop\\markadanapi\\markadan.infrastructure\\configurations\\appuser_cfg.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{1E30A51C-6FDC-4CEF-890F-4B7BF2765F4F}|Markadan.Infrastructure\\Markadan.Infrastructure.csproj|solutionrelative:markadan.infrastructure\\configurations\\appuser_cfg.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{1E30A51C-6FDC-4CEF-890F-4B7BF2765F4F}|Markadan.Infrastructure\\Markadan.Infrastructure.csproj|c:\\users\\caganz\\desktop\\markadanapi\\markadan.infrastructure\\configurations\\product_cfg.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{1E30A51C-6FDC-4CEF-890F-4B7BF2765F4F}|Markadan.Infrastructure\\Markadan.Infrastructure.csproj|solutionrelative:markadan.infrastructure\\configurations\\product_cfg.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{1E30A51C-6FDC-4CEF-890F-4B7BF2765F4F}|Markadan.Infrastructure\\Markadan.Infrastructure.csproj|c:\\users\\caganz\\desktop\\markadanapi\\markadan.infrastructure\\configurations\\brand_cfg.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{1E30A51C-6FDC-4CEF-890F-4B7BF2765F4F}|Markadan.Infrastructure\\Markadan.Infrastructure.csproj|solutionrelative:markadan.infrastructure\\configurations\\brand_cfg.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{DB0BBA08-52EF-4AC0-9ACA-0343295BE8FD}|Markadan.Domain\\Markadan.Domain.csproj|c:\\users\\caganz\\desktop\\markadanapi\\markadan.domain\\models\\brand.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{DB0BBA08-52EF-4AC0-9ACA-0343295BE8FD}|Markadan.Domain\\Markadan.Domain.csproj|solutionrelative:markadan.domain\\models\\brand.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{1E30A51C-6FDC-4CEF-890F-4B7BF2765F4F}|Markadan.Infrastructure\\Markadan.Infrastructure.csproj|c:\\users\\caganz\\desktop\\markadanapi\\markadan.infrastructure\\configurations\\category_cfg.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{1E30A51C-6FDC-4CEF-890F-4B7BF2765F4F}|Markadan.Infrastructure\\Markadan.Infrastructure.csproj|solutionrelative:markadan.infrastructure\\configurations\\category_cfg.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{2260B596-9065-4959-8B03-DFCE540AF5A7}|Markadan.API\\Markadan.API.csproj|c:\\users\\caganz\\desktop\\markadanapi\\markadan.api\\controllers\\categoriescontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{2260B596-9065-4959-8B03-DFCE540AF5A7}|Markadan.API\\Markadan.API.csproj|solutionrelative:markadan.api\\controllers\\categoriescontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
+      "AbsoluteMoniker": "D:0:0:{2260B596-9065-4959-8B03-DFCE540AF5A7}|Markadan.API\\Markadan.API.csproj|c:\\users\\caganz\\desktop\\markadanapi\\markadan.api\\controllers\\productscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2260B596-9065-4959-8B03-DFCE540AF5A7}|Markadan.API\\Markadan.API.csproj|solutionrelative:markadan.api\\controllers\\productscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{2260B596-9065-4959-8B03-DFCE540AF5A7}|Markadan.API\\Markadan.API.csproj|c:\\users\\caganz\\desktop\\markadanapi\\markadan.api\\controllers\\debugcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{2260B596-9065-4959-8B03-DFCE540AF5A7}|Markadan.API\\Markadan.API.csproj|solutionrelative:markadan.api\\controllers\\debugcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2260B596-9065-4959-8B03-DFCE540AF5A7}|Markadan.API\\Markadan.API.csproj|c:\\users\\caganz\\desktop\\markadanapi\\markadan.api\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2260B596-9065-4959-8B03-DFCE540AF5A7}|Markadan.API\\Markadan.API.csproj|solutionrelative:markadan.api\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2260B596-9065-4959-8B03-DFCE540AF5A7}|Markadan.API\\Markadan.API.csproj|c:\\users\\caganz\\desktop\\markadanapi\\markadan.api\\properties\\launchsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{2260B596-9065-4959-8B03-DFCE540AF5A7}|Markadan.API\\Markadan.API.csproj|solutionrelative:markadan.api\\properties\\launchsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{2260B596-9065-4959-8B03-DFCE540AF5A7}|Markadan.API\\Markadan.API.csproj|c:\\users\\caganz\\desktop\\markadanapi\\markadan.api\\markadan.api.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
@@ -46,8 +154,217 @@
       "DocumentGroups": [
         {
           "DockedWidth": 469,
-          "SelectedChildIndex": 4,
+          "SelectedChildIndex": 7,
           "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 17,
+              "Title": "Cart.cs",
+              "DocumentMoniker": "C:\\Users\\CaganZ\\Desktop\\MarkadanAPI\\Markadan.Domain\\Models\\Cart.cs",
+              "RelativeDocumentMoniker": "Markadan.Domain\\Models\\Cart.cs",
+              "ToolTip": "C:\\Users\\CaganZ\\Desktop\\MarkadanAPI\\Markadan.Domain\\Models\\Cart.cs",
+              "RelativeToolTip": "Markadan.Domain\\Models\\Cart.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAwAAABQAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-09-01T18:18:21.566Z",
+              "IsPinned": true,
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "ProductDetailDTO.cs",
+              "DocumentMoniker": "C:\\Users\\CaganZ\\Desktop\\MarkadanAPI\\Markadan.Application\\DTOs\\Products\\ProductDetailDTO.cs",
+              "RelativeDocumentMoniker": "Markadan.Application\\DTOs\\Products\\ProductDetailDTO.cs",
+              "ToolTip": "C:\\Users\\CaganZ\\Desktop\\MarkadanAPI\\Markadan.Application\\DTOs\\Products\\ProductDetailDTO.cs",
+              "RelativeToolTip": "Markadan.Application\\DTOs\\Products\\ProductDetailDTO.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAwAAAAGAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-09-11T23:32:51.415Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "ProductCreateDTO.cs",
+              "DocumentMoniker": "C:\\Users\\CaganZ\\Desktop\\MarkadanAPI\\Markadan.Application\\DTOs\\Products\\ProductCreateDTO.cs",
+              "RelativeDocumentMoniker": "Markadan.Application\\DTOs\\Products\\ProductCreateDTO.cs",
+              "ToolTip": "C:\\Users\\CaganZ\\Desktop\\MarkadanAPI\\Markadan.Application\\DTOs\\Products\\ProductCreateDTO.cs",
+              "RelativeToolTip": "Markadan.Application\\DTOs\\Products\\ProductCreateDTO.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAwAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-09-11T23:33:35.025Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "PagedResultDTO.cs",
+              "DocumentMoniker": "C:\\Users\\CaganZ\\Desktop\\MarkadanAPI\\Markadan.Application\\DTOs\\Common\\PagedResultDTO.cs",
+              "RelativeDocumentMoniker": "Markadan.Application\\DTOs\\Common\\PagedResultDTO.cs",
+              "ToolTip": "C:\\Users\\CaganZ\\Desktop\\MarkadanAPI\\Markadan.Application\\DTOs\\Common\\PagedResultDTO.cs",
+              "RelativeToolTip": "Markadan.Application\\DTOs\\Common\\PagedResultDTO.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-09-11T23:31:00.961Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "CategoryDTO.cs",
+              "DocumentMoniker": "C:\\Users\\CaganZ\\Desktop\\MarkadanAPI\\Markadan.Application\\DTOs\\Categories\\CategoryDTO.cs",
+              "RelativeDocumentMoniker": "Markadan.Application\\DTOs\\Categories\\CategoryDTO.cs",
+              "ToolTip": "C:\\Users\\CaganZ\\Desktop\\MarkadanAPI\\Markadan.Application\\DTOs\\Categories\\CategoryDTO.cs",
+              "RelativeToolTip": "Markadan.Application\\DTOs\\Categories\\CategoryDTO.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAIAAABaAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-09-11T23:51:57.858Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "CartItemDTO.cs",
+              "DocumentMoniker": "C:\\Users\\CaganZ\\Desktop\\MarkadanAPI\\Markadan.Application\\DTOs\\Carts\\CartItemDTO.cs",
+              "RelativeDocumentMoniker": "Markadan.Application\\DTOs\\Carts\\CartItemDTO.cs",
+              "ToolTip": "C:\\Users\\CaganZ\\Desktop\\MarkadanAPI\\Markadan.Application\\DTOs\\Carts\\CartItemDTO.cs",
+              "RelativeToolTip": "Markadan.Application\\DTOs\\Carts\\CartItemDTO.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAkAAAAEAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-09-11T23:53:54.81Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "CartDTO.cs",
+              "DocumentMoniker": "C:\\Users\\CaganZ\\Desktop\\MarkadanAPI\\Markadan.Application\\DTOs\\Carts\\CartDTO.cs",
+              "RelativeDocumentMoniker": "Markadan.Application\\DTOs\\Carts\\CartDTO.cs",
+              "ToolTip": "C:\\Users\\CaganZ\\Desktop\\MarkadanAPI\\Markadan.Application\\DTOs\\Carts\\CartDTO.cs",
+              "RelativeToolTip": "Markadan.Application\\DTOs\\Carts\\CartDTO.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAIAAABTAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-09-11T23:55:14.299Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "BrandDTO.cs",
+              "DocumentMoniker": "C:\\Users\\CaganZ\\Desktop\\MarkadanAPI\\Markadan.Application\\DTOs\\Brands\\BrandDTO.cs",
+              "RelativeDocumentMoniker": "Markadan.Application\\DTOs\\Brands\\BrandDTO.cs",
+              "ToolTip": "C:\\Users\\CaganZ\\Desktop\\MarkadanAPI\\Markadan.Application\\DTOs\\Brands\\BrandDTO.cs",
+              "RelativeToolTip": "Markadan.Application\\DTOs\\Brands\\BrandDTO.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-09-11T23:53:11.19Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "ProductListDTO.cs",
+              "DocumentMoniker": "C:\\Users\\CaganZ\\Desktop\\MarkadanAPI\\Markadan.Application\\DTOs\\Products\\ProductListDTO.cs",
+              "RelativeDocumentMoniker": "Markadan.Application\\DTOs\\Products\\ProductListDTO.cs",
+              "ToolTip": "C:\\Users\\CaganZ\\Desktop\\MarkadanAPI\\Markadan.Application\\DTOs\\Products\\ProductListDTO.cs",
+              "RelativeToolTip": "Markadan.Application\\DTOs\\Products\\ProductListDTO.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAYAAAAZAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-09-11T23:31:44.374Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "ProductUpdateDTO.cs",
+              "DocumentMoniker": "C:\\Users\\CaganZ\\Desktop\\MarkadanAPI\\Markadan.Application\\DTOs\\Products\\ProductUpdateDTO.cs",
+              "RelativeDocumentMoniker": "Markadan.Application\\DTOs\\Products\\ProductUpdateDTO.cs",
+              "ToolTip": "C:\\Users\\CaganZ\\Desktop\\MarkadanAPI\\Markadan.Application\\DTOs\\Products\\ProductUpdateDTO.cs",
+              "RelativeToolTip": "Markadan.Application\\DTOs\\Products\\ProductUpdateDTO.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAsAAAAEAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-09-11T23:36:20.153Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
+              "Title": "AddressDTO.cs",
+              "DocumentMoniker": "C:\\Users\\CaganZ\\Desktop\\MarkadanAPI\\Markadan.Application\\DTOs\\Users\\AddressDTO.cs",
+              "RelativeDocumentMoniker": "Markadan.Application\\DTOs\\Users\\AddressDTO.cs",
+              "ToolTip": "C:\\Users\\CaganZ\\Desktop\\MarkadanAPI\\Markadan.Application\\DTOs\\Users\\AddressDTO.cs",
+              "RelativeToolTip": "Markadan.Application\\DTOs\\Users\\AddressDTO.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAwAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-09-11T23:29:46.169Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 10,
+              "Title": "MeDTO.cs",
+              "DocumentMoniker": "C:\\Users\\CaganZ\\Desktop\\MarkadanAPI\\Markadan.Application\\DTOs\\Users\\MeDTO.cs",
+              "RelativeDocumentMoniker": "Markadan.Application\\DTOs\\Users\\MeDTO.cs",
+              "ToolTip": "C:\\Users\\CaganZ\\Desktop\\MarkadanAPI\\Markadan.Application\\DTOs\\Users\\MeDTO.cs",
+              "RelativeToolTip": "Markadan.Application\\DTOs\\Users\\MeDTO.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAcAAAAIAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-09-11T23:28:06.768Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 11,
+              "Title": "LoginResultDTO.cs",
+              "DocumentMoniker": "C:\\Users\\CaganZ\\Desktop\\MarkadanAPI\\Markadan.Application\\DTOs\\Auth\\LoginResultDTO.cs",
+              "RelativeDocumentMoniker": "Markadan.Application\\DTOs\\Auth\\LoginResultDTO.cs",
+              "ToolTip": "C:\\Users\\CaganZ\\Desktop\\MarkadanAPI\\Markadan.Application\\DTOs\\Auth\\LoginResultDTO.cs",
+              "RelativeToolTip": "Markadan.Application\\DTOs\\Auth\\LoginResultDTO.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABEAAABOAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-09-11T23:06:12.008Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 14,
+              "Title": "RefreshRequestTokenDTO.cs",
+              "DocumentMoniker": "C:\\Users\\CaganZ\\Desktop\\MarkadanAPI\\Markadan.Application\\DTOs\\Auth\\RefreshRequestTokenDTO.cs",
+              "RelativeDocumentMoniker": "Markadan.Application\\DTOs\\Auth\\RefreshRequestTokenDTO.cs",
+              "ToolTip": "C:\\Users\\CaganZ\\Desktop\\MarkadanAPI\\Markadan.Application\\DTOs\\Auth\\RefreshRequestTokenDTO.cs",
+              "RelativeToolTip": "Markadan.Application\\DTOs\\Auth\\RefreshRequestTokenDTO.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAQAAAAIAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-09-11T23:05:23.06Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 13,
+              "Title": "RegisterRequestDTO.cs",
+              "DocumentMoniker": "C:\\Users\\CaganZ\\Desktop\\MarkadanAPI\\Markadan.Application\\DTOs\\Auth\\RegisterRequestDTO.cs",
+              "RelativeDocumentMoniker": "Markadan.Application\\DTOs\\Auth\\RegisterRequestDTO.cs",
+              "ToolTip": "C:\\Users\\CaganZ\\Desktop\\MarkadanAPI\\Markadan.Application\\DTOs\\Auth\\RegisterRequestDTO.cs",
+              "RelativeToolTip": "Markadan.Application\\DTOs\\Auth\\RegisterRequestDTO.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAgAAAAIAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-09-11T23:04:29.147Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 12,
+              "Title": "LoginRequestDTO.cs",
+              "DocumentMoniker": "C:\\Users\\CaganZ\\Desktop\\MarkadanAPI\\Markadan.Application\\DTOs\\Auth\\LoginRequestDTO.cs",
+              "RelativeDocumentMoniker": "Markadan.Application\\DTOs\\Auth\\LoginRequestDTO.cs",
+              "ToolTip": "C:\\Users\\CaganZ\\Desktop\\MarkadanAPI\\Markadan.Application\\DTOs\\Auth\\LoginRequestDTO.cs",
+              "RelativeToolTip": "Markadan.Application\\DTOs\\Auth\\LoginRequestDTO.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAUAAAAIAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-09-11T23:02:47.41Z",
+              "EditorCaption": ""
+            },
             {
               "$type": "Bookmark",
               "Name": "ST:128:0:{1fc202d4-d401-403c-9834-5b218574bb67}"
@@ -66,80 +383,215 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "MarkadanDbContext.cs",
-              "DocumentMoniker": "C:\\Users\\CaganZ\\Desktop\\MarkadanAPI\\Markadan.Infrastructure\\Data\\MarkadanDbContext.cs",
-              "RelativeDocumentMoniker": "Markadan.Infrastructure\\Data\\MarkadanDbContext.cs",
-              "ToolTip": "C:\\Users\\CaganZ\\Desktop\\MarkadanAPI\\Markadan.Infrastructure\\Data\\MarkadanDbContext.cs",
-              "RelativeToolTip": "Markadan.Infrastructure\\Data\\MarkadanDbContext.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAEcAAAAPAAAAAAAAAA==",
+              "DocumentIndex": 19,
+              "Title": "CartStatus.cs",
+              "DocumentMoniker": "C:\\Users\\CaganZ\\Desktop\\MarkadanAPI\\Markadan.Domain\\Models\\Enums\\CartStatus.cs",
+              "RelativeDocumentMoniker": "Markadan.Domain\\Models\\Enums\\CartStatus.cs",
+              "ToolTip": "C:\\Users\\CaganZ\\Desktop\\MarkadanAPI\\Markadan.Domain\\Models\\Enums\\CartStatus.cs",
+              "RelativeToolTip": "Markadan.Domain\\Models\\Enums\\CartStatus.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAUAAAATAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-08-28T14:01:43.594Z",
+              "WhenOpened": "2025-09-11T00:40:23.391Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 18,
               "Title": "Product.cs",
               "DocumentMoniker": "C:\\Users\\CaganZ\\Desktop\\MarkadanAPI\\Markadan.Domain\\Models\\Product.cs",
               "RelativeDocumentMoniker": "Markadan.Domain\\Models\\Product.cs",
               "ToolTip": "C:\\Users\\CaganZ\\Desktop\\MarkadanAPI\\Markadan.Domain\\Models\\Product.cs",
               "RelativeToolTip": "Markadan.Domain\\Models\\Product.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAgAAAAtAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABAAAAAFAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-08-26T00:43:55.62Z"
+              "WhenOpened": "2025-08-26T00:43:55.62Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 22,
+              "Title": "Address_Cfg.cs",
+              "DocumentMoniker": "C:\\Users\\CaganZ\\Desktop\\MarkadanAPI\\Markadan.Infrastructure\\Configurations\\Address_Cfg.cs",
+              "RelativeDocumentMoniker": "Markadan.Infrastructure\\Configurations\\Address_Cfg.cs",
+              "ToolTip": "C:\\Users\\CaganZ\\Desktop\\MarkadanAPI\\Markadan.Infrastructure\\Configurations\\Address_Cfg.cs",
+              "RelativeToolTip": "Markadan.Infrastructure\\Configurations\\Address_Cfg.cs",
+              "ViewState": "AgIAABQAAAAAAAAAAADwvyIAAAAqAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-09-11T02:41:47.653Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 23,
+              "Title": "AppRole_Cfg.cs",
+              "DocumentMoniker": "C:\\Users\\CaganZ\\Desktop\\MarkadanAPI\\Markadan.Infrastructure\\Configurations\\AppRole_Cfg.cs",
+              "RelativeDocumentMoniker": "Markadan.Infrastructure\\Configurations\\AppRole_Cfg.cs",
+              "ToolTip": "C:\\Users\\CaganZ\\Desktop\\MarkadanAPI\\Markadan.Infrastructure\\Configurations\\AppRole_Cfg.cs",
+              "RelativeToolTip": "Markadan.Infrastructure\\Configurations\\AppRole_Cfg.cs",
+              "ViewState": "AgIAAAMAAAAAAAAAAAAAAA0AAAA7AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-09-11T02:41:16.881Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 25,
+              "Title": "Product_Cfg.cs",
+              "DocumentMoniker": "C:\\Users\\CaganZ\\Desktop\\MarkadanAPI\\Markadan.Infrastructure\\Configurations\\Product_Cfg.cs",
+              "RelativeDocumentMoniker": "Markadan.Infrastructure\\Configurations\\Product_Cfg.cs",
+              "ToolTip": "C:\\Users\\CaganZ\\Desktop\\MarkadanAPI\\Markadan.Infrastructure\\Configurations\\Product_Cfg.cs",
+              "RelativeToolTip": "Markadan.Infrastructure\\Configurations\\Product_Cfg.cs",
+              "ViewState": "AgIAAAMAAAAAAAAAAAAAABAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-09-11T02:40:34.97Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 16,
+              "Title": "CartItem.cs",
+              "DocumentMoniker": "C:\\Users\\CaganZ\\Desktop\\MarkadanAPI\\Markadan.Domain\\Models\\CartItem.cs",
+              "RelativeDocumentMoniker": "Markadan.Domain\\Models\\CartItem.cs",
+              "ToolTip": "C:\\Users\\CaganZ\\Desktop\\MarkadanAPI\\Markadan.Domain\\Models\\CartItem.cs",
+              "RelativeToolTip": "Markadan.Domain\\Models\\CartItem.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAkAAAAyAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-09-01T18:18:58.139Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 15,
+              "Title": "Category.cs",
+              "DocumentMoniker": "C:\\Users\\CaganZ\\Desktop\\MarkadanAPI\\Markadan.Domain\\Models\\Category.cs",
+              "RelativeDocumentMoniker": "Markadan.Domain\\Models\\Category.cs",
+              "ToolTip": "C:\\Users\\CaganZ\\Desktop\\MarkadanAPI\\Markadan.Domain\\Models\\Category.cs",
+              "RelativeToolTip": "Markadan.Domain\\Models\\Category.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAgAAAAtAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-09-01T15:39:41.156Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 24,
+              "Title": "AppUser_Cfg.cs",
+              "DocumentMoniker": "C:\\Users\\CaganZ\\Desktop\\MarkadanAPI\\Markadan.Infrastructure\\Configurations\\AppUser_Cfg.cs",
+              "RelativeDocumentMoniker": "Markadan.Infrastructure\\Configurations\\AppUser_Cfg.cs",
+              "ToolTip": "C:\\Users\\CaganZ\\Desktop\\MarkadanAPI\\Markadan.Infrastructure\\Configurations\\AppUser_Cfg.cs",
+              "RelativeToolTip": "Markadan.Infrastructure\\Configurations\\AppUser_Cfg.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAwAAAAJAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-09-11T02:41:05.117Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 20,
+              "Title": "CartItem_Cfg.cs",
+              "DocumentMoniker": "C:\\Users\\CaganZ\\Desktop\\MarkadanAPI\\Markadan.Infrastructure\\Configurations\\CartItem_Cfg.cs",
+              "RelativeDocumentMoniker": "Markadan.Infrastructure\\Configurations\\CartItem_Cfg.cs",
+              "ToolTip": "C:\\Users\\CaganZ\\Desktop\\MarkadanAPI\\Markadan.Infrastructure\\Configurations\\CartItem_Cfg.cs",
+              "RelativeToolTip": "Markadan.Infrastructure\\Configurations\\CartItem_Cfg.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAuwBAAAAAmAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-09-11T01:16:37.492Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 21,
+              "Title": "Cart_Cfg.cs",
+              "DocumentMoniker": "C:\\Users\\CaganZ\\Desktop\\MarkadanAPI\\Markadan.Infrastructure\\Configurations\\Cart_Cfg.cs",
+              "RelativeDocumentMoniker": "Markadan.Infrastructure\\Configurations\\Cart_Cfg.cs",
+              "ToolTip": "C:\\Users\\CaganZ\\Desktop\\MarkadanAPI\\Markadan.Infrastructure\\Configurations\\Cart_Cfg.cs",
+              "RelativeToolTip": "Markadan.Infrastructure\\Configurations\\Cart_Cfg.cs",
+              "ViewState": "AgIAAAYAAAAAAAAAAAAAwA4AAAA2AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-09-11T01:10:00.054Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 26,
+              "Title": "Brand_Cfg.cs",
+              "DocumentMoniker": "C:\\Users\\CaganZ\\Desktop\\MarkadanAPI\\Markadan.Infrastructure\\Configurations\\Brand_Cfg.cs",
+              "RelativeDocumentMoniker": "Markadan.Infrastructure\\Configurations\\Brand_Cfg.cs",
+              "ToolTip": "C:\\Users\\CaganZ\\Desktop\\MarkadanAPI\\Markadan.Infrastructure\\Configurations\\Brand_Cfg.cs",
+              "RelativeToolTip": "Markadan.Infrastructure\\Configurations\\Brand_Cfg.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABsAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-09-11T02:40:18.229Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 27,
+              "Title": "Brand.cs",
+              "DocumentMoniker": "C:\\Users\\CaganZ\\Desktop\\MarkadanAPI\\Markadan.Domain\\Models\\Brand.cs",
+              "RelativeDocumentMoniker": "Markadan.Domain\\Models\\Brand.cs",
+              "ToolTip": "C:\\Users\\CaganZ\\Desktop\\MarkadanAPI\\Markadan.Domain\\Models\\Brand.cs",
+              "RelativeToolTip": "Markadan.Domain\\Models\\Brand.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAsAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-09-01T15:38:41.904Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 28,
+              "Title": "Category_Cfg.cs",
+              "DocumentMoniker": "C:\\Users\\CaganZ\\Desktop\\MarkadanAPI\\Markadan.Infrastructure\\Configurations\\Category_Cfg.cs",
+              "RelativeDocumentMoniker": "Markadan.Infrastructure\\Configurations\\Category_Cfg.cs",
+              "ToolTip": "C:\\Users\\CaganZ\\Desktop\\MarkadanAPI\\Markadan.Infrastructure\\Configurations\\Category_Cfg.cs",
+              "RelativeToolTip": "Markadan.Infrastructure\\Configurations\\Category_Cfg.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABsAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-09-11T02:40:51.664Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 30,
               "Title": "ProductsController.cs",
               "DocumentMoniker": "C:\\Users\\CaganZ\\Desktop\\MarkadanAPI\\Markadan.API\\Controllers\\ProductsController.cs",
               "RelativeDocumentMoniker": "Markadan.API\\Controllers\\ProductsController.cs",
               "ToolTip": "C:\\Users\\CaganZ\\Desktop\\MarkadanAPI\\Markadan.API\\Controllers\\ProductsController.cs",
               "RelativeToolTip": "Markadan.API\\Controllers\\ProductsController.cs",
-              "ViewState": "AgIAADwAAAAAAAAAAAAYwFUAAAAdAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA8AAAAkAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-08-20T23:34:32.043Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 5,
+              "DocumentIndex": 29,
               "Title": "CategoriesController.cs",
               "DocumentMoniker": "C:\\Users\\CaganZ\\Desktop\\MarkadanAPI\\Markadan.API\\Controllers\\CategoriesController.cs",
               "RelativeDocumentMoniker": "Markadan.API\\Controllers\\CategoriesController.cs",
               "ToolTip": "C:\\Users\\CaganZ\\Desktop\\MarkadanAPI\\Markadan.API\\Controllers\\CategoriesController.cs",
               "RelativeToolTip": "Markadan.API\\Controllers\\CategoriesController.cs",
-              "ViewState": "AgIAABAAAAAAAAAAAAAiwBcAAAAWAAAAAAAAAA==",
+              "ViewState": "AgIAAAkAAAAAAAAAAAAUwBcAAAAWAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-08-20T23:33:15.423Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 6,
+              "DocumentIndex": 31,
               "Title": "DebugController.cs",
               "DocumentMoniker": "C:\\Users\\CaganZ\\Desktop\\MarkadanAPI\\Markadan.API\\Controllers\\DebugController.cs",
               "RelativeDocumentMoniker": "Markadan.API\\Controllers\\DebugController.cs",
               "ToolTip": "C:\\Users\\CaganZ\\Desktop\\MarkadanAPI\\Markadan.API\\Controllers\\DebugController.cs",
               "RelativeToolTip": "Markadan.API\\Controllers\\DebugController.cs",
-              "ViewState": "AgIAAAgAAAAAAAAAAAAxwBwAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAAMAAAAAAAAAAAAAABoAAAAFAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-08-21T01:48:25.035Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 32,
               "Title": "Program.cs",
               "DocumentMoniker": "C:\\Users\\CaganZ\\Desktop\\MarkadanAPI\\Markadan.API\\Program.cs",
               "RelativeDocumentMoniker": "Markadan.API\\Program.cs",
               "ToolTip": "C:\\Users\\CaganZ\\Desktop\\MarkadanAPI\\Markadan.API\\Program.cs",
               "RelativeToolTip": "Markadan.API\\Program.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA0AAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABEAAAAXAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-08-20T23:36:28.609Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 33,
               "Title": "launchSettings.json",
               "DocumentMoniker": "C:\\Users\\CaganZ\\Desktop\\MarkadanAPI\\Markadan.API\\Properties\\launchSettings.json",
               "RelativeDocumentMoniker": "Markadan.API\\Properties\\launchSettings.json",
@@ -151,7 +603,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 7,
+              "DocumentIndex": 34,
               "Title": "Markadan.API.csproj",
               "DocumentMoniker": "C:\\Users\\CaganZ\\Desktop\\MarkadanAPI\\Markadan.API\\Markadan.API.csproj",
               "RelativeDocumentMoniker": "Markadan.API\\Markadan.API.csproj",
@@ -163,7 +615,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 8,
+              "DocumentIndex": 35,
               "Title": "appsettings.Development.json",
               "DocumentMoniker": "C:\\Users\\CaganZ\\Desktop\\MarkadanAPI\\Markadan.API\\appsettings.Development.json",
               "RelativeDocumentMoniker": "Markadan.API\\appsettings.Development.json",

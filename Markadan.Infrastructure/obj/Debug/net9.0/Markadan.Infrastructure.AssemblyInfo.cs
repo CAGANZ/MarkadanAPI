@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Markadan.Infrastructure")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+b2141c876f752a9cd477261441483e1aa42687aa")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+4beccd73be0890ae8ac8e7bdd9739b18cfdde99b")]
 [assembly: System.Reflection.AssemblyProductAttribute("Markadan.Infrastructure")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Markadan.Infrastructure")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
