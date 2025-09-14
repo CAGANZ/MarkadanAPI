@@ -1,13 +1,13 @@
 ﻿namespace Markadan.Application.DTOs.Products
 {
     public record ProductUpdateDTO(
-        int Id,
-        string Title,
-        string? Description,
-        decimal Price,
-        int Stock,
-        string? ImageUrl,
-        int BrandId,
-        int CategoryId
-    );
+    int Id,
+    string? Title = null,
+    string? Description = null,
+    decimal? Price = null,
+    int? Stock = null,
+    string? ImageUrl = null,
+    int? BrandId = null,
+    int? CategoryId = null
+);
 }

@@ -1,4 +1,5 @@
-﻿using Markadan.Infrastructure.Data;
+﻿using Markadan.Application.Abstractions;
+using Markadan.Infrastructure.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -9,7 +10,13 @@ namespace Markadan.API.Controllers;
 public class ProductsController : ControllerBase
 {
     private readonly MarkadanDbContext _db;
-    public ProductsController(MarkadanDbContext db) => _db = db;
+    private readonly IProductReadService _products;
+
+    public ProductsController(MarkadanDbContext db, IProductReadService products)
+    {
+        _db = db;
+        _products = products;
+    }
 
     [HttpGet]
     public async Task<IActionResult> GetList(
@@ -69,25 +76,9 @@ public class ProductsController : ControllerBase
     }
 
     [HttpGet("{id:int}")]
-    public async Task<IActionResult> GetById(int id)
+    public async Task<IActionResult> GetById([FromRoute] int id)
     {
-        var p = await _db.Products.AsNoTracking()
-            .Include(x => x.Brand)
-            .Include(x => x.Category)
-            .Where(x => x.Id == id)
-            .Select(x => new {
-                x.Id,
-                x.Title,
-                x.Price,
-                x.Stock,
-                x.ImageUrl,
-                x.BrandId,
-                BrandName = x.Brand!.Name,
-                x.CategoryId,
-                CategoryName = x.Category!.Name
-            })
-            .FirstOrDefaultAsync();
-
-        return p is null ? NotFound() : Ok(p);
+        var dto = await _products.GetDetailAsync(id, HttpContext.RequestAborted);
+        return dto is null ? NotFound() : Ok(dto);
     }
 }

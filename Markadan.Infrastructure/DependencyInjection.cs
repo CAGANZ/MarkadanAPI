@@ -1,4 +1,6 @@
-﻿using Markadan.Infrastructure.Data;
+﻿using Markadan.Application.Abstractions;
+using Markadan.Infrastructure.Data;
+using Markadan.Infrastructure.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -19,6 +21,10 @@ public static class DependencyInjection
                     maxRetryCount: 5,
                     maxRetryDelay: TimeSpan.FromSeconds(10),
                     errorNumbersToAdd: null)));
+
+        services.AddScoped<IProductReadService, ProductReadService>();
+        services.AddScoped<IProductCommandService, ProductCommandService>();
+
 
         return services;
     }
