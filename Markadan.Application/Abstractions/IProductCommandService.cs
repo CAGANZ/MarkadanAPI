@@ -10,5 +10,7 @@ namespace Markadan.Application.Abstractions
         // Update: kısmi güncelleme (ProductUpdateDTO alanları nullable)
         // Bulunamazsa null; controller 404 döner
         Task<ProductDetailDTO?> UpdateAsync(ProductUpdateDTO dto, CancellationToken ct = default);
+
+        Task<bool> DeleteAsync(int id, CancellationToken ct = default);
     }
 }

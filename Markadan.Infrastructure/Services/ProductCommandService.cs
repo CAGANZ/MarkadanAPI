@@ -123,7 +123,16 @@ namespace Markadan.Infrastructure.Services
         }
 
 
+        public async Task<bool> DeleteAsync(int id, CancellationToken ct = default)
+        {
+            // Yoksa 404’e zemin hazırlıyoruz
+            var exists = await _db.Products.AnyAsync(p => p.Id == id, ct);
+            if (!exists) return false;
 
+            // Hızlı ve server-side delete (EF Core 9)
+            await _db.Products.Where(p => p.Id == id).ExecuteDeleteAsync(ct);
+            return true;
+        }
 
 
     }
