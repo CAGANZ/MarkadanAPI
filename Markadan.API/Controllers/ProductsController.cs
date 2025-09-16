@@ -1,7 +1,5 @@
 ﻿using Markadan.Application.Abstractions;
-using Markadan.Infrastructure.Data;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace Markadan.API.Controllers;
 
@@ -9,71 +7,37 @@ namespace Markadan.API.Controllers;
 [Route("products")]
 public class ProductsController : ControllerBase
 {
-    private readonly MarkadanDbContext _db;
-    private readonly IProductReadService _products;
-
-    public ProductsController(MarkadanDbContext db, IProductReadService products)
+    public readonly IProductReadService _products;
+    public ProductsController(IProductReadService products)
     {
-        _db = db;
+        ArgumentNullException.ThrowIfNull(products);
         _products = products;
     }
 
     [HttpGet]
     public async Task<IActionResult> GetList(
-        [FromQuery] int? categoryId,
-        [FromQuery] int? brandId,
-        [FromQuery] string? q,
-        [FromQuery] decimal? min,
-        [FromQuery] decimal? max,
-        [FromQuery] string? sort,
-        [FromQuery] int page = 1,
-        [FromQuery] int pageSize = 12)
+    [FromQuery] int? categoryId,
+    [FromQuery] int? brandId,
+    [FromQuery] string? q,
+    [FromQuery] decimal? min,
+    [FromQuery] decimal? max,
+    [FromQuery] string? sort,
+    [FromQuery] int page = 1,
+    [FromQuery] int pageSize = 12)
     {
-        if (page <= 0) page = 1;
-        if (pageSize <= 0 || pageSize > 100) pageSize = 12;
+        var result = await _products.ListAsync(
+            categoryId, brandId,
+            q,
+            min,
+            max,
+            sort,
+            page,
+            pageSize,
+            HttpContext.RequestAborted);
 
-        var query = _db.Products.AsNoTracking()
-            .Include(p => p.Brand)
-            .Include(p => p.Category)
-            .AsQueryable();
-
-        if (categoryId.HasValue) query = query.Where(p => p.CategoryId == categoryId.Value);
-        if (brandId.HasValue) query = query.Where(p => p.BrandId == brandId.Value);
-        if (!string.IsNullOrWhiteSpace(q))
-        {
-            var term = q.Trim();
-            query = query.Where(p => p.Title.Contains(term));
-        }
-        if (min.HasValue) query = query.Where(p => p.Price >= min.Value);
-        if (max.HasValue) query = query.Where(p => p.Price <= max.Value);
-
-        query = sort switch
-        {
-            "price_asc" => query.OrderBy(p => p.Price).ThenBy(p => p.Id),
-            "price_desc" => query.OrderByDescending(p => p.Price).ThenByDescending(p => p.Id),
-            "newest" => query.OrderByDescending(p => p.Id),
-            _ => query.OrderBy(p => p.Id)
-        };
-
-        var total = await query.CountAsync();
-        var items = await query
-            .Skip((page - 1) * pageSize)
-            .Take(pageSize)
-            .Select(p => new {
-                p.Id,
-                p.Title,
-                p.Price,
-                p.Stock,
-                p.ImageUrl,
-                p.BrandId,
-                BrandName = p.Brand!.Name,
-                p.CategoryId,
-                CategoryName = p.Category!.Name
-            })
-            .ToListAsync();
-
-        return Ok(new { total, page, pageSize, items });
+        return Ok(result); // PagedResult<ProductListDTO>
     }
+
 
     [HttpGet("{id:int}")]
     public async Task<IActionResult> GetById([FromRoute] int id)

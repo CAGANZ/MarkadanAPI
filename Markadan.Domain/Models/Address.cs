@@ -13,6 +13,6 @@
 
         //np
         public int AppUserId { get; set; }
-        public AppUser AppUser { get; set; }
+        public required AppUser AppUser { get; set; }
     }
 }

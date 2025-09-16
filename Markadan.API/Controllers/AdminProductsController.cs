@@ -49,4 +49,11 @@ public sealed class AdminProductsController : ControllerBase
         return updated is null ? NotFound() : Ok(updated);
     }
 
+    [HttpDelete("{id:int}")]
+    public async Task<IActionResult> Delete([FromRoute] int id)
+    {
+        var ok = await _commands.DeleteAsync(id, HttpContext.RequestAborted);
+        return ok ? NoContent() : NotFound();
+    }
+
 }
