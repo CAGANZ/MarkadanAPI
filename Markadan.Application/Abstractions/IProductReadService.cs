@@ -5,7 +5,14 @@ namespace Markadan.Application.Abstractions
 {
     public interface IProductReadService
     {
+        Task<PagedResult<AdminProductListDTO>> ListAdminAsync(
+        int? categoryId, int? brandId, string? q, decimal? min, decimal? max,
+        string? sort, int page = 1, int pageSize = 12, CancellationToken ct = default);
+
+        Task<AdminProductDetailDTO?> GetDetailAdminAsync(int id, CancellationToken ct = default);
+
         Task<ProductDetailDTO?> GetDetailAsync(int id, CancellationToken ct = default);
+
 
         Task<PagedResult<ProductListDTO>> ListAsync(
         int? categoryId,

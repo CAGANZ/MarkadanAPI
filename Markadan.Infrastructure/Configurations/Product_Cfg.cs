@@ -25,7 +25,7 @@ namespace Markadan.Infrastructure.Configurations
             b.Property(x => x.Description)
              .HasMaxLength(2000);
 
-            // İlişkiler (bire-çok):
+
             b.HasOne(x => x.Brand)
              .WithMany(bd => bd.Products)
              .HasForeignKey(x => x.BrandId)
@@ -36,7 +36,6 @@ namespace Markadan.Infrastructure.Configurations
              .HasForeignKey(x => x.CategoryId)
              .OnDelete(DeleteBehavior.Restrict);
 
-            // Hafif arama/sıralama için indeksler:
             b.HasIndex(x => x.Title);
             b.HasIndex(x => x.BrandId);
             b.HasIndex(x => x.CategoryId);

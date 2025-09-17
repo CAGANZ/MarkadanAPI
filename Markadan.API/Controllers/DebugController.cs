@@ -11,13 +11,12 @@ public class DebugController : ControllerBase
     private readonly MarkadanDbContext _db;
     public DebugController(MarkadanDbContext db) => _db = db;
 
-    // GET /debug/db
     [HttpGet("db")]
     public async Task<IActionResult> Db()
     {
         var conn = _db.Database.GetDbConnection();
-        var dataSource = conn.DataSource;   // örn: (localdb)\MSSQLLocalDB
-        var database = conn.Database;      // örn: MarkandanDb
+        var dataSource = conn.DataSource; 
+        var database = conn.Database;
 
         var brands = await _db.Brands.CountAsync();
         var categories = await _db.Categories.CountAsync();

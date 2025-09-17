@@ -13,14 +13,11 @@ namespace Markadan.Infrastructure.Configurations
 
             b.Property(x => x.Status).HasConversion<byte>();
             b.Property(x => x.CreatedAt).IsRequired();
-            
+
             b.HasOne(x => x.AppUser)
              .WithMany(u => u.Carts)
              .HasForeignKey(x => x.AppUserId)
-             .OnDelete(DeleteBehavior.Restrict); 
-
-            // İsteğe bağlı (performans için):
-            // b.HasIndex(x => new { x.AppUserId, x.Status });
+             .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }

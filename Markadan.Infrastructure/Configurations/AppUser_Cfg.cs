@@ -8,7 +8,6 @@ namespace Markadan.Infrastructure.Configurations
     {
         public void Configure(EntityTypeBuilder<AppUser> b)
         {
-            // Identity tablosu default 'AspNetUsers'
             b.ToTable("AspNetUsers");
         }
     }

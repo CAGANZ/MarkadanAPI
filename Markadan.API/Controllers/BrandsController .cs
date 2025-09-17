@@ -1,45 +1,32 @@
-﻿using Markadan.Infrastructure.Data;
+﻿using Markadan.Application.Abstractions;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace Markadan.API.Controllers;
 
 [ApiController]
 [Route("brands")]
-public class BrandsController : ControllerBase
+public sealed class BrandsController : ControllerBase
 {
-    private readonly MarkadanDbContext _db;
-    public BrandsController(MarkadanDbContext db) => _db = db;
+    private readonly IBrandReadService _brands;
 
+    public BrandsController(IBrandReadService brands)
+    {
+        ArgumentNullException.ThrowIfNull(brands);
+        _brands = brands;
+    }
+    
     [HttpGet]
-    public async Task<IActionResult> GetList()
+    public async Task<IActionResult> GetAll(CancellationToken ct = default)
     {
-        var items = await _db.Brands.AsNoTracking()
-            .Select(b => new {
-                b.Id,
-                b.Name
-            })
-            .ToListAsync();
-
-        return Ok(items);
+        var list = await _brands.GetAllAsync(ct);
+        return Ok(list);
     }
 
-    [HttpGet("{id}")]
-    public async Task<IActionResult> GetById(string id)
+    [HttpGet("{id:int}")]
+    public async Task<IActionResult> GetById(int id, CancellationToken ct = default)
     {
-        if (!int.TryParse(id, out var brandId))
-        {
-            return BadRequest("Invalid brand ID format.");
-        }
-
-        var brand = await _db.Brands.AsNoTracking()
-            .Where(b => b.Id == brandId)
-            .Select(b => new {
-                b.Id,
-                b.Name
-            })
-            .FirstOrDefaultAsync();
-
-        return brand is null ? NotFound() : Ok(brand);
+        var dto = await _brands.GetByIdAsync(id, ct);
+        return dto is null ? NotFound() : Ok(dto);
     }
+
 }
