@@ -40,3 +40,4 @@ ReSharper.user
 # Derleme çıktıları (önerilir)
 [Bb]in/
 [Oo]bj/
+/To do.txt
