@@ -7,14 +7,14 @@ using System.Threading.Tasks;
 namespace Markadan.Application.DTOs.Auth
 {
     public record LoginResultDTO(
-        string AccessToken,      // JWT
-        DateTime ExpiresAtUtc,   // erişim token bitiş
-        string RefreshToken,     // opsiyonel ama önerilir
+        string AccessToken,
+        DateTime ExpiresAtUtc,
+        string RefreshToken,
         int UserId,
         string Name,
         string Surname,
         string Email,
-        string[] Roles,          // ["Admin","User",...]
-        bool IsAdmin             // convenience flag (Roles.Contains("Admin"))
+        string[] Roles,
+        bool IsAdmin
         );
 }

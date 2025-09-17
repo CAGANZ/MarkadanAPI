@@ -22,8 +22,14 @@ public static class DependencyInjection
                     maxRetryDelay: TimeSpan.FromSeconds(10),
                     errorNumbersToAdd: null)));
 
+
         services.AddScoped<IProductReadService, ProductReadService>();
         services.AddScoped<IProductCommandService, ProductCommandService>();
+
+        services.AddScoped<IBrandReadService, BrandReadService>();
+        services.AddScoped<IBrandCommandService, BrandCommandService>();
+
+        services.AddScoped<ICategoryReadService, CategoryReadService>();
 
 
         return services;

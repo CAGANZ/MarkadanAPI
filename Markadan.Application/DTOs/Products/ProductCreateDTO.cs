@@ -4,7 +4,7 @@
         string Title,
         string? Description,
         decimal Price,
-        int Stock,          // admin ekranı için
+        int Stock,// sadece adminde gösteceğim
         string? ImageUrl,
         int BrandId,
         int CategoryId

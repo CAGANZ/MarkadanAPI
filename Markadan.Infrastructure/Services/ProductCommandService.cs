@@ -57,12 +57,10 @@ namespace Markadan.Infrastructure.Services
         }
 
         public async Task<ProductDetailDTO?> UpdateAsync(ProductUpdateDTO dto, CancellationToken ct = default)
-        {
-            // 1) Ürün var mı?
+        {            
             var entity = await _db.Products.FirstOrDefaultAsync(p => p.Id == dto.Id, ct);
-            if (entity is null) return null; // controller 404 dönecek
-
-            // 2) Alan bazlı güncelle (yalnız gelenleri uygula)
+            if (entity is null) return null;
+         
             if (dto.Title is not null)
             {
                 var t = dto.Title.Trim();
@@ -82,7 +80,7 @@ namespace Markadan.Infrastructure.Services
             if (dto.Stock is not null)
             {
                 if (dto.Stock.Value < 0) throw new InvalidOperationException("Stock cannot be negative.");
-                entity.Stock = dto.Stock.Value; // public’e sızdırmıyoruz, admin tarafı
+                entity.Stock = dto.Stock.Value;
             }
 
             if (dto.ImageUrl is not null)
@@ -103,8 +101,6 @@ namespace Markadan.Infrastructure.Services
             }
 
             await _db.SaveChangesAsync(ct);
-
-            // 3) Güncel detayı projekte edip dön (UI direkt kullanabilsin)
             return await _db.Products
                 .AsNoTracking()
                 .Where(p => p.Id == entity.Id)
@@ -122,14 +118,11 @@ namespace Markadan.Infrastructure.Services
                 .SingleAsync(ct);
         }
 
-
         public async Task<bool> DeleteAsync(int id, CancellationToken ct = default)
         {
-            // Yoksa 404’e zemin hazırlıyoruz
             var exists = await _db.Products.AnyAsync(p => p.Id == id, ct);
             if (!exists) return false;
 
-            // Hızlı ve server-side delete (EF Core 9)
             await _db.Products.Where(p => p.Id == id).ExecuteDeleteAsync(ct);
             return true;
         }

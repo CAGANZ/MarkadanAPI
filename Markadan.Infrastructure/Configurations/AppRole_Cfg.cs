@@ -12,8 +12,7 @@ namespace Markadan.Infrastructure.Configurations
     public class AppRole_Cfg : IEntityTypeConfiguration<AppRole>
     {
         public void Configure(EntityTypeBuilder<AppRole> b)
-        {
-            // Identity tablosu default 'AspNetRoles'
+        {           
             b.ToTable("AspNetRoles");
         }
     }

@@ -30,13 +30,13 @@ namespace Markadan.Infrastructure.Configurations
             b.Property(x => x.Country)
                 .HasMaxLength(100);
 
-            // User ilişki
+           
             b.HasOne(x => x.AppUser)
-                .WithMany(u => u.Addresses)   // AppUser tarafında ICollection<Address> tanımlaman lazım
+                .WithMany(u => u.Addresses)
                 .HasForeignKey(x => x.AppUserId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            // Index: kullanıcı + şehir (sorgu hızlandırma için)
+           
             b.HasIndex(x => new { x.AppUserId, x.City });
         }
     }

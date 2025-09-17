@@ -11,7 +11,7 @@
         public string Country { get; set; } = "";
 
 
-        //np
+        //np tekrar bak
         public int AppUserId { get; set; }
         public required AppUser AppUser { get; set; }
     }

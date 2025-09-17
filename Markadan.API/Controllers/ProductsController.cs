@@ -7,7 +7,7 @@ namespace Markadan.API.Controllers;
 [Route("products")]
 public class ProductsController : ControllerBase
 {
-    public readonly IProductReadService _products;
+    private readonly IProductReadService _products;
     public ProductsController(IProductReadService products)
     {
         ArgumentNullException.ThrowIfNull(products);
@@ -35,7 +35,7 @@ public class ProductsController : ControllerBase
             pageSize,
             HttpContext.RequestAborted);
 
-        return Ok(result); // PagedResult<ProductListDTO>
+        return Ok(result);
     }
 
 
