@@ -1,0 +1,19 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/.vs/Markadan/CopilotIndices/17.14.995.13737
+/.vs/MarkadanAPI/v17
+/.vs/Markadan/v17
+/Markadan.API/bin/Debug/net9.0
+/Markadan.API/obj/Debug/net9.0
+/.vs/Markadan/FileContentIndex
+/Markadan.API/obj
+/Markadan.Application
+/Markadan.Infrastructure/bin/Debug/net9.0
+/Markadan.Domain/bin/Debug/net9.0
+/Markadan.Domain/obj/Debug/net9.0/refint
+/Markadan.Domain/obj/Debug/net9.0/ref
+/Markadan.Domain/obj/Debug/net9.0
+/Markadan.Domain/obj
+/Markadan.Infrastructure/obj
