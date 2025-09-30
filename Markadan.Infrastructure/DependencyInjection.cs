@@ -1,6 +1,8 @@
 ﻿using Markadan.Application.Abstractions;
+using Markadan.Domain.Models;
 using Markadan.Infrastructure.Data;
 using Markadan.Infrastructure.Services;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -13,7 +15,7 @@ public static class DependencyInjection
     {
         var cs = config.GetConnectionString("DefaultConnection")
                  ?? config.GetConnectionString("Default")
-                 ?? throw new InvalidOperationException("Connection string bulunamadı (DefaultConnection veya Default).");
+                 ?? throw new InvalidOperationException("Connection string bulunamadı!? (DefaultConnection veya Default).");
 
         services.AddDbContext<MarkadanDbContext>(o =>
             o.UseSqlServer(cs, sql =>
@@ -21,6 +23,20 @@ public static class DependencyInjection
                     maxRetryCount: 5,
                     maxRetryDelay: TimeSpan.FromSeconds(10),
                     errorNumbersToAdd: null)));
+
+        services
+        .AddIdentityCore<AppUser>(opt =>
+        {
+            opt.User.RequireUniqueEmail = true;
+            opt.Password.RequiredLength = 6;
+            opt.Password.RequireNonAlphanumeric = false;
+            opt.Password.RequireUppercase = false;
+            opt.Password.RequireLowercase = false;
+            opt.Password.RequireDigit = false;
+        })
+        .AddRoles<AppRole>()
+        .AddEntityFrameworkStores<MarkadanDbContext>()
+        .AddSignInManager();
 
 
         services.AddScoped<IProductReadService, ProductReadService>();
@@ -30,6 +46,9 @@ public static class DependencyInjection
         services.AddScoped<IBrandCommandService, BrandCommandService>();
 
         services.AddScoped<ICategoryReadService, CategoryReadService>();
+        services.AddScoped<ICategoryCommandService, CategoryCommandService>();
+
+        services.AddScoped<IAuthService, AuthService>();
 
 
         return services;

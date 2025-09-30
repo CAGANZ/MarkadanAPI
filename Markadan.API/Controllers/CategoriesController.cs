@@ -29,5 +29,5 @@ public class CategoriesController : ControllerBase
     {
         var dto = await _categories.GetByIdAsync(id, ct);
         return dto is null ? NotFound() : Ok(dto);
-}
+    }
 }

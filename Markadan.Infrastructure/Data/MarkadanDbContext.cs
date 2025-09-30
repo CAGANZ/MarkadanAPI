@@ -16,6 +16,8 @@ namespace Markadan.Infrastructure.Data
         public  DbSet<CartItem> CartItems => Set<CartItem>();
         public DbSet<Address> Addresses => Set<Address>();
 
+        public DbSet<RefreshToken> RefreshTokens => Set<RefreshToken>();
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (!optionsBuilder.IsConfigured)
