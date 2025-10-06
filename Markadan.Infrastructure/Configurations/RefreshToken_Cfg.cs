@@ -2,9 +2,9 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace Markadan.Infrastructure.Data.Config
+namespace Markadan.Infrastructure.Configurations
 {
-    public sealed class RefreshTokenConfiguration : IEntityTypeConfiguration<RefreshToken>
+    public sealed class RefreshToken_Cfg : IEntityTypeConfiguration<RefreshToken>
     {
         public void Configure(EntityTypeBuilder<RefreshToken> b)
         {
