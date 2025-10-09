@@ -13,7 +13,8 @@ namespace Markadan.Infrastructure.Configurations
 
             b.Property(x => x.Title)
              .IsRequired()
-             .HasMaxLength(200);
+             .HasMaxLength(200)
+             .UseCollation("Turkish_100_CI_AI");
 
             b.Property(x => x.Price)
              .HasColumnType("decimal(18,2)")

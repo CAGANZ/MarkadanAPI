@@ -1,4 +1,5 @@
 ﻿using System.Threading;
+using Markadan.Application.Exceptions;
 using Markadan.Application.Abstractions;
 using Markadan.Application.DTOs.Brands;
 using Markadan.Domain.Models;
@@ -7,8 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Markadan.Infrastructure.Services;
 
-public sealed class BrandCommandService : 
-    IBrandCommandService
+public sealed class BrandCommandService : IBrandCommandService
 {
     private readonly MarkadanDbContext _db;
 
@@ -23,11 +23,11 @@ public sealed class BrandCommandService :
         if (string.IsNullOrWhiteSpace(dto.Name))
             throw new InvalidOperationException("Name cannot be empty.");
 
-        var name = dto.Name.Trim();
 
+        var name = dto.Name.Trim();
         var exists = await _db.Brands.AnyAsync(b => b.Name == name, ct);
         if (exists)
-            throw new InvalidOperationException($"Brand '{name}' already exists.");
+            throw new BusinessRuleException($"Brand '{name}' already exists.");
 
         var entity = new Brand
         {
@@ -55,7 +55,7 @@ public sealed class BrandCommandService :
 
             var exists = await _db.Brands.AnyAsync(b => b.Id != dto.Id && b.Name == name, ct);
             if (exists) 
-                throw new InvalidOperationException($"Brand '{name}' already exists.");
+                throw new BusinessRuleException($"Brand '{name}' already exists.");
             entity.Name = name;
         }
         if (dto.Description is not null)
@@ -76,8 +76,8 @@ public sealed class BrandCommandService :
 
         var inUse = await _db.Products.AnyAsync(p => p.BrandId == id, ct);
         if (inUse)
-            throw new InvalidOperationException("Brand has products and cannot be deletd.");
-
+            throw new BusinessRuleException("Brand has products and cannot be deletd.");
+            
         await _db.Brands.Where(b => b.Id == id).ExecuteDeleteAsync(ct);
         return true;
     }

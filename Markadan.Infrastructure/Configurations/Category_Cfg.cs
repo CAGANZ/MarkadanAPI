@@ -13,7 +13,11 @@ namespace Markadan.Infrastructure.Configurations
 
             b.Property(x => x.Name)
              .IsRequired()
-             .HasMaxLength(150);
+             .HasMaxLength(150)
+             .UseCollation("Turkish_100_CI_AI");
+
+            b.HasIndex(x => x.Name).IsUnique();
+
 
             b.Property(x => x.ImageUrl)
              .HasMaxLength(1024);

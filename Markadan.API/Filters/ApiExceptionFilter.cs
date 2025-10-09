@@ -1,46 +1,36 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Markadan.Application.Exceptions;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.EntityFrameworkCore;
+using System.Net;
 
-namespace Markadan.API.Filters;
-
-public sealed class ApiExceptionFilter : IExceptionFilter
+namespace Markadan.API.Filters
 {
-    public void OnException(ExceptionContext context)
+    public sealed class ApiExceptionFilter : IExceptionFilter
     {
-        var ex = context.Exception;
-        int status;
-        string title;
+        public void OnException(ExceptionContext context)
+        {
+            var ex = context.Exception;
 
-        if (ex is DbUpdateException)
-        {
-            status = StatusCodes.Status409Conflict;
-            title = "Conflict";
-        }
-        else if (ex is InvalidOperationException ioe && ioe.Message.Contains("not found", StringComparison.OrdinalIgnoreCase))
-        {
-            status = StatusCodes.Status404NotFound;
-            title = "Not Found";
-        }
-        else if (ex is InvalidOperationException)
-        {
-            status = StatusCodes.Status400BadRequest;
-            title = "Bad Request";
-        }
-        else
-        {
-            status = StatusCodes.Status500InternalServerError;
-            title = "Internal Server Error";
-        }
+            var (status, title) = ex switch
+            {
+                BusinessRuleException => (HttpStatusCode.Conflict, "Business rule violated"), // 409
+                KeyNotFoundException => (HttpStatusCode.NotFound, "Not Found"),              // 404
+                InvalidOperationException => (HttpStatusCode.BadRequest, "Bad Request"),            // 400
+                ArgumentException => (HttpStatusCode.BadRequest, "Bad Request"),            // 400
+                DbUpdateException => (HttpStatusCode.Conflict, "Conflict"),               // 409 (FK/unique)
+                _ => (HttpStatusCode.InternalServerError, "Internal Server Error")
+            };
 
-        var problem = new ProblemDetails
-        {
-            Status = status,
-            Title = title,
-            Detail = ex.Message
-        };
+            var problem = new ProblemDetails
+            {
+                Status = (int)status,
+                Title = title,
+                Detail = ex.Message
+            };
 
-        context.Result = new ObjectResult(problem) { StatusCode = status };
-        context.ExceptionHandled = true;
+            context.Result = new ObjectResult(problem) { StatusCode = (int)status };
+            context.ExceptionHandled = true;
+        }
     }
 }

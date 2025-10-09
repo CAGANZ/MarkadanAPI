@@ -1,5 +1,6 @@
 ﻿using Markadan.Application.Abstractions;
 using Markadan.Application.DTOs.Categories;
+using Markadan.Application.Exceptions;
 using Markadan.Domain.Models;
 using Markadan.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
@@ -24,7 +25,7 @@ namespace Markadan.Infrastructure.Services
 
             var exists = await _db.Categories.AnyAsync(c => c.Name == name, ct);
             if (exists)
-                throw new InvalidOperationException($" Category name{name} already exists");
+                throw new BusinessRuleException($" Category name '{name}' already exists");
 
             var entity = new Category()
             {
@@ -39,19 +40,20 @@ namespace Markadan.Infrastructure.Services
         }
 
         public async Task<bool> DeleteAsync(int id, CancellationToken ct = default)
-        {
-            var exists = await _db.Categories.AnyAsync(c => c.Id == id);
-            if (!exists)
-                return false;
+        {           
+            var inUse = await _db.Products
+                .AsNoTracking()
+                .AnyAsync(p => p.CategoryId == id, ct);
+            if (inUse)
+                throw new BusinessRuleException("Category is in use and cannot be deleted");
+            
+            var rows = await _db.Categories.Where(c => c.Id == id).ExecuteDeleteAsync(ct);
+            if (rows == 0)
+                throw new KeyNotFoundException("Category not found");
 
-
-            var InUse = await _db.Products.AnyAsync(p => p.CategoryId == id, ct);
-            if (InUse)
-                throw new InvalidOperationException("Category is in use and cannot be deleted");
-
-            await _db.Categories.Where(b => b.Id == id).ExecuteDeleteAsync(ct);
             return true;
         }
+
 
         public async Task<CategoryDTO?> UpdateAsync(CategoryUpdateDTO dto, CancellationToken ct = default)
         {
@@ -65,7 +67,7 @@ namespace Markadan.Infrastructure.Services
                     throw new InvalidOperationException("Name cannot be empty");
                 var exists = await _db.Categories.AnyAsync(c => c.Id != dto.Id && c.Name == name, ct);
                 if (exists)
-                    throw new InvalidOperationException($" Category {name} already exists");
+                    throw new BusinessRuleException($" Category {name} already exists");
                 entity.Name = name;
             }
             if (dto.Description is not null)

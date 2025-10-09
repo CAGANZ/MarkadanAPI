@@ -22,11 +22,18 @@ public sealed class ProductReadService : IProductReadService
         if (page < 1) page = 1;
         if (pageSize <= 0) pageSize = 12;
 
-        var query = _db.Products.AsNoTracking();
+        var query = _db.Products.Include(p => p.Brand).Include(p => p.Category).AsNoTracking();
 
         if (categoryId.HasValue) query = query.Where(p => p.CategoryId == categoryId.Value);
         if (brandId.HasValue) query = query.Where(p => p.BrandId == brandId.Value);
-        if (!string.IsNullOrWhiteSpace(q)) query = query.Where(p => p.Title.Contains(q));
+        if (!string.IsNullOrWhiteSpace(q))
+        {
+            query = query.Where(p =>
+                p.Title.Contains(q) ||
+                p.Brand.Name.Contains(q) ||
+                p.Category.Name.Contains(q)
+            );
+        }
         if (min.HasValue) query = query.Where(p => p.Price >= min.Value);
         if (max.HasValue) query = query.Where(p => p.Price <= max.Value);
 
@@ -34,6 +41,8 @@ public sealed class ProductReadService : IProductReadService
         {
             "price_asc" => query.OrderBy(p => p.Price),
             "price_desc" => query.OrderByDescending(p => p.Price),
+            "name_asc" => query.OrderBy(p => p.Title), // YENİ ...
+            "name_desc" => query.OrderByDescending(p => p.Title), // YENİ ... performans ölçümü yapılmadı
             "newest" => query.OrderByDescending(p => p.Id),
             _ => query.OrderBy(p => p.Id)
         };

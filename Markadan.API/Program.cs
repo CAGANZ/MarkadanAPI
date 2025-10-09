@@ -42,6 +42,10 @@ builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.Configure<Markadan.Application.Options.JwtOptions>(
     builder.Configuration.GetSection("Jwt"));
 
+builder.Services.AddCors(o => o.AddPolicy("Frontend",
+    p => p.WithOrigins("http://localhost:3000", "https://localhost:3000")
+          .AllowAnyHeader().AllowAnyMethod()));
+
 
 
 builder.Services
@@ -78,6 +82,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();  // deðerli bilgi****buradan sonraki sýralama önemli AddAuthentication, addAuthorizationve addJwtBearer middleware'leri UseAuthorization'dan önce ve UseAuthentication'dan sonra olmalý****
+app.UseCors("Frontend");
 
 app.UseAuthentication();
 app.UseAuthorization();
