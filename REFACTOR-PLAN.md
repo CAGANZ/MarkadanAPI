@@ -395,3 +395,36 @@ Bağımlılık: E1 hepsinden önce; E2 ile E3 paralel; E4, E2+E3'e bağımlı; E
 - **Docker doğrulama (2026-06-10):** `docker compose up -d` ile temiz ortamda ayağa kaldırıldı.
   Migration'lar otomatik uygulandı, admin seed çalıştı, `POST /auth/login` JWT token döndü.
   `ASPNETCORE_ENVIRONMENT=Development` ile Swagger erişilebilir durumda.
+
+- **C5 Analizi — Public uçlarda ID enumeration (2026-06-10):**
+
+  **Mevcut durum:**
+  - `/products/{id}`, `/brands/{id}`, `/categories/{id}` sıralı int ID kullanıyor.
+  - `ProductListDTO` ve `ProductDetailDTO`'da `Stock` **yok** — stok verisi anonim erişime kapalı.
+  - Açık olan: ürün başlığı, fiyat, açıklama, görsel URL, brand/kategori adı.
+
+  **Gerçek risk:**
+  - Rakip `GET /products/1..N` tarayarak tüm katalog içeriğini ve fiyat listesini çekebilir.
+  - Son geçerli ID katalog büyüklüğünü ele verir.
+  - Multi-instance modelde her instance ayrı domain'de — rakip hangi URL'nin hangi mağazaya ait
+    olduğunu bilmek zorunda, bu da pratikte riski düşürür.
+  - Stok verisi kapalı olduğu için satış hızı analizi yapılamaz (en kritik ticari sır korunuyor).
+
+  **Risk seviyesi: Düşük-Orta.** Butik mağaza genellikle 10–300 ürün barındırır; katalog
+  içeriği zaten mağaza vitrininden görünür durumdadır.
+
+  **Önerilen aksiyon (öncelik sırasıyla):**
+
+  1. **Rate limiting ekle (önerilir, kod değişikliği yok):** ASP.NET Core 8+ built-in rate
+     limiting middleware (`AddRateLimiter`) ile public uçlara IP başına dakikalık limit koy.
+     Otomatik taramayı engeller, meşru kullanıcıyı etkilemez.
+
+  2. **`Product`'a `Slug` ekle (SEO da kazanılır, opsiyonel):** `Title`'dan üretilen benzersiz
+     slug alanı (`nike-air-max-2024`). Route'lar hem `/{id}` hem `/{slug}` destekleyebilir.
+     Butik için SEO değeri yüksek; migration gerektirir.
+
+  3. **Opak ID (UUID/ULID) — şimdi gerekmez:** B2B veya API-first senaryolarda anlamlı;
+     butik mağaza için URL okunabilirliği bozar, maliyet faydasını karşılamaz.
+
+  **Karar: Ürün sahibi rate limiting ile başlayıp SEO ihtiyacı doğunca slug ekleyebilir.
+  Int ID'leri değiştirmek için acil gereksinim yok.**
