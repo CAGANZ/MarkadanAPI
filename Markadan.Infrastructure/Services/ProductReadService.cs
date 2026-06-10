@@ -30,8 +30,8 @@ public sealed class ProductReadService : IProductReadService
         {
             query = query.Where(p =>
                 p.Title.Contains(q) ||
-                p.Brand.Name.Contains(q) ||
-                p.Category.Name.Contains(q)
+                p.Brand!.Name.Contains(q) ||
+                p.Category!.Name.Contains(q)
             );
         }
         if (min.HasValue) query = query.Where(p => p.Price >= min.Value);
