@@ -204,9 +204,19 @@ public sealed class AuthService : IAuthService
             .AsTracking()
             .SingleOrDefaultAsync(x => x.Token == HashToken(dto.RefreshToken), ct);
 
-        // 2) Token yok, süresi geçmiş veya zaten revoke edilmişse: 401
+        // 2) Token DB'de yok → 401
         if (rt is null) return null;
-        if (rt.RevokedAtUtc is not null) return null;
+
+        // 2b) Revoke edilmiş token yeniden kullanıldı → çalıntı şüphesi.
+        //     Rotasyonun amacı budur: eski token iki kişide varsa biri saldırgandır.
+        //     Kullanıcıya ait tüm aktif token'lar iptal edilir; re-login zorunlu.
+        if (rt.RevokedAtUtc is not null)
+        {
+            await RevokeAllActiveTokensForUserAsync(rt.AppUserId, ct);
+            return null;
+        }
+
+        // 2c) Süresi dolmuş → 401 (alarm değil, normal expiry)
         if (rt.ExpiresAtUtc <= DateTime.UtcNow) return null;
 
         // 3) Kullanıcıyı getir (soft-deleted ise 401)
@@ -224,5 +234,21 @@ public sealed class AuthService : IAuthService
         // 6) Yeni access token
         var roles = await _users.GetRolesAsync(user);
         return GenerateLoginResult(user, roles, newRefresh);
+    }
+
+    private async Task RevokeAllActiveTokensForUserAsync(int userId, CancellationToken ct)
+    {
+        var active = await _db.RefreshTokens
+            .AsTracking()
+            .Where(x => x.AppUserId == userId
+                     && x.RevokedAtUtc == null
+                     && x.ExpiresAtUtc > DateTime.UtcNow)
+            .ToListAsync(ct);
+
+        var now = DateTime.UtcNow;
+        foreach (var t in active)
+            t.RevokedAtUtc = now;
+
+        await _db.SaveChangesAsync(ct);
     }
 }
