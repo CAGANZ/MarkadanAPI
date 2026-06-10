@@ -53,8 +53,12 @@ builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.Configure<Markadan.Application.Options.JwtOptions>(
     builder.Configuration.GetSection("Jwt"));
 
+var allowedOrigins = builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>() ?? [];
+if (allowedOrigins.Length == 0)
+    Console.WriteLine("UYARI: Cors:AllowedOrigins boş — tüm cross-origin istekleri reddedilecek.");
+
 builder.Services.AddCors(o => o.AddPolicy("Frontend",
-    p => p.WithOrigins("http://localhost:3000", "https://localhost:3000")
+    p => p.WithOrigins(allowedOrigins)
           .AllowAnyHeader().AllowAnyMethod()));
 
 
