@@ -45,9 +45,6 @@ builder.Services.AddSwaggerGen(c =>
     });
 });
 
-builder.Services.AddAutoMapper(cfg => cfg.AddMaps(typeof(Markadan.Application.Mapping.CatalogProfile).Assembly));
-
-
 builder.Services.AddDataProtection();
 
 builder.Services.AddInfrastructure(builder.Configuration);
