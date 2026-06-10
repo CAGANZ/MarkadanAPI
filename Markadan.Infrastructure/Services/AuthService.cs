@@ -4,6 +4,7 @@ using Markadan.Application.DTOs.Users;
 using Markadan.Application.Options;
 using Markadan.Domain.Models;
 using Markadan.Infrastructure.Data;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
@@ -21,14 +22,20 @@ public sealed class AuthService : IAuthService
     private readonly RoleManager<AppRole> _roles;
     private readonly JwtOptions _jwt;
     private readonly MarkadanDbContext _db;
+    private readonly IDataProtector _govIdProtector;
 
-    public AuthService(UserManager<AppUser> users, RoleManager<AppRole> roles, IOptions<JwtOptions> jwt, MarkadanDbContext db)
+    public AuthService(
+        UserManager<AppUser> users,
+        RoleManager<AppRole> roles,
+        IOptions<JwtOptions> jwt,
+        MarkadanDbContext db,
+        IDataProtectionProvider dataProtection)
     {
         _users = users;
         _roles = roles;
         _jwt = jwt.Value;
         _db = db;
-
+        _govIdProtector = dataProtection.CreateProtector("Markadan.GovId.v1");
     }
 
     public async Task<LoginResultDTO> RegisterAsync(RegisterRequestDTO dto, CancellationToken ct = default)
@@ -47,14 +54,14 @@ public sealed class AuthService : IAuthService
         if (await _users.FindByNameAsync(dto.UserName) is not null)
             throw new InvalidOperationException("UserName already in use.");
 
-        var user = new AppUser //
+        var user = new AppUser
         {
             UserName = dto.UserName.Trim(),
             Email = dto.Email.Trim(),
             PhoneNumber = dto.PhoneNumber.Trim(),
             Name = dto.Name?.Trim() ?? "",
             Surname = dto.Surname?.Trim() ?? "",
-            GovId = dto.GovId,
+            GovId = _govIdProtector.Protect(dto.GovId.Trim()),
             Birthday = dto.Birthday,
             IsDeleted = false
         };
@@ -130,20 +137,28 @@ public sealed class AuthService : IAuthService
         return s.Replace('+', '-').Replace('/', '_').TrimEnd('=');
     }
 
+    // Gelen raw token'ı DB'ye yazmadan önce ve sorgularken hashlemek için.
+    // SHA-256 deterministiktir: aynı girdi her zaman aynı hash'i üretir.
+    private static string HashToken(string raw)
+    {
+        var hash = SHA256.HashData(Encoding.UTF8.GetBytes(raw));
+        return Convert.ToBase64String(hash);
+    }
+
     private async Task<string> IssueRefreshTokenAsync(AppUser user, string? createdByIp, CancellationToken ct)
     {
-        var token = NewRefreshTokenString();
+        var raw = NewRefreshTokenString();
         var rt = new RefreshToken
         {
             AppUserId = user.Id,
-            Token = token,
+            Token = HashToken(raw),  // DB'ye hash yazılır, raw token client'a verilir
             CreatedAtUtc = DateTime.UtcNow,
-            ExpiresAtUtc = DateTime.UtcNow.AddDays(30),// 30 gün geçerlilik verdim..
+            ExpiresAtUtc = DateTime.UtcNow.AddDays(30),
             CreatedByIp = createdByIp
         };
         _db.RefreshTokens.Add(rt);
         await _db.SaveChangesAsync(ct);
-        return token;
+        return raw;  // raw token → client (cookie/response body)
     }
 
 
@@ -184,10 +199,10 @@ public sealed class AuthService : IAuthService
     {
         if (string.IsNullOrWhiteSpace(dto.RefreshToken)) return null;
 
-        // 1) DB'de token'ı bul
+        // 1) DB'de token'ı bul — gelen raw token hashlenerek eşleştirilir
         var rt = await _db.RefreshTokens
             .AsTracking()
-            .SingleOrDefaultAsync(x => x.Token == dto.RefreshToken, ct);
+            .SingleOrDefaultAsync(x => x.Token == HashToken(dto.RefreshToken), ct);
 
         // 2) Token yok, süresi geçmiş veya zaten revoke edilmişse: 401
         if (rt is null) return null;
@@ -201,9 +216,9 @@ public sealed class AuthService : IAuthService
         // 4) Yeni refresh üret
         var newRefresh = await IssueRefreshTokenAsync(user, ip, ct);
 
-        // 5) Eskiyi kapat (rotasyon)
+        // 5) Eskiyi kapat (rotasyon) — ReplacedByToken da hash olarak tutulur
         rt.RevokedAtUtc = DateTime.UtcNow;
-        rt.ReplacedByToken = newRefresh;
+        rt.ReplacedByToken = HashToken(newRefresh);
         await _db.SaveChangesAsync(ct);
 
         // 6) Yeni access token
