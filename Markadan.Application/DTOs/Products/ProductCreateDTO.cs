@@ -1,12 +1,14 @@
-﻿namespace Markadan.Application.DTOs.Products
+using System.ComponentModel.DataAnnotations;
+
+namespace Markadan.Application.DTOs.Products
 {
     public record ProductCreateDTO(
-        string Title,
+        [Required, MinLength(1), MaxLength(200)] string Title,
         string? Description,
-        decimal Price,
-        int Stock,// sadece adminde gösteceğim unutma...
+        [Range(0.0, double.MaxValue)] decimal Price,
+        [Range(0, int.MaxValue)] int Stock,
         string? ImageUrl,
-        int BrandId,
-        int CategoryId
+        [Range(1, int.MaxValue)] int BrandId,
+        [Range(1, int.MaxValue)] int CategoryId
     );
 }

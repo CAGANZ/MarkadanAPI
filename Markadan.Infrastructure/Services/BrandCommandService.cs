@@ -20,11 +20,8 @@ public sealed class BrandCommandService : IBrandCommandService
 
     public async Task<BrandDTO> CreateAsync(BrandCreateDTO dto, CancellationToken ct = default)
     {
-        if (string.IsNullOrWhiteSpace(dto.Name))
-            throw new InvalidOperationException("Name cannot be empty.");
-
-
         var name = dto.Name.Trim();
+        if (name.Length == 0) throw new ArgumentException("Name cannot be empty.");
         var exists = await _db.Brands.AnyAsync(b => b.Name == name, ct);
         if (exists)
             throw new BusinessRuleException($"Brand '{name}' already exists.");
@@ -50,8 +47,7 @@ public sealed class BrandCommandService : IBrandCommandService
         if (dto.Name is not null)
         {
             var name = dto.Name.Trim();
-            if (name.Length == 0)
-                throw new InvalidOperationException("Name cannot be empty.");
+            if (name.Length == 0) throw new ArgumentException("Name cannot be empty.");
 
             var exists = await _db.Brands.AnyAsync(b => b.Id != dto.Id && b.Name == name, ct);
             if (exists) 

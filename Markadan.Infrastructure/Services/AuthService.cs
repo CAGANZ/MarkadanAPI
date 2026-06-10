@@ -1,5 +1,6 @@
 ﻿using Markadan.Application.Abstractions;
 using Markadan.Application.DTOs.Auth;
+using Markadan.Application.Exceptions;
 using Markadan.Application.DTOs.Users;
 using Markadan.Application.Options;
 using Markadan.Domain.Models;
@@ -40,19 +41,13 @@ public sealed class AuthService : IAuthService
 
     public async Task<LoginResultDTO> RegisterAsync(RegisterRequestDTO dto, CancellationToken ct = default)
     {
-        if (string.IsNullOrWhiteSpace(dto.Email)) throw new InvalidOperationException("Email required.");
-        if (string.IsNullOrWhiteSpace(dto.UserName)) throw new InvalidOperationException("UserName required.");
-        if (string.IsNullOrWhiteSpace(dto.PhoneNumber)) throw new InvalidOperationException("PhoneNumber required.");
-        if (string.IsNullOrWhiteSpace(dto.Password)) throw new InvalidOperationException("Password required.");
-        if (dto.Password.Length < 6) throw new InvalidOperationException("Password must be at least 6 characters.");
-        if (string.IsNullOrWhiteSpace(dto.GovId)) throw new InvalidOperationException("GovId required.");
-        if (dto.Birthday == default) throw new InvalidOperationException("Birthday required.");
+        // Annotation'ların yakalayamadığı tek format hatası: DateTime.MinValue geldiğinde
+        if (dto.Birthday == default) throw new ArgumentException("Birthday required.");
 
-        // db den kontrol yapılanları asenkron yazacaksın..
         if (await _users.FindByEmailAsync(dto.Email) is not null)
-            throw new InvalidOperationException("Email already in use.");
+            throw new BusinessRuleException("Email already in use.");
         if (await _users.FindByNameAsync(dto.UserName) is not null)
-            throw new InvalidOperationException("UserName already in use.");
+            throw new BusinessRuleException("UserName already in use.");
 
         var user = new AppUser
         {

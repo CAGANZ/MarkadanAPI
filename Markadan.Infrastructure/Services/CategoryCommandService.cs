@@ -18,10 +18,8 @@ namespace Markadan.Infrastructure.Services
 
         public async Task<CategoryDTO> CreateAsync(CategoryCreateDTO dto, CancellationToken ct = default)
         {
-            if (string.IsNullOrWhiteSpace(dto.Name))
-                throw new InvalidOperationException("Name cannot be empty");
-
             var name = dto.Name.Trim();
+            if (name.Length == 0) throw new ArgumentException("Name cannot be empty.");
 
             var exists = await _db.Categories.AnyAsync(c => c.Name == name, ct);
             if (exists)
@@ -63,8 +61,7 @@ namespace Markadan.Infrastructure.Services
             if (dto.Name is not null)
             {
                 var name = dto.Name.Trim();
-                if (name.Length == 0)
-                    throw new InvalidOperationException("Name cannot be empty");
+                if (name.Length == 0) throw new ArgumentException("Name cannot be empty.");
                 var exists = await _db.Categories.AnyAsync(c => c.Id != dto.Id && c.Name == name, ct);
                 if (exists)
                     throw new BusinessRuleException($" Category {name} already exists");

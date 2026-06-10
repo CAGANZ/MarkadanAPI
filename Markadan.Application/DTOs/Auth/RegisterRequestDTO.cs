@@ -10,7 +10,7 @@ public record RegisterRequestDTO
     [Required]
     public required string UserName { get; init; }
 
-    [Required]
+    [Required, MinLength(6)]
     public required string Password { get; init; }
 
     [Required, Phone]

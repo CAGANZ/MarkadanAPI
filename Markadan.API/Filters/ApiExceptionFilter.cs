@@ -15,11 +15,10 @@ namespace Markadan.API.Filters
             var (status, title) = ex switch
             {
                 BusinessRuleException => (HttpStatusCode.Conflict, "Business rule violated"), // 409
-                KeyNotFoundException => (HttpStatusCode.NotFound, "Not Found"),              // 404
-                InvalidOperationException => (HttpStatusCode.BadRequest, "Bad Request"),            // 400
-                ArgumentException => (HttpStatusCode.BadRequest, "Bad Request"),            // 400
-                DbUpdateException => (HttpStatusCode.Conflict, "Conflict"),               // 409 (FK/unique)
-                _ => (HttpStatusCode.InternalServerError, "Internal Server Error")
+                KeyNotFoundException  => (HttpStatusCode.NotFound, "Not Found"),              // 404
+                ArgumentException     => (HttpStatusCode.BadRequest, "Bad Request"),          // 400
+                DbUpdateException     => (HttpStatusCode.Conflict, "Conflict"),               // 409 (FK/unique)
+                _                     => (HttpStatusCode.InternalServerError, "Internal Server Error")
             };
 
             var problem = new ProblemDetails

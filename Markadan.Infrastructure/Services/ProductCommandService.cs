@@ -17,13 +17,11 @@ namespace Markadan.Infrastructure.Services
 
         public async Task<ProductDetailDTO> CreateAsync(ProductCreateDTO dto, CancellationToken ct = default)
         {
-            var brandExits = await _db.Brands.AnyAsync(b => b.Id == dto.BrandId, ct);
-            if (!brandExits)
-                throw new InvalidOperationException($"Brand {dto.BrandId} not found");
+            if (!await _db.Brands.AnyAsync(b => b.Id == dto.BrandId, ct))
+                throw new KeyNotFoundException($"Brand {dto.BrandId} not found.");
 
-            var categoryExists = await _db.Categories.AnyAsync(c => c.Id == dto.CategoryId, ct);
-            if (!categoryExists)
-                throw new InvalidOperationException($"Category {dto.CategoryId} not found");
+            if (!await _db.Categories.AnyAsync(c => c.Id == dto.CategoryId, ct))
+                throw new KeyNotFoundException($"Category {dto.CategoryId} not found.");
 
             var entity = new Product
             {
@@ -64,7 +62,7 @@ namespace Markadan.Infrastructure.Services
             if (dto.Title is not null)
             {
                 var t = dto.Title.Trim();
-                if (t.Length == 0) throw new InvalidOperationException("Title cannot be empty.");
+                if (t.Length == 0) throw new ArgumentException("Title cannot be empty.");
                 entity.Title = t;
             }
 
@@ -72,31 +70,25 @@ namespace Markadan.Infrastructure.Services
                 entity.Description = string.IsNullOrWhiteSpace(dto.Description) ? null : dto.Description.Trim();
 
             if (dto.Price is not null)
-            {
-                if (dto.Price.Value < 0) throw new InvalidOperationException("Price cannot be negative.");
                 entity.Price = dto.Price.Value;
-            }
 
             if (dto.Stock is not null)
-            {
-                if (dto.Stock.Value < 0) throw new InvalidOperationException("Stock cannot be negative.");
                 entity.Stock = dto.Stock.Value;
-            }
 
             if (dto.ImageUrl is not null)
                 entity.ImageUrl = string.IsNullOrWhiteSpace(dto.ImageUrl) ? null : dto.ImageUrl.Trim();
 
             if (dto.BrandId is not null)
             {
-                var exists = await _db.Brands.AnyAsync(b => b.Id == dto.BrandId.Value, ct);
-                if (!exists) throw new InvalidOperationException($"Brand {dto.BrandId} not found.");
+                if (!await _db.Brands.AnyAsync(b => b.Id == dto.BrandId.Value, ct))
+                    throw new KeyNotFoundException($"Brand {dto.BrandId} not found.");
                 entity.BrandId = dto.BrandId.Value;
             }
 
             if (dto.CategoryId is not null)
             {
-                var exists = await _db.Categories.AnyAsync(c => c.Id == dto.CategoryId.Value, ct);
-                if (!exists) throw new InvalidOperationException($"Category {dto.CategoryId} not found.");
+                if (!await _db.Categories.AnyAsync(c => c.Id == dto.CategoryId.Value, ct))
+                    throw new KeyNotFoundException($"Category {dto.CategoryId} not found.");
                 entity.CategoryId = dto.CategoryId.Value;
             }
 
