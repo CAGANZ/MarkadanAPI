@@ -1,11 +1,13 @@
 ﻿using Markadan.Application.Abstractions;
 using Markadan.Application.DTOs.Categories;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Markadan.API.Controllers
 {
     [ApiController]
     [Route("admin/categories")]
+    [Authorize(Policy = "AdminOnly")]
     public class AdminCategoriesController : ControllerBase
     {
         private readonly ICategoryCommandService _commands;

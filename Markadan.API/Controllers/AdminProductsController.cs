@@ -1,12 +1,14 @@
 ﻿using Markadan.Application.Abstractions;
 using Markadan.Application.DTOs.Products;
 using Markadan.Infrastructure.Data;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Markadan.API.Controllers;
 
 [ApiController]
 [Route("admin/products")]
+[Authorize(Policy = "AdminOnly")]
 public sealed class AdminProductsController : ControllerBase
 {
     private readonly MarkadanDbContext _db;

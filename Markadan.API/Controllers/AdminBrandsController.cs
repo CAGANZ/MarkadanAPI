@@ -1,11 +1,13 @@
 ﻿using Markadan.Application.Abstractions;
 using Markadan.Application.DTOs.Brands;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Markadan.API.Controllers
 {
     [ApiController]
     [Route("admin/brands")]
+    [Authorize(Policy = "AdminOnly")]
     public class AdminBrandsController : ControllerBase
     {
         private readonly IBrandCommandService _commands;
