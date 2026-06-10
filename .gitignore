@@ -17,3 +17,6 @@ _ReSharper*/
 # Logs / artifacts
 *.log
 artifacts/
+
+# Instance yapılandırması — gerçek değerler repoya girmemeli
+.env

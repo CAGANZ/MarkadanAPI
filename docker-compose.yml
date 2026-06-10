@@ -1,0 +1,56 @@
+services:
+
+  # ── SQL Server ───────────────────────────────────────────────────────────────
+  db:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    environment:
+      ACCEPT_EULA: "Y"
+      MSSQL_PID: Developer
+      SA_PASSWORD: ${DB_SA_PASSWORD}
+    volumes:
+      - sqldata:/var/opt/mssql
+    healthcheck:
+      # API başlamadan önce SQL Server'ın hazır olmasını bekler.
+      test: [
+        "CMD-SHELL",
+        "/opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P \"$SA_PASSWORD\" -Q 'SELECT 1' -No"
+      ]
+      interval: 15s
+      timeout: 10s
+      retries: 10
+      start_period: 30s
+    networks:
+      - markadan-net
+
+  # ── API ──────────────────────────────────────────────────────────────────────
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    depends_on:
+      db:
+        condition: service_healthy   # SQL Server sağlıklı olmadan başlamaz
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      ConnectionStrings__DefaultConnection: ${ConnectionStrings__DefaultConnection}
+      Jwt__Key:                 ${Jwt__Key}
+      Jwt__Issuer:              ${Jwt__Issuer}
+      Jwt__Audience:            ${Jwt__Audience}
+      Jwt__AccessTokenMinutes:  ${Jwt__AccessTokenMinutes}
+      # CORS: birden fazla origin için __1, __2 şeklinde devam edilir
+      Cors__AllowedOrigins__0:  ${Cors__AllowedOrigins__0}
+      Seed__AdminEmail:         ${Seed__AdminEmail}
+      Seed__AdminPassword:      ${Seed__AdminPassword}
+    ports:
+      - "${API_PORT:-8080}:8080"
+    networks:
+      - markadan-net
+
+# ── Kalıcı depolama ──────────────────────────────────────────────────────────
+volumes:
+  sqldata:
+
+# ── İzole ağ ─────────────────────────────────────────────────────────────────
+networks:
+  markadan-net:
+    driver: bridge
