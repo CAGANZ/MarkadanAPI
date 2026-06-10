@@ -18,14 +18,11 @@ namespace Markadan.Infrastructure.Configurations
 
             b.HasIndex(x => x.Name).IsUnique();
 
-
             b.Property(x => x.ImageUrl)
              .HasMaxLength(1024);
 
             b.Property(x => x.Description)
              .HasMaxLength(2000);
-
-            b.HasIndex(x => x.Name).IsUnique(false);
         }
     }
 }

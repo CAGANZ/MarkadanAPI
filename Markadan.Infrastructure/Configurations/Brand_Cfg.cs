@@ -23,8 +23,6 @@ namespace Markadan.Infrastructure.Configurations
 
             b.Property(x => x.Description)
              .HasMaxLength(2000);
-
-            b.HasIndex(x => x.Name).IsUnique(false);
         }
     }
 }
