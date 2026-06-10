@@ -7,6 +7,17 @@ using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Fail-fast: instance'a Ã¶zgÃ¼ sÄ±rlar config'ten gelmeli, koda gÃ¶mÃ¼lÃ¼ olmamalÄ±
+var jwtKey = builder.Configuration["Jwt:Key"];
+if (string.IsNullOrWhiteSpace(jwtKey) || Encoding.UTF8.GetByteCount(jwtKey) < 32)
+    throw new InvalidOperationException(
+        "Jwt:Key eksik veya 32 byte'tan kÄ±sa. Ortam deÄŸiÅŸkeni (Jwt__Key) veya user-secrets ile saÄŸlayÄ±n.");
+
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+if (string.IsNullOrWhiteSpace(connectionString))
+    throw new InvalidOperationException(
+        "ConnectionStrings:DefaultConnection eksik. Ortam deÄŸiÅŸkeni (ConnectionStrings__DefaultConnection) ile saÄŸlayÄ±n.");
+
 builder.Services.AddControllers(o =>
 {
     o.Filters.Add<Markadan.API.Filters.ApiExceptionFilter>();
@@ -19,7 +30,7 @@ builder.Services.AddSwaggerGen(c =>
     var securityScheme = new OpenApiSecurityScheme
     {
         Name = "Authorization",
-        Description = " test için gelen tokeni value kýsmýna yazýn authorize butonuna basýn...",
+        Description = " test iï¿½in gelen tokeni value kï¿½smï¿½na yazï¿½n authorize butonuna basï¿½n...",
         In = ParameterLocation.Header,
         Type = SecuritySchemeType.Http,
         Scheme = "bearer",
@@ -62,7 +73,7 @@ builder.Services
             ValidateAudience = true,
             ValidateIssuerSigningKey = true,
             ValidateLifetime = true,
-            ClockSkew = TimeSpan.Zero // Token süresi dolduktan sonra hemen geçersiz kýlmayý saðlýyor deneme...
+            ClockSkew = TimeSpan.Zero // Token sï¿½resi dolduktan sonra hemen geï¿½ersiz kï¿½lmayï¿½ saï¿½lï¿½yor deneme...
         };
     });
 
@@ -81,7 +92,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();  // deðerli bilgi****buradan sonraki sýralama önemli AddAuthentication, addAuthorizationve addJwtBearer middleware'leri UseAuthorization'dan önce ve UseAuthentication'dan sonra olmalý****
+app.UseHttpsRedirection();  // deï¿½erli bilgi****buradan sonraki sï¿½ralama ï¿½nemli AddAuthentication, addAuthorizationve addJwtBearer middleware'leri UseAuthorization'dan ï¿½nce ve UseAuthentication'dan sonra olmalï¿½****
 app.UseCors("Frontend");
 
 app.UseAuthentication();
