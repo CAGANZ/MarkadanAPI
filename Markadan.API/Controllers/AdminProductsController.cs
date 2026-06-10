@@ -1,6 +1,5 @@
 ﻿using Markadan.Application.Abstractions;
 using Markadan.Application.DTOs.Products;
-using Markadan.Infrastructure.Data;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -11,16 +10,13 @@ namespace Markadan.API.Controllers;
 [Authorize(Policy = "AdminOnly")]
 public sealed class AdminProductsController : ControllerBase
 {
-    private readonly MarkadanDbContext _db;
     private readonly IProductReadService _reads;
     private readonly IProductCommandService _commands;
 
-    public AdminProductsController(MarkadanDbContext db, IProductCommandService commands, IProductReadService reads)
+    public AdminProductsController(IProductCommandService commands, IProductReadService reads)
     {
-        ArgumentNullException.ThrowIfNull(db);
         ArgumentNullException.ThrowIfNull(commands);
         ArgumentNullException.ThrowIfNull(reads);
-        _db = db;
         _commands = commands;
         _reads = reads;
     }

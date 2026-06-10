@@ -1,7 +1,6 @@
 ﻿using Markadan.Application.Abstractions;
 using Markadan.Application.DTOs.Auth;
 using Markadan.Application.DTOs.Users;
-using Markadan.Infrastructure.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
