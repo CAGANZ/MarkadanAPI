@@ -48,37 +48,42 @@ public sealed class CheckoutService : ICheckoutService
             ?? throw new KeyNotFoundException("Adres bulunamadı.");
 
         // 5. Transaction — stok düşme + sepet güncelleme atomik olmalı
-        await using var tx = await _db.Database.BeginTransactionAsync(ct);
-
-        foreach (var item in cart.Items)
+        // EnableRetryOnFailure ile manuel transaction, ExecutionStrategy içinde sarmalanmalı
+        var strategy = _db.Database.CreateExecutionStrategy();
+        await strategy.ExecuteAsync(async () =>
         {
-            // Koşullu UPDATE: stock < quantity ise 0 satır etkilenir → yetersiz stok
-            var affected = await _db.Products
-                .Where(p => p.Id == item.ProductId && p.Stock >= item.Quantity)
-                .ExecuteUpdateAsync(
-                    s => s.SetProperty(p => p.Stock, p => p.Stock - item.Quantity), ct);
+            await using var tx = await _db.Database.BeginTransactionAsync(ct);
 
-            if (affected == 0)
-                throw new BusinessRuleException(
-                    $"'{item.Product.Title}' ürünü için yeterli stok yok.");
-        }
+            foreach (var item in cart.Items)
+            {
+                // Koşullu UPDATE: stock < quantity ise 0 satır etkilenir → yetersiz stok
+                var affected = await _db.Products
+                    .Where(p => p.Id == item.ProductId && p.Stock >= item.Quantity)
+                    .ExecuteUpdateAsync(
+                        s => s.SetProperty(p => p.Stock, p => p.Stock - item.Quantity), ct);
 
-        // 6. Sepeti siparişe çevir
-        cart.Status        = CartStatus.Ordered;
-        cart.OrderedAtUtc  = DateTime.UtcNow;
-        cart.UpdatedAt     = DateTime.UtcNow;
-        cart.OrderNumber   = GenerateOrderNumber();
+                if (affected == 0)
+                    throw new BusinessRuleException(
+                        $"'{item.Product.Title}' ürünü için yeterli stok yok.");
+            }
 
-        // Adres FK + snapshot (kullanıcı adresi sonradan silse de sipariş geçmişi korunur)
-        cart.ShippingAddressId  = address.Id;
-        cart.ShippingStreet     = address.Street;
-        cart.ShippingCity       = address.City;
-        cart.ShippingState      = address.State;
-        cart.ShippingPostalCode = address.PostalCode;
-        cart.ShippingCountry    = address.Country;
+            // 6. Sepeti siparişe çevir
+            cart.Status        = CartStatus.Ordered;
+            cart.OrderedAtUtc  = DateTime.UtcNow;
+            cart.UpdatedAt     = DateTime.UtcNow;
+            cart.OrderNumber   = GenerateOrderNumber();
 
-        await _db.SaveChangesAsync(ct);
-        await tx.CommitAsync(ct);
+            // Adres FK + snapshot (kullanıcı adresi sonradan silse de sipariş geçmişi korunur)
+            cart.ShippingAddressId  = address.Id;
+            cart.ShippingStreet     = address.Street;
+            cart.ShippingCity       = address.City;
+            cart.ShippingState      = address.State;
+            cart.ShippingPostalCode = address.PostalCode;
+            cart.ShippingCountry    = address.Country;
+
+            await _db.SaveChangesAsync(ct);
+            await tx.CommitAsync(ct);
+        });
 
         // 7. Yanıt — in-memory yüklü veriden build edilir (ekstra sorgu yok)
         var items = cart.Items.Select(i => new CartItemDTO(

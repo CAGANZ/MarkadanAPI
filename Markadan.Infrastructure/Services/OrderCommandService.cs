@@ -30,22 +30,26 @@ public sealed class OrderCommandService : IOrderCommandService
         if (cart.Status != CartStatus.Ordered)
             throw new BusinessRuleException("Yalnızca 'Ordered' durumundaki siparişler iptal edilebilir.");
 
-        await using var tx = await _db.Database.BeginTransactionAsync(ct);
-
-        // Stok iadesi — her ürüne miktar geri eklenir
-        foreach (var item in cart.Items)
+        var strategy = _db.Database.CreateExecutionStrategy();
+        await strategy.ExecuteAsync(async () =>
         {
-            await _db.Products
-                .Where(p => p.Id == item.ProductId)
-                .ExecuteUpdateAsync(
-                    s => s.SetProperty(p => p.Stock, p => p.Stock + item.Quantity), ct);
-        }
+            await using var tx = await _db.Database.BeginTransactionAsync(ct);
 
-        cart.Status    = CartStatus.Cancelled;
-        cart.UpdatedAt = DateTime.UtcNow;
+            // Stok iadesi — her ürüne miktar geri eklenir
+            foreach (var item in cart.Items)
+            {
+                await _db.Products
+                    .Where(p => p.Id == item.ProductId)
+                    .ExecuteUpdateAsync(
+                        s => s.SetProperty(p => p.Stock, p => p.Stock + item.Quantity), ct);
+            }
 
-        await _db.SaveChangesAsync(ct);
-        await tx.CommitAsync(ct);
+            cart.Status    = CartStatus.Cancelled;
+            cart.UpdatedAt = DateTime.UtcNow;
+
+            await _db.SaveChangesAsync(ct);
+            await tx.CommitAsync(ct);
+        });
 
         return await _orderRead.GetOrderAsync(userId, orderId, ct);
     }

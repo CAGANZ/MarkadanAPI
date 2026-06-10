@@ -36,25 +36,29 @@ public sealed class AdminOrderCommandService : IAdminOrderCommandService
         if (cart.Status == newStatus)
             throw new BusinessRuleException($"Sipariş zaten '{newStatus}' durumunda.");
 
-        await using var tx = await _db.Database.BeginTransactionAsync(ct);
-
-        // Cancelled'a geçişte stok iade edilir
-        if (newStatus == CartStatus.Cancelled && cart.Status == CartStatus.Ordered)
+        var strategy = _db.Database.CreateExecutionStrategy();
+        await strategy.ExecuteAsync(async () =>
         {
-            foreach (var item in cart.Items)
+            await using var tx = await _db.Database.BeginTransactionAsync(ct);
+
+            // Cancelled'a geçişte stok iade edilir
+            if (newStatus == CartStatus.Cancelled && cart.Status == CartStatus.Ordered)
             {
-                await _db.Products
-                    .Where(p => p.Id == item.ProductId)
-                    .ExecuteUpdateAsync(
-                        s => s.SetProperty(p => p.Stock, p => p.Stock + item.Quantity), ct);
+                foreach (var item in cart.Items)
+                {
+                    await _db.Products
+                        .Where(p => p.Id == item.ProductId)
+                        .ExecuteUpdateAsync(
+                            s => s.SetProperty(p => p.Stock, p => p.Stock + item.Quantity), ct);
+                }
             }
-        }
 
-        cart.Status    = newStatus;
-        cart.UpdatedAt = DateTime.UtcNow;
+            cart.Status    = newStatus;
+            cart.UpdatedAt = DateTime.UtcNow;
 
-        await _db.SaveChangesAsync(ct);
-        await tx.CommitAsync(ct);
+            await _db.SaveChangesAsync(ct);
+            await tx.CommitAsync(ct);
+        });
 
         return await _orderRead.GetOrderAsync(orderId, ct);
     }
