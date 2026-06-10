@@ -19,7 +19,7 @@ anahtarı, CORS origin, marka bilgisi) koda gömülü olamaz.
 ### Stack
 - .NET 9, ASP.NET Core Web API, EF Core 9 + SQL Server
 - ASP.NET Identity (int PK) + JWT access token + refresh token rotasyonu
-- AutoMapper 15 (kayıtlı, az kullanılıyor), Swagger
+- Swagger (C4 ile AutoMapper kaldırıldı)
 
 ### Katmanlar
 ```
@@ -57,7 +57,7 @@ Bağımlılık yönü: `API → Infrastructure → Application → Domain`.
 
 ## FAZ A — Güvenlik (acil, önce bu)
 
-### A1. Admin endpoint'lerini yetkilendir
+### A1. Admin endpoint'lerini yetkilendir ✅
 - **Ne:** `AdminProductsController`, `AdminBrandsController`, `AdminCategoriesController`
   sınıflarına `AdminOnly` policy'siyle yetkilendirme ekle. Policy `Program.cs:71`'de zaten tanımlı
   (`options.AddPolicy("AdminOnly", p => p.RequireRole("Admin"))`) ama hiçbir yerde kullanılmıyor.
@@ -69,7 +69,7 @@ Bağımlılık yönü: `API → Infrastructure → Application → Domain`.
 - **Kabul kriteri:** Token'sız istekte admin uçları 401, "User" rollü token'la 403, "Admin" rollü
   token'la 200 dönmeli. Public uçlar (`/products`, `/brands`, `/categories` GET'leri) anonim kalmalı.
 
-### A2. DebugController'ı kaldır veya kilitle
+### A2. DebugController'ı kaldır veya kilitle ✅
 - **Ne:** `Markadan.API/Controllers/DebugController.cs` ya tamamen silinmeli ya da yalnızca
   Development ortamında ve `AdminOnly` ile erişilebilir olmalı. Tercih: **sil** (DB sayıları zaten
   Swagger/admin uçlarından görülebilir).
@@ -77,7 +77,7 @@ Bağımlılık yönü: `API → Infrastructure → Application → Domain`.
   Müşteriye paketlenen her kopyada bu bilgi ifşası tekrarlanır.
 - **Kabul kriteri:** `/debug/db` 404 dönmeli (veya korunmuş olmalı); build temiz.
 
-### A3. Sırları konfigürasyondan/repodan çıkar
+### A3. Sırları konfigürasyondan/repodan çıkar ✅
 - **Ne:**
   - `appsettings.json`'daki `Jwt:Key` ve `ConnectionStrings:DefaultConnection` değerlerini kaldır;
     bunlar environment variable / user-secrets'tan gelsin. `appsettings.json`'da anahtarlar boş veya
@@ -96,7 +96,7 @@ Bağımlılık yönü: `API → Infrastructure → Application → Domain`.
 - **Kabul kriteri:** Repo'da gerçek sır kalmamalı; env değişkenleri verilmeden uygulama açıklayıcı
   hata ile durmalı; env verilince çalışmalı; `dotnet ef migrations list` hâlâ çalışabilmeli.
 
-### A4. CORS origin'lerini config'e taşı
+### A4. CORS origin'lerini config'e taşı ✅
 - **Ne:** `Program.cs:45-47`'deki sabit `localhost:3000` origin listesi `appsettings` →
   `Cors:AllowedOrigins` (string dizisi) üzerinden okunmalı.
 - **Neden:** Her firmanın frontend'i kendi domain'inde çalışacak; origin deploy başına değişen bir
@@ -107,7 +107,7 @@ Bağımlılık yönü: `API → Infrastructure → Application → Domain`.
 
 ## FAZ B — Bug ve veri bütünlüğü
 
-### B1. Brand isim benzersizliği bug'ı
+### B1. Brand isim benzersizliği bug'ı ✅
 - **Ne:** `Markadan.Infrastructure/Configurations/Brand_Cfg.cs` içinde `Name` için önce
   `HasIndex(...).IsUnique()` sonra **aynı property'ye** `HasIndex(...).IsUnique(false)` çağrılıyor;
   ikincisi birinciyi ezer. İkinci `HasIndex` satırını sil, unique index'i koru. Migration üret.
@@ -118,7 +118,7 @@ Bağımlılık yönü: `API → Infrastructure → Application → Domain`.
 - **Kabul kriteri:** Migration'da Brands.Name üzerinde unique index oluşmalı; aynı isimle (büyük/
   küçük harf veya Türkçe karakter varyantıyla) ikinci brand eklenememeli.
 
-### B2. GovId ve refresh token saklama güvenliği
+### B2. GovId ve refresh token saklama güvenliği ✅
 - **Ne:** İki ayrı iş: (a) `RefreshToken.Token` DB'ye **hash'lenerek** (SHA-256 yeterli) yazılmalı;
   doğrulamada gelen token hash'lenip aranmalı. (b) `AppUser.GovId` (TC kimlik no) için en azından
   "neden saklanıyor?" kararı verilmeli — gerekliyse şifrelenerek (ASP.NET Data Protection)
@@ -131,7 +131,7 @@ Bağımlılık yönü: `API → Infrastructure → Application → Domain`.
   etmeli; eski düz metin token'lar için migration stratejisi (tabloyu boşaltmak kabul — kullanıcılar
   re-login olur) belirtilmeli.
 
-### B3. Refresh token reuse tespiti
+### B3. Refresh token reuse tespiti ✅
 - **Ne:** `AuthService.RefreshAsync`'te revoke edilmiş bir token'la gelinirse şu an sadece 401
   dönüyor. Revoke edilmiş token kullanımı **çalıntı şüphesidir**: bu durumda o kullanıcının aktif
   tüm refresh token'ları revoke edilmeli (zincir invalidasyonu).
@@ -144,7 +144,7 @@ Bağımlılık yönü: `API → Infrastructure → Application → Domain`.
 
 ## FAZ C — Katman temizliği ve kod kalitesi
 
-### C1. API → Infrastructure sızıntılarını kapat
+### C1. API → Infrastructure sızıntılarını kapat ✅
 - **Ne:**
   - `AdminProductsController` constructor'ından `MarkadanDbContext` bağımlılığını kaldır (inject
     ediliyor ama hiçbir action kullanmıyor).
@@ -157,7 +157,7 @@ Bağımlılık yönü: `API → Infrastructure → Application → Domain`.
 - **Kabul kriteri:** `grep -rn "Infrastructure" Markadan.API/Controllers/` yalnızca boş dönmeli;
   build temiz.
 
-### C2. Validation'ı exception'dan ayır
+### C2. Validation'ı exception'dan ayır ✅
 - **Ne:** Servislerdeki (`AuthService.RegisterAsync`, `*CommandService.CreateAsync/UpdateAsync`)
   girdi doğrulamaları `InvalidOperationException` fırlatıyor. DTO'lara DataAnnotations
   (`[Required]`, `[MinLength]`, `[Range]` vb.) eklenerek format/zorunluluk kontrolleri model
@@ -170,7 +170,7 @@ Bağımlılık yönü: `API → Infrastructure → Application → Domain`.
 - **Kabul kriteri:** Boş/eksik alanlı isteklere ProblemDetails formatında 400; iş kuralı ihlaline
   409; servislerde format kontrolü kalmamalı.
 
-### C3. Çöp ve isimlendirme temizliği
+### C3. Çöp ve isimlendirme temizliği ✅
 - **Ne:**
   - `Markadan.API/WeatherForecast.cs` sil (şablon artığı).
   - `Markadan.API/Controllers/BrandsController .cs` → dosya adındaki boşluğu kaldır
@@ -183,7 +183,7 @@ Bağımlılık yönü: `API → Infrastructure → Application → Domain`.
   sorunudur; `*.user` dosyaları kişisel IDE ayarıdır, repo'ya ait değildir.
 - **Kabul kriteri:** Build temiz; `git status` temiz; route'lar değişmemiş olmalı.
 
-### C4. AutoMapper kararı: ya kullan ya kaldır
+### C4. AutoMapper kararı: ya kullan ya kaldır ✅
 - **Ne:** AutoMapper üç projeye paket olarak ekli ve `CatalogProfile` kayıtlı, ancak servisler DTO
   projeksiyonunu elle `Select` ile yapıyor. Karar: **elle projeksiyon korunacak** (bkz. korunacaklar
   listesi), dolayısıyla AutoMapper'ın gerçekten kullanıldığı yer var mı tara; kullanılmıyorsa paketi
@@ -215,7 +215,7 @@ Bağımlılık yönü: `API → Infrastructure → Application → Domain`.
   otomatik mekanizma testtir. Faz A–C değişikliklerinin de doğrulama aracı olur.
 - **Kabul kriteri:** `dotnet test` çözüm kökünde çalışmalı ve yeşil olmalı.
 
-### D2. Docker paketleme
+### D2. Docker paketleme ✅
 - **Ne:** `Markadan.API` için çok aşamalı (multi-stage) Dockerfile + örnek `docker-compose.yml`
   (API + SQL Server) + `.env.example` (tüm instance-bazlı değişkenlerin listesi: connection string,
   JWT ayarları, CORS origin'leri). README'ye "yeni firma kurulumu" bölümü eklenecek.
@@ -225,7 +225,7 @@ Bağımlılık yönü: `API → Infrastructure → Application → Domain`.
 - **Kabul kriteri:** Temiz bir makinede `.env` doldurup compose ile ayağa kaldırınca migration'lar
   uygulanmış, Swagger erişilebilir, login akışı çalışır olmalı.
 
-### D3. İlk admin kullanıcısı (seed) stratejisi
+### D3. İlk admin kullanıcısı (seed) stratejisi ✅
 - **Ne:** Şu an "Admin" rolünü alan bir mekanizma yok (register herkese "User" verir). Açılışta
   config'ten (`Seed:AdminEmail`, `Seed:AdminPassword` — env'den) ilk admin kullanıcıyı ve "Admin"
   rolünü idempotent şekilde oluşturan bir seed adımı eklenmeli.
@@ -234,7 +234,7 @@ Bağımlılık yönü: `API → Infrastructure → Application → Domain`.
 - **Kabul kriteri:** Boş DB ile açılan instance'ta config'teki admin login olup admin uçlarına
   erişebilmeli; ikinci açılışta mükerrer kayıt oluşmamalı.
 
-### D4. Sipariş/checkout eksiği — analiz görevi
+### D4. Sipariş/checkout eksiği — analiz görevi ✅ (çıktı: aşağıdaki "D4 Analizi" bölümü)
 - **Ne:** `Cart`/`CartItem` var, `CartStatus.Ordered` enum'u var ama Cart/sipariş için **hiçbir
   controller ve servis yok**; Address de hiçbir uçtan kullanılmıyor. Bu görev analiz görevidir:
   sepet → sipariş akışının eksik parçalarını (endpoint listesi, stok düşme, fiyat snapshot kullanımı)
@@ -247,13 +247,17 @@ Bağımlılık yönü: `API → Infrastructure → Application → Domain`.
 ## Önerilen sıra ve bağımlılıklar
 
 ```
-A1 → A2 → A3 → A4        (sıralı; A3 ve A4 bağımsız ama A3 önce)
-B1, B2, B3               (A'dan bağımsız başlayabilir; B3, B2'den sonra)
-C1, C3                   (her an yapılabilir, küçük)
-C2, C4                   (B'lerden sonra; davranış değiştirir, dikkat)
-D1                       (C2'den önce başlasa da olur; en geç D2'den önce)
-D3 → D2                  (D2, A3+A4+D3'e bağımlı)
-C5, D4                   (analiz görevleri, paralel)
+A1 ✅ → A2 ✅ → A3 ✅ → A4 ✅
+B1 ✅, B2 ✅, B3 ✅
+C1 ✅, C2 ✅, C3 ✅, C4 ✅
+D3 ✅ → D2 ✅  (Docker testi geçti: migration, login, JWT doğrulandı)
+
+D4 ✅ (analiz tamamlandı — bkz. "D4 Analizi" bölümü)
+
+── Kalan görevler ──────────────────────────────────────────────
+C5   analiz: public uçlarda ID enumeration kararı
+D1   test iskeleti (xUnit)
+E1–E7  checkout epiği (D4 analizinde tanımlandı; E4'ten önce D1 şart)
 ```
 
 ## Delegasyon notu (yönetici → uygulayıcı modeller)
@@ -264,6 +268,130 @@ C5, D4                   (analiz görevleri, paralel)
   doğrulayıp sonucu raporlamalı.
 - C5 ve D4 kod üretmeyen analiz görevleridir; çıktıları bu dosyanın Notlar bölümüne eklenir.
 
+## D4 Analizi — Sepet → Sipariş (Checkout) Akışı Tasarımı
+
+> Bu bölüm D4 analiz görevinin çıktısıdır (2026-06-10). Kod yazılmamıştır; bir sonraki epik
+> buradaki görev sırasıyla planlanabilir.
+
+### Mevcut durum tespiti
+
+| Parça | Durum |
+|---|---|
+| `Cart` entity | Var — `AppUserId`, `Status`, `CreatedAt/UpdatedAt`, `Items`. Sipariş alanları **yok** (adres FK, sipariş no, sipariş tarihi, toplam tutar) |
+| `CartItem` entity | Var — `Quantity`, `UnitPriceSnapshot` alanı **tanımlı ama dolduran kod yok**; Product'a navigation/FK konfigürasyonu yok (sadece index var) |
+| `CartStatus` enum | `Active = 0`, `Ordered = 1` (plan girişinde "Open" yazıyordu; gerçek ad **Active**). `Cancelled` ve teslimat durumları yok |
+| `Address` entity | Var, user'a bağlı, **hiçbir uçtan/serviste kullanılmıyor**; Cart ile ilişkisi yok |
+| `Product.Stock` | Var, ama düşüren kod yok; eşzamanlılık koruması (rowversion) yok |
+| Servis/Controller | Cart, Address, Checkout için **hiçbiri yok** — sepet oluşturma ve ürün ekleme dahi mevcut değil |
+
+### Model kararı: ayrı Order entity yerine "Cart = Order" yaklaşımı
+
+Mevcut tasarım, sepetin `Status = Ordered`'a çevrilmesiyle siparişe dönüşmesini ima ediyor
+(`UnitPriceSnapshot` bunun kanıtı). Bu yaklaşım korunabilir — küçük ölçekli butik mağaza için
+yeterli ve ekstra tablo/kopyalama gerektirmez. Ancak şu eklemeler **şarttır**:
+
+- `Cart`'a: `OrderedAtUtc (DateTime?)`, `ShippingAddressId (int?)` + navigation, `OrderNumber (string?)`
+  (kullanıcıya gösterilecek, tahmin edilemez — örn. `MRK-{8 haneli rastgele}`)
+- `CartStatus`'a: `Cancelled = 2` (ileride `Shipped/Delivered` eklenebilir; byte enum buna açık)
+- `CartItem`'a: `Product` navigation + `HasOne(...).WithMany().OnDelete(Restrict)` konfigürasyonu
+  (sipariş geçmişindeki ürün silinememeli) ve `(CartId, ProductId)` unique index (aynı ürün iki
+  satır olmamalı, miktar artmalı)
+- Adres ilişkisi kurulunca `Address_Cfg`'deki `Cascade` delete gözden geçirilmeli: siparişe bağlı
+  adres silinirse sipariş kaydı adressiz kalır → `Restrict` veya adresin snapshot'ı (öneri:
+  checkout anında adres alanlarını Cart'a kopyala — kullanıcı adresi sonradan değiştirse de
+  sipariş kaydı bozulmaz)
+
+### Fiyat snapshot neden önemli
+
+`CartItem.UnitPriceSnapshot` ürün **sepete eklendiği andaki** fiyatı saklar. Bunsuz iki sorun olur:
+1. Admin fiyat güncellerse müşterinin sepetindeki/geçmiş siparişindeki tutar değişir — geçmiş
+   sipariş kaydı muhasebe açısından değişmez (immutable) olmalıdır.
+2. `Product` silinir/değişirse sipariş geçmişi yeniden hesaplanamaz.
+
+Kural: snapshot **sepete eklemede** yazılır; **checkout anında** güncel fiyatla karşılaştırılır —
+fark varsa müşteriye "fiyat değişti" yanıtı dönülür (409) ve snapshot güncellenip onay istenir.
+Sipariş verildikten sonra snapshot asla değişmez.
+
+### Stok düşme stratejisi
+
+- Stok **sepete eklemede düşülmez** (sepette bekletme stoku kilitlemez; terk edilmiş sepetler
+  stoku süresiz rehin alır). Sepete eklemede yalnızca `Stock > 0` kontrolü yapılır (bilgilendirme
+  amaçlı, garanti değil).
+- Stok **checkout anında, tek transaction içinde** düşülür. Eşzamanlı iki checkout'un aynı stoku
+  düşürmemesi için iki güvenli seçenek (öneri: ilki):
+  1. **Koşullu UPDATE:** `UPDATE Products SET Stock = Stock - @q WHERE Id = @id AND Stock >= @q`
+     (EF Core'da `ExecuteUpdateAsync` ile); etkilenen satır 0 ise yetersiz stok → transaction
+     rollback + 409.
+  2. `Product`'a `rowversion` concurrency token ekleyip `DbUpdateConcurrencyException` yakalamak.
+- Sipariş iptalinde (`Cancelled`) stok aynı transaction içinde geri eklenir.
+
+### Address ne zaman devreye girer
+
+Adres CRUD'u checkout'tan **bağımsız ve önce** gelir (kullanıcı profilinde adres defteri).
+Checkout isteği `addressId` taşır; servis adresin **o kullanıcıya ait olduğunu** doğrular
+(başkasının adres ID'si → 404, enumeration'a karşı 403 değil). Sipariş kaydına adres,
+yukarıdaki karara göre kopyalanarak (snapshot) bağlanır.
+
+### Gerekli endpoint listesi
+
+```
+— Adres defteri (hepsi [Authorize], kullanıcı kendi kayıtları) —
+GET    /me/addresses             adres listesi
+POST   /me/addresses             yeni adres
+PUT    /me/addresses/{id}        güncelle
+DELETE /me/addresses/{id}        sil (aktif siparişte kullanılıyorsa engelle)
+
+— Sepet ([Authorize]; kullanıcının tek Active sepeti olur, yoksa otomatik açılır) —
+GET    /me/cart                  aktif sepeti getir (item'lar + güncel fiyat karşılaştırması)
+POST   /me/cart/items            ürün ekle { productId, quantity } — varsa miktar artır
+PUT    /me/cart/items/{id}       miktar değiştir (0 → satırı sil)
+DELETE /me/cart/items/{id}       satırı çıkar
+DELETE /me/cart                  sepeti boşalt
+
+— Checkout / Sipariş ([Authorize]) —
+POST   /me/checkout              { addressId } → stok düş + snapshot doğrula + Status=Ordered
+GET    /me/orders                kendi sipariş listesi (Status != Active)
+GET    /me/orders/{id}           sipariş detayı
+POST   /me/orders/{id}/cancel    iptal (yalnızca henüz kargolanmamışsa; stok iade)
+
+— Admin ([Authorize(Policy="AdminOnly")]) —
+GET    /admin/orders             tüm siparişler (filtre: durum, tarih)
+GET    /admin/orders/{id}        detay
+PUT    /admin/orders/{id}/status durum güncelle (ileride Shipped/Delivered için)
+```
+
+`/me/*` prefix'i mevcut route stilini (`auth/me`) takip eder ve "kendi kaynağın" semantiğini
+URL'de netleştirir.
+
+### Servis katmanı (mevcut CQRS-lite desenine uygun)
+
+- `IAddressService` (tek servis yeterli; read/command ayrımına gerek yok, basit CRUD)
+- `ICartService` — `GetActiveCartAsync`, `AddItemAsync`, `UpdateItemQuantityAsync`,
+  `RemoveItemAsync`, `ClearAsync`
+- `ICheckoutService` — `CheckoutAsync(userId, addressId)`: tek transaction içinde
+  (1) sepet boş mu, (2) fiyat snapshot ≟ güncel fiyat, (3) koşullu stok düşme,
+  (4) adres doğrulama + kopyalama, (5) `Status=Ordered` + `OrderedAtUtc` + `OrderNumber`
+- `IOrderReadService` / iptal için `IOrderCommandService`
+
+### Uygulama sırası (her madde ayrı görev/commit)
+
+```
+E1. Domain + migration    Cart/CartItem/CartStatus/Address model eklemeleri (yukarıdaki karar listesi)
+E2. Adres defteri         IAddressService + /me/addresses uçları
+E3. Sepet                 ICartService + /me/cart uçları (snapshot'ı yazan yer burası)
+E4. Checkout              ICheckoutService + POST /me/checkout (transaction + koşullu stok düşme)
+E5. Sipariş görüntüleme   IOrderReadService + /me/orders, iptal akışı
+E6. Admin sipariş uçları  /admin/orders
+E7. Testler               D1 iskelesi üzerine: eşzamanlı checkout stok yarışı, fiyat değişimi
+                          senaryosu, reuse edilen sepetin durumu (D1 tamamlanmadan E4 merge edilmemeli)
+```
+
+Bağımlılık: E1 hepsinden önce; E2 ile E3 paralel; E4, E2+E3'e bağımlı; E5/E6, E4'ten sonra.
+
+---
+
 ## Notlar (uygulayıcılar buraya ekler)
 
-- (boş)
+- **Docker doğrulama (2026-06-10):** `docker compose up -d` ile temiz ortamda ayağa kaldırıldı.
+  Migration'lar otomatik uygulandı, admin seed çalıştı, `POST /auth/login` JWT token döndü.
+  `ASPNETCORE_ENVIRONMENT=Development` ile Swagger erişilebilir durumda.
