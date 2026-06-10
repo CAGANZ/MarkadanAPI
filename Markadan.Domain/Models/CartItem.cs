@@ -8,5 +8,6 @@
         public int Quantity { get; set; }
         public decimal UnitPriceSnapshot { get; set; }
         public Cart Cart { get; set; } = default!;
+        public Product Product { get; set; } = default!;
     }
 }
