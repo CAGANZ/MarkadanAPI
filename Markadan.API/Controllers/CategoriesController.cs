@@ -1,10 +1,12 @@
 ﻿using Markadan.Application.Abstractions;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 
 namespace Markadan.API.Controllers;
 
 [ApiController]
 [Route("categories")]
+[EnableRateLimiting("public-catalog")]
 public class CategoriesController : ControllerBase
 {
     private readonly ICategoryReadService _categories;

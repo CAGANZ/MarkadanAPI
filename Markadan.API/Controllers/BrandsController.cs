@@ -1,10 +1,12 @@
 ﻿using Markadan.Application.Abstractions;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 
 namespace Markadan.API.Controllers;
 
 [ApiController]
 [Route("brands")]
+[EnableRateLimiting("public-catalog")]
 public sealed class BrandsController : ControllerBase
 {
     private readonly IBrandReadService _brands;

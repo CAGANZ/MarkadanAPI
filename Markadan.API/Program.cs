@@ -1,9 +1,11 @@
 using Markadan.Infrastructure;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
+using System.Threading.RateLimiting;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -85,6 +87,22 @@ builder.Services.AddAuthorization(options =>
     options.AddPolicy("AdminOnly", p => p.RequireRole("Admin"));
 });
 
+// Public katalog uçları için IP bazlı rate limiting — bot/scraper engeli
+var permitLimit   = builder.Configuration.GetValue<int>("RateLimit:PermitLimit",   60);
+var windowSeconds = builder.Configuration.GetValue<int>("RateLimit:WindowSeconds", 60);
+
+builder.Services.AddRateLimiter(options =>
+{
+    options.AddFixedWindowLimiter("public-catalog", o =>
+    {
+        o.PermitLimit          = permitLimit;
+        o.Window               = TimeSpan.FromSeconds(windowSeconds);
+        o.QueueProcessingOrder = QueueProcessingOrder.OldestFirst;
+        o.QueueLimit           = 0;
+    });
+    options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
+});
+
 
 
 var app = builder.Build();
@@ -98,6 +116,7 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();  // de�erli bilgi****buradan sonraki s�ralama �nemli AddAuthentication, addAuthorizationve addJwtBearer middleware'leri UseAuthorization'dan �nce ve UseAuthentication'dan sonra olmal�****
 app.UseCors("Frontend");
 
+app.UseRateLimiter();
 app.UseAuthentication();
 app.UseAuthorization();
 
