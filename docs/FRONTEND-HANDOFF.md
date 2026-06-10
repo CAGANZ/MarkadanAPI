@@ -2,6 +2,11 @@
 
 **Hazırlayan:** Backend Ekibi | **Tarih:** 2026-06-10 | **API Versiyonu:** v1
 
+> **Konum kararı:** Bu doküman backend reposunda (`docs/`) yaşar çünkü API kontratını tanımlar
+> ve kontratın sahibi backend'dir. Endpoint değiştiğinde doküman aynı commit'te güncellenir.
+> UI reposu değişse, framework değişse veya mobil uygulama eklense bu doküman hâlâ geçerlidir.
+> Swagger (`/swagger`) interaktif teknik referansı sağlar; bu doküman üst düzey akış ve iş kurallarını kapsar.
+
 ---
 
 ## 1. Bağlantı
