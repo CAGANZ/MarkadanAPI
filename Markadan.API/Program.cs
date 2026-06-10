@@ -105,10 +105,11 @@ app.UseAuthorization();
 app.MapControllers();
 
 
-using (var scope = app.Services.CreateScope())
+await using (var scope = app.Services.CreateAsyncScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<Markadan.Infrastructure.Data.MarkadanDbContext>();
     db.Database.Migrate();
+    await Markadan.Infrastructure.Seeding.AdminSeeder.SeedAsync(scope.ServiceProvider, builder.Configuration);
 }
 
 app.Run();
