@@ -391,6 +391,31 @@ namespace Markadan.Infrastructure.Migrations
                     b.ToTable("Products", (string)null);
                 });
 
+            modelBuilder.Entity("Markadan.Domain.Models.StoreSettings", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("StoreName").IsRequired().HasMaxLength(100).HasColumnType("nvarchar(100)");
+                    b.Property<string>("LogoUrl").HasMaxLength(500).HasColumnType("nvarchar(500)");
+                    b.Property<string>("Description").HasMaxLength(500).HasColumnType("nvarchar(500)");
+                    b.Property<string>("WhatsAppPhone").HasMaxLength(20).HasColumnType("nvarchar(20)");
+                    b.Property<string>("ContactPhone").HasMaxLength(20).HasColumnType("nvarchar(20)");
+                    b.Property<string>("ContactEmail").HasMaxLength(200).HasColumnType("nvarchar(200)");
+                    b.Property<string>("InstagramUrl").HasMaxLength(200).HasColumnType("nvarchar(200)");
+                    b.Property<string>("FacebookUrl").HasMaxLength(200).HasColumnType("nvarchar(200)");
+                    b.Property<string>("PrimaryColor").HasMaxLength(7).HasColumnType("nvarchar(7)");
+                    b.Property<string>("AccentColor").HasMaxLength(7).HasColumnType("nvarchar(7)");
+                    b.Property<string>("MetaDescription").HasMaxLength(300).HasColumnType("nvarchar(300)");
+                    b.Property<DateTime>("UpdatedAt").HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+                    b.ToTable("StoreSettings", (string)null);
+                });
+
             modelBuilder.Entity("Markadan.Domain.Models.WishlistItem", b =>
                 {
                     b.Property<int>("Id")

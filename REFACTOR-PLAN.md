@@ -575,6 +575,13 @@ Sıra: F1 önce (bağımsız, kritik), sonra F2. Her biri ayrı commit.
 | G14 | Toplu ürün yükleme (CSV) | Yüksek | Küçük |
 
 #### G14. Toplu ürün yükleme (CSV import) ✅
+
+#### G17. Mağaza ayarları ✅
+- **Kazanım:** Admin mağaza adını, logosunu, renklerini, WhatsApp numarasını, iletişim bilgilerini
+  kod değişikliği yapmadan panelden yönetir. Her müşteri için Çağan'ın dosya düzenlemesine gerek kalmaz.
+- `GET /store-settings` — public, frontend marka bilgisini okur
+- `GET /admin/settings` + `PUT /admin/settings` — admin yönetir
+- İlk açılışta varsayılan satır otomatik oluşur
 - **Kazanım:** Admin yüzlerce ürünü tek CSV dosyasıyla yükler; yeni mağaza kurulumu veya
   sezon değişiminde saatlerce süren manuel giriş ortadan kalkar.
 - **Öncelik:** Yüksek

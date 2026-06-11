@@ -59,6 +59,7 @@ public static class DependencyInjection
         services.AddScoped<IAdminOrderReadService, AdminOrderReadService>();
         services.AddScoped<IAdminOrderCommandService, AdminOrderCommandService>();
         services.AddScoped<IWishlistService, WishlistService>();
+        services.AddScoped<IStoreSettingsService, StoreSettingsService>();
 
         services.Configure<EmailOptions>(config.GetSection("Email"));
         services.AddScoped<IEmailService, SmtpEmailService>();
