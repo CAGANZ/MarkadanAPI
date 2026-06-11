@@ -424,6 +424,149 @@ Bağımlılık: E1 hepsinden önce; E2 ile E3 paralel; E4, E2+E3'e bağımlı; E
 
 Sıra: F1 önce (bağımsız, kritik), sonra F2. Her biri ayrı commit.
 
+---
+
+## Ürün Yol Haritası (2026-06-11)
+
+> Bu bölüm teknik görev değil, ürün kararıdır. Her özellik için **müşteriye/mağaza sahibine ne kazandırır**,
+> **öncelik** ve **backend efor** verilmiştir. Öncelik sırası ürün sahibiyle netleştirilmeli; görev
+> haline gelenler ilgili Faz'a taşınır.
+
+---
+
+### ACI 1 — Müşteri kaybı (sepeti terk etme, tekrar alışveriş yok)
+
+#### G1. Terk edilen sepet e-postası
+- **Kazanım:** Sepetini bırakıp çıkan müşteriye X saat sonra otomatik hatırlatma maili gider.
+  Butik e-ticarette en yüksek ROI'li pazarlama aracıdır; dönüşüm oranını %5–15 artırdığı
+  ölçülmüştür. Mağaza sahibinden sıfır efor.
+- **Öncelik:** Yüksek
+- **Backend efor:** Orta (arka plan job/Hangfire + mail gönderimi; sepet `UpdatedAt` + `Status=Active`
+  kontrolü yeterli)
+- **Not:** SMTP config zaten `.env`'e eklenebilir; tasarım/içerik mağaza sahibine ait.
+
+#### G2. Favori / İstek listesi
+- **Kazanım:** Müşteri beğendiği ürünü "şimdi değil ama yakında" diye işaretler; stok veya fiyat
+  değişince bildirim alır. Geri dönüş oranını artırır, sepet boyutunu büyütür.
+- **Öncelik:** Orta
+- **Backend efor:** Küçük (yeni `Wishlist` + `WishlistItem` entity; CRUD uçları; stok/fiyat değişim
+  hook'u e-posta tetikler)
+
+#### G3. Stok gelince haber ver
+- **Kazanım:** Tükenmiş ürünü görmek yerine e-posta bırakan müşteri rakibe gitmiyor.
+  Mağaza sahibi talebi önceden görüp üretim/sipariş kararı verebilir.
+- **Öncelik:** Orta
+- **Backend efor:** Küçük (`StockNotification` kayıt tablosu; stok artışında toplu mail)
+
+#### G4. Tekrar sipariş ver
+- **Kazanım:** Müşteri geçmiş siparişinden tek tıklamayla aynı ürünleri sepete ekler.
+  Düzenli müşteri deneyimini büyük platform seviyesine taşır.
+- **Öncelik:** Orta
+- **Backend efor:** Küçük (`POST /me/orders/{id}/reorder` — CartItem'ları kopyalar, güncel fiyat + stok
+  kontrol eder)
+
+---
+
+### ACİ 2 — Operasyonel yük (manuel kargo, fatura, stok takibi)
+
+#### G5. Kargo takip kodu + müşteri bildirimi
+- **Kazanım:** Admin sipariş durumunu "Kargoda" yaparken takip kodu girer; müşteriye otomatik
+  e-posta gider. "Kargom nerede?" soruları müşteri hizmetlerinden %60-80 düşer.
+- **Öncelik:** Yüksek
+- **Backend efor:** Küçük (siparişe `TrackingNumber (string?)` + `TrackingUrl (string?)` alanı;
+  durum güncellemesinde mail tetikle)
+- **Not:** Kargo firması API entegrasyonu bu bölümün dışında tutuldu — kargo firması seçimi
+  mağaza sahibine göre değişir; URL alanı tüm firmalara çalışır.
+
+#### G6. Stok uyarısı (eşik altı bildirimi)
+- **Kazanım:** Stok `X` adede düşünce admin e-posta alır. Stoksuz satış riskini ortadan kaldırır;
+  mağaza sahibi stok takibini her gün Excelden yapmak zorunda kalmaz.
+- **Öncelik:** Yüksek
+- **Backend efor:** Küçük (arka plan job veya stok düşüm işleminde kontrol; eşik config'ten —
+  `Inventory:LowStockThreshold`)
+
+#### G7. Sipariş listesi CSV/Excel export
+- **Kazanım:** Admin tüm siparişleri (tarih aralığıyla) indirir; muhasebeci/muhasebe yazılımına
+  aktarır. "Her siparişi tek tek açıp yazıyorum" acısını sona erdirir.
+- **Öncelik:** Yüksek
+- **Backend efor:** Küçük (`GET /admin/orders/export?from=&to=` → CSV; `CsvHelper` paketi yeterli)
+
+#### G8. e-Fatura / e-Arşiv entegrasyonu
+- **Kazanım:** Sipariş onaylanınca fatura otomatik kesilir; hem yasal zorunluluk karşılanır hem
+  manuel girişten kaynaklanan hatalar biter.
+- **Öncelik:** Orta
+- **Backend efor:** Büyük (GİB entegrasyonu veya aracı (Logo, Parasut, e-Logo) API'si; mağaza
+  sahibinin vergi yapısına göre değişir — bu özellik satış öncesi netleştirilmeli)
+- **Not:** MVP için "sipariş onaylanınca admin'e fatura PDF gönder" yeterli olabilir; GİB
+  entegrasyonu ikinci aşama.
+
+---
+
+### ACİ 3 — Rekabet (büyük platformlarla nasıl rekabet eder)
+
+#### G9. Kupon / İndirim kodu
+- **Kazanım:** "İlk alışverişe %10 indirim" gibi kampanyalar mağaza sahibinin en doğrudan
+  müşteri edinme aracıdır. Büyük platformlarda standart; olmayınca mağaza eksik görünür.
+- **Öncelik:** Yüksek
+- **Backend efor:** Orta (`Coupon` entity — kod, tür (yüzde/sabit), min tutar, kullanım limiti,
+  geçerlilik tarihi; checkout'ta uygulama; admin CRUD)
+
+#### G10. Ürün yorumları ve puanlama
+- **Kazanım:** Sosyal kanıt. Sıfır reklam bütçesiyle güven oluşturmanın en ucuz yolu.
+  Müşteri yorumu büyük platformda alıcı kararını %70+ etkiliyor — butik için daha kritik.
+- **Öncelik:** Yüksek
+- **Backend efor:** Orta (`Review` entity — rating, yorum metni, `AppUserId`, `ProductId`;
+  yalnızca o ürünü satın almış kullanıcı yorum yapabilir; admin moderasyon)
+
+#### G11. SEO: Ürün slug'ı ve meta tag yönetimi
+- **Kazanım:** `/products/nike-air-max-2024` hem Google'da sıraya girer hem paylaşılabilir.
+  Organik trafik, reklam maliyeti sıfır. C5 analizinde önerilmişti; burada önceliklendirildi.
+- **Öncelik:** Yüksek
+- **Backend efor:** Küçük (`Product`'a `Slug (string)` + `MetaDescription (string?)` alanı;
+  migration; admin formuna eklenir; frontend route güncellenir)
+
+#### G12. Benzer ürünler / Çapraz satış
+- **Kazanım:** "Bunu alanlar şunu da aldı" yerine "aynı kategoriden öneriler" — sepet ortalamasını
+  artırır. Büyük platformun en görünür özelliklerinden biri; küçük mağazada yoksa boşluk hissedilir.
+- **Öncelik:** Düşük
+- **Backend efor:** Küçük (aynı kategori/brand'dan rastgele/popüler X ürün dönen endpoint;
+  ML gerekmez, kural tabanlı yeterli)
+
+#### G13. WhatsApp sipariş bildirimi (Türkiye'ye özel)
+- **Kazanım:** Türkiye'de müşterilerin büyük çoğunluğu e-posta yerine WhatsApp'ı açar.
+  Sipariş onayını ve kargo kodunu WhatsApp'tan almak müşteri memnuniyetini belirgin artırır;
+  mağaza sahibini rakipten farklılaştırır.
+- **Öncelik:** Orta
+- **Backend efor:** Küçük (WhatsApp Business API veya Twilio/Telnyx üzerinden; phone number
+  `AppUser`'da zaten var — sadece gönderim katmanı eklenir)
+
+---
+
+### Öncelik özeti
+
+| # | Özellik | Öncelik | Backend Efor |
+|---|---|---|---|
+| G1 | Terk edilen sepet e-postası | Yüksek | Orta |
+| G5 | Kargo takip kodu + bildirim | Yüksek | Küçük |
+| G6 | Stok uyarısı | Yüksek | Küçük |
+| G7 | Sipariş CSV export | Yüksek | Küçük |
+| G9 | Kupon / indirim kodu | Yüksek | Orta |
+| G10 | Ürün yorumları | Yüksek | Orta |
+| G11 | SEO slug + meta tag | Yüksek | Küçük |
+| G2 | Favori / istek listesi | Orta | Küçük |
+| G3 | Stok gelince haber ver | Orta | Küçük |
+| G4 | Tekrar sipariş ver | Orta | Küçük |
+| G13 | WhatsApp bildirimi | Orta | Küçük |
+| G8 | e-Fatura entegrasyonu | Orta | Büyük |
+| G12 | Benzer ürünler | Düşük | Küçük |
+
+**Tavsiye:** G5, G6, G7, G11 hızlı kazanımlardır — küçük efor, yüksek operasyonel değer.
+Bunlarla başlamak mağaza sahibinin ilk versiyondan geri dönüşünü olumlu kılar ve satış
+hikayesini güçlendirir. G1, G9, G10 ise "mağazaya değer katan" özelliklerdir; teknik
+değil ürün kararı gerektirdiğinden ürün sahibiyle önce netleştirilmeli.
+
+---
+
 ## Notlar (uygulayıcılar buraya ekler)
 
 - **Docker doğrulama (2026-06-10):** `docker compose up -d` ile temiz ortamda ayağa kaldırıldı.
