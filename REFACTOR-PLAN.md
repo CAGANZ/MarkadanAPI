@@ -495,12 +495,12 @@ Sıra: F1 önce (bağımsız, kritik), sonra F2. Her biri ayrı commit.
 - **Not:** Kargo firması API entegrasyonu bu bölümün dışında tutuldu — kargo firması seçimi
   mağaza sahibine göre değişir; URL alanı tüm firmalara çalışır.
 
-#### G6. Stok uyarısı (eşik altı bildirimi)
-- **Kazanım:** Stok `X` adede düşünce admin e-posta alır. Stoksuz satış riskini ortadan kaldırır;
-  mağaza sahibi stok takibini her gün Excelden yapmak zorunda kalmaz.
+#### G6. Stok uyarısı — admin'e e-posta ✅
+- **Kazanım:** Stok eşiğin altına düşünce admin e-posta alır. Stoksuz satış riskini ortadan
+  kaldırır; mağaza sahibi stok takibini her gün Excelden yapmak zorunda kalmaz.
 - **Öncelik:** Yüksek
-- **Backend efor:** Küçük (arka plan job veya stok düşüm işleminde kontrol; eşik config'ten —
-  `Inventory:LowStockThreshold`)
+- **Backend efor:** Küçük — checkout'ta stok düştükten sonra eşik kontrolü + admin'e mail.
+  Config: `Inventory:LowStockThreshold` (varsayılan 5), `Inventory:AdminEmail`.
 
 #### G7. Sipariş listesi CSV/Excel export
 - **Kazanım:** Admin tüm siparişleri (tarih aralığıyla) indirir; muhasebeci/muhasebe yazılımına
@@ -528,12 +528,8 @@ Sıra: F1 önce (bağımsız, kritik), sonra F2. Her biri ayrı commit.
 - **Backend efor:** Orta (`Coupon` entity — kod, tür (yüzde/sabit), min tutar, kullanım limiti,
   geçerlilik tarihi; checkout'ta uygulama; admin CRUD)
 
-#### G10. Ürün yorumları ve puanlama
-- **Kazanım:** Sosyal kanıt. Sıfır reklam bütçesiyle güven oluşturmanın en ucuz yolu.
-  Müşteri yorumu büyük platformda alıcı kararını %70+ etkiliyor — butik için daha kritik.
-- **Öncelik:** Yüksek
-- **Backend efor:** Orta (`Review` entity — rating, yorum metni, `AppUserId`, `ProductId`;
-  yalnızca o ürünü satın almış kullanıcı yorum yapabilir; admin moderasyon)
+#### G10. Ürün yorumları ve puanlama — İSTENMİYOR
+- Ürün sahibi kararı: bu özellik kapsam dışı bırakıldı (2026-06-11).
 
 #### G11. SEO: Ürün slug'ı ve meta tag yönetimi
 - **Kazanım:** `/products/nike-air-max-2024` hem Google'da sıraya girer hem paylaşılabilir.
@@ -576,11 +572,18 @@ Sıra: F1 önce (bağımsız, kritik), sonra F2. Her biri ayrı commit.
 | G13 | WhatsApp bildirimi | Orta | Küçük |
 | G8 | e-Fatura entegrasyonu | Orta | Büyük |
 | G12 | Benzer ürünler | Düşük | Küçük |
+| G14 | Toplu ürün yükleme (CSV) | Yüksek | Küçük |
 
-**Tavsiye:** G5, G6, G7, G11 hızlı kazanımlardır — küçük efor, yüksek operasyonel değer.
-Bunlarla başlamak mağaza sahibinin ilk versiyondan geri dönüşünü olumlu kılar ve satış
-hikayesini güçlendirir. G1, G9, G10 ise "mağazaya değer katan" özelliklerdir; teknik
-değil ürün kararı gerektirdiğinden ürün sahibiyle önce netleştirilmeli.
+#### G14. Toplu ürün yükleme (CSV import) ✅
+- **Kazanım:** Admin yüzlerce ürünü tek CSV dosyasıyla yükler; yeni mağaza kurulumu veya
+  sezon değişiminde saatlerce süren manuel giriş ortadan kalkar.
+- **Öncelik:** Yüksek
+- **Backend efor:** Küçük (`POST /admin/products/bulk` — multipart CSV; satır satır validate,
+  başarılı/başarısız sayısı + hata listesi döner; brand/kategori adıyla eşleştirme)
+- **CSV formatı:** `Title,Description,Price,Stock,ImageUrl,BrandName,CategoryName`
+
+**Tavsiye:** G6, G14 bu oturumda implement edildi. G5, G7, G11 sıradaki hızlı kazanımlardır.
+G9 (kupon) ürün kararı gerektirir; G10 kapsam dışı.
 
 ---
 

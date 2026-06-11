@@ -84,4 +84,21 @@ public sealed class AdminProductsController : ControllerBase
         var ok = await _commands.DeleteAsync(id, HttpContext.RequestAborted);
         return ok ? NoContent() : NotFound();
     }
+
+    // POST /admin/products/bulk — multipart/form-data, alan adı "file", UTF-8 CSV
+    // Başlık satırı: Title,Description,Price,Stock,ImageUrl,BrandName,CategoryName
+    [HttpPost("bulk")]
+    [RequestSizeLimit(10 * 1024 * 1024)] // 10 MB
+    public async Task<IActionResult> BulkUpload(IFormFile file)
+    {
+        if (file is null || file.Length == 0)
+            return BadRequest("CSV dosyası gönderilmedi.");
+
+        if (!file.FileName.EndsWith(".csv", StringComparison.OrdinalIgnoreCase))
+            return BadRequest("Yalnızca .csv uzantılı dosya kabul edilir.");
+
+        await using var stream = file.OpenReadStream();
+        var result = await _commands.BulkUploadAsync(stream, HttpContext.RequestAborted);
+        return Ok(result);
+    }
 }

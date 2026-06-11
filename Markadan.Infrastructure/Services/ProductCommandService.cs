@@ -135,6 +135,72 @@ namespace Markadan.Infrastructure.Services
             return true;
         }
 
+        public async Task<BulkUploadResultDTO> BulkUploadAsync(Stream csvStream, CancellationToken ct = default)
+        {
+            // Tüm brand/kategori isim→id eşlemesini tek sorguda çek
+            var brands     = await _db.Brands.AsNoTracking().ToDictionaryAsync(b => b.Name.ToUpperInvariant(), b => b.Id, ct);
+            var categories = await _db.Categories.AsNoTracking().ToDictionaryAsync(c => c.Name.ToUpperInvariant(), c => c.Id, ct);
+
+            var errors    = new List<BulkUploadErrorDTO>();
+            var toInsert  = new List<Product>();
+            int rowNumber = 1; // başlık satırı
+
+            using var reader = new StreamReader(csvStream);
+            var header = await reader.ReadLineAsync(ct); // başlık atla
+
+            string? line;
+            while ((line = await reader.ReadLineAsync(ct)) is not null)
+            {
+                rowNumber++;
+                if (string.IsNullOrWhiteSpace(line)) continue;
+
+                // Basit CSV parse — tırnaklı alan desteği yok; değerlerde virgül geçmemeli
+                var cols = line.Split(',');
+                if (cols.Length < 7)
+                {
+                    errors.Add(new(rowNumber, "Eksik sütun — 7 sütun bekleniyor: Title,Description,Price,Stock,ImageUrl,BrandName,CategoryName"));
+                    continue;
+                }
+
+                var title       = cols[0].Trim();
+                var description = cols[1].Trim();
+                var priceStr    = cols[2].Trim();
+                var stockStr    = cols[3].Trim();
+                var imageUrl    = cols[4].Trim();
+                var brandName   = cols[5].Trim();
+                var catName     = cols[6].Trim();
+
+                if (string.IsNullOrEmpty(title))          { errors.Add(new(rowNumber, "Title boş olamaz")); continue; }
+                if (!decimal.TryParse(priceStr, System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, out var price) || price < 0)
+                                                           { errors.Add(new(rowNumber, $"Geçersiz fiyat: {priceStr}")); continue; }
+                if (!int.TryParse(stockStr, out var stock) || stock < 0)
+                                                           { errors.Add(new(rowNumber, $"Geçersiz stok: {stockStr}")); continue; }
+                if (!brands.TryGetValue(brandName.ToUpperInvariant(), out var brandId))
+                                                           { errors.Add(new(rowNumber, $"Marka bulunamadı: {brandName}")); continue; }
+                if (!categories.TryGetValue(catName.ToUpperInvariant(), out var categoryId))
+                                                           { errors.Add(new(rowNumber, $"Kategori bulunamadı: {catName}")); continue; }
+
+                toInsert.Add(new Product
+                {
+                    Title       = title,
+                    Description = string.IsNullOrWhiteSpace(description) ? null : description,
+                    Price       = price,
+                    Stock       = stock,
+                    ImageUrl    = string.IsNullOrWhiteSpace(imageUrl) ? null : imageUrl,
+                    BrandId     = brandId,
+                    CategoryId  = categoryId,
+                });
+            }
+
+            if (toInsert.Count > 0)
+            {
+                _db.Products.AddRange(toInsert);
+                await _db.SaveChangesAsync(ct);
+            }
+
+            return new BulkUploadResultDTO(toInsert.Count, errors.Count, errors);
+        }
+
         private async Task NotifyWishlistUsersAsync(Product product, bool priceDropped, bool stockRestored, CancellationToken ct)
         {
             var users = await _db.WishlistItems

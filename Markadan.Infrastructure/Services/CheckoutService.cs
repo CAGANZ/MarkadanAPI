@@ -4,6 +4,8 @@ using Markadan.Application.Exceptions;
 using Markadan.Domain.Models.Enums;
 using Markadan.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -12,8 +14,19 @@ namespace Markadan.Infrastructure.Services;
 public sealed class CheckoutService : ICheckoutService
 {
     private readonly MarkadanDbContext _db;
+    private readonly IEmailService _email;
+    private readonly ILogger<CheckoutService> _log;
+    private readonly int _lowStockThreshold;
+    private readonly string? _adminEmail;
 
-    public CheckoutService(MarkadanDbContext db) => _db = db;
+    public CheckoutService(MarkadanDbContext db, IEmailService email, ILogger<CheckoutService> log, IConfiguration config)
+    {
+        _db                = db;
+        _email             = email;
+        _log               = log;
+        _lowStockThreshold = config.GetValue<int>("Inventory:LowStockThreshold", 5);
+        _adminEmail        = config["Inventory:AdminEmail"];
+    }
 
     public async Task<CartDTO> CheckoutAsync(int userId, int addressId, CancellationToken ct = default)
     {
@@ -85,7 +98,10 @@ public sealed class CheckoutService : ICheckoutService
             await tx.CommitAsync(ct);
         });
 
-        // 7. Yanıt — in-memory yüklü veriden build edilir (ekstra sorgu yok)
+        // 7. Stok uyarısı — fire-and-forget, checkout yanıtını engellemesin
+        _ = NotifyLowStockAsync(cart.Items.Select(i => i.ProductId).ToList(), CancellationToken.None);
+
+        // 8. Yanıt — in-memory yüklü veriden build edilir (ekstra sorgu yok)
         var items = cart.Items.Select(i => new CartItemDTO(
             Id:                i.Id,
             ProductId:         i.ProductId,
@@ -105,6 +121,41 @@ public sealed class CheckoutService : ICheckoutService
             Total:           items.Sum(i => i.Subtotal),
             HasPriceChanges: false
         );
+    }
+
+    private async Task NotifyLowStockAsync(List<int> productIds, CancellationToken ct)
+    {
+        if (string.IsNullOrWhiteSpace(_adminEmail)) return;
+
+        try
+        {
+            var lowStock = await _db.Products
+                .AsNoTracking()
+                .Where(p => productIds.Contains(p.Id) && p.Stock <= _lowStockThreshold)
+                .Select(p => new { p.Title, p.Stock })
+                .ToListAsync(ct);
+
+            if (lowStock.Count == 0) return;
+
+            var rows = string.Join("", lowStock.Select(p =>
+                $"<tr><td>{p.Title}</td><td><strong>{p.Stock} adet</strong></td></tr>"));
+
+            var body = $"""
+                <p>Aşağıdaki ürünlerin stoğu kritik seviyenin altına ({_lowStockThreshold} adet) düştü:</p>
+                <table border="1" cellpadding="6" style="border-collapse:collapse">
+                  <thead><tr><th>Ürün</th><th>Kalan Stok</th></tr></thead>
+                  <tbody>{rows}</tbody>
+                </table>
+                <p>Stok takibini güncelleyebilirsiniz.</p>
+                """;
+
+            await _email.SendAsync(_adminEmail, "Mağaza Yöneticisi",
+                $"Stok uyarısı: {lowStock.Count} üründe kritik seviye", body, ct);
+        }
+        catch (Exception ex)
+        {
+            _log.LogWarning(ex, "Stok uyarısı maili gönderilemedi");
+        }
     }
 
     // MRK-XXXXXXXX formatında tahmin edilemez sipariş numarası

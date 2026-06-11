@@ -9,5 +9,8 @@ namespace Markadan.Application.Abstractions
         Task<ProductDetailDTO?> UpdateAsync(ProductUpdateDTO dto, CancellationToken ct = default);
 
         Task<bool> DeleteAsync(int id, CancellationToken ct = default);
+
+        // CSV stream: Title,Description,Price,Stock,ImageUrl,BrandName,CategoryName
+        Task<BulkUploadResultDTO> BulkUploadAsync(Stream csvStream, CancellationToken ct = default);
     }
 }
