@@ -20,3 +20,4 @@ artifacts/
 
 # Instance yapılandırması — gerçek değerler repoya girmemeli
 .env
+appsettings.Development.json
