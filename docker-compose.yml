@@ -41,6 +41,8 @@ services:
       Cors__AllowedOrigins__0:  ${Cors__AllowedOrigins__0}
       Seed__AdminEmail:         ${Seed__AdminEmail}
       Seed__AdminPassword:      ${Seed__AdminPassword}
+    volumes:
+      - dpkeys:/app/dp-keys
     ports:
       - "${API_PORT:-8080}:8080"
     networks:
@@ -49,6 +51,7 @@ services:
 # ── Kalıcı depolama ──────────────────────────────────────────────────────────
 volumes:
   sqldata:
+  dpkeys:
 
 # ── İzole ağ ─────────────────────────────────────────────────────────────────
 networks:

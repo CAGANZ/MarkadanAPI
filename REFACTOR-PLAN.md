@@ -390,6 +390,40 @@ Bağımlılık: E1 hepsinden önce; E2 ile E3 paralel; E4, E2+E3'e bağımlı; E
 
 ---
 
+## FAZ F — Üretim hazırlığı (2026-06-11 analizi)
+
+### F1. Data Protection key kalıcılığı (KRİTİK — veri kaybı riski) ✅
+- **Ne:** `Program.cs:50`'deki çıplak `AddDataProtection()` çağrısına key persistence ekle:
+  `.PersistKeysToFileSystem(new DirectoryInfo("/app/dp-keys"))` + `.SetApplicationName("Markadan")`.
+  Dizin config'ten okunabilir olmalı (`DataProtection:KeysPath`, env: `DataProtection__KeysPath`,
+  varsayılan `/app/dp-keys`). `docker-compose.yml`'de api servisine named volume bağla:
+  `dpkeys:/app/dp-keys` (volumes listesine `dpkeys:` ekle). `.env.example`'a değişkeni belgele.
+- **Neden:** GovId alanları Data Protection ile şifreleniyor. Key'ler şu an container dosya
+  sistemine yazılıyor; `docker compose down` sonrası kaybolur → mevcut DB'deki tüm GovId'ler
+  **kalıcı olarak çözülemez** hale gelir. Multi-instance modelde bu her müşteri için veri kaybıdır.
+- **Dikkat:** Container non-root `app` kullanıcısıyla çalışıyor (Dockerfile `USER app`); named
+  volume'un yazılabilir olduğunu doğrula — gerekirse Dockerfile'da dizini oluşturup `chown app` yap.
+- **Kabul kriteri:** `docker compose down && up` (volume SİLMEDEN) sonrası eski kullanıcıyla
+  login + register akışı çalışmalı; `dpkeys` volume'unda `key-*.xml` dosyası görünmeli;
+  api loglarında "may not be persisted" uyarısı kaybolmalı.
+
+### F2. POST /me/cart/accept-prices — fiyat değişikliği onayı
+- **Ne:** `ICartService`'e `AcceptPriceChangesAsync(int userId, CancellationToken)` ekle:
+  kullanıcının Active sepetindeki tüm satırların `UnitPriceSnapshot`'ını ürünün güncel
+  `Price`'ına eşitler, `UpdatedAt`'i günceller, güncel `CartDTO` döner (`HasPriceChanges`
+  artık `false` olmalı). `MeCartController`'a `POST me/cart/accept-prices` action'ı ekle
+  (`[Authorize]`, diğer action'lardaki `TryGetUserId` deseniyle). Aktif sepet yoksa mevcut
+  `GetOrCreate` davranışıyla tutarlı şekilde boş sepet dön (hata değil).
+- **Neden:** Checkout fiyat değişiminde 409 dönüyor; UI şu an workaround olarak satırı silip
+  yeniden ekliyor (2 istek + yarış riski). UI ekibi bu ucu açıkça talep etti
+  (MarkadanUI/docs/DURUM-RAPORU.md §2). Tek atomik istek hem basit hem güvenli.
+- **Kabul kriteri:** Admin fiyat değiştir → `GET /me/cart` `hasPriceChanges: true` →
+  `POST /me/cart/accept-prices` → yanıtta `hasPriceChanges: false` ve snapshot'lar güncel →
+  `POST /me/checkout` artık 409 fiyat hatası vermemeli. Build + mevcut 12 test yeşil;
+  mümkünse CartService'e bir test ekle.
+
+Sıra: F1 önce (bağımsız, kritik), sonra F2. Her biri ayrı commit.
+
 ## Notlar (uygulayıcılar buraya ekler)
 
 - **Docker doğrulama (2026-06-10):** `docker compose up -d` ile temiz ortamda ayağa kaldırıldı.

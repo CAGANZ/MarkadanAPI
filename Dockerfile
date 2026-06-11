@@ -29,6 +29,9 @@ COPY --from=build /app/publish .
 ENV ASPNETCORE_HTTP_PORTS=8080
 EXPOSE 8080
 
+# Data Protection key'leri için kalıcı dizin — app kullanıcısına ait olmalı
+RUN mkdir -p /app/dp-keys && chown app:app /app/dp-keys
+
 # Güvenlik: imajda hazır gelen non-root 'app' kullanıcısıyla çalıştır.
 USER app
 

@@ -1,5 +1,6 @@
 using Markadan.Infrastructure;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -47,7 +48,10 @@ builder.Services.AddSwaggerGen(c =>
     });
 });
 
-builder.Services.AddDataProtection();
+var dpKeysPath = builder.Configuration["DataProtection:KeysPath"] ?? "/app/dp-keys";
+builder.Services.AddDataProtection()
+    .PersistKeysToFileSystem(new DirectoryInfo(dpKeysPath))
+    .SetApplicationName("Markadan");
 
 builder.Services.AddInfrastructure(builder.Configuration);
 
