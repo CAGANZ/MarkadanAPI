@@ -1,11 +1,15 @@
 using System;
+using Markadan.Infrastructure.Data;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
 namespace Markadan.Infrastructure.Migrations
 {
-    /// <inheritdoc />
+    [DbContext(typeof(MarkadanDbContext))]
+    [Migration("20260611000000_G1G2_WishlistAndAbandonedCart")]
     public partial class G1G2_WishlistAndAbandonedCart : Migration
     {
         /// <inheritdoc />

@@ -1,11 +1,15 @@
 using System;
+using Markadan.Infrastructure.Data;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
 namespace Markadan.Infrastructure.Migrations
 {
-    /// <inheritdoc />
+    [DbContext(typeof(MarkadanDbContext))]
+    [Migration("20260611120000_G17_StoreSettings")]
     public partial class G17_StoreSettings : Migration
     {
         /// <inheritdoc />
