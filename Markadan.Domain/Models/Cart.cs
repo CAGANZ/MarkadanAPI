@@ -27,5 +27,8 @@ namespace Markadan.Domain.Models
         public string? ShippingCountry { get; set; }
 
         public ICollection<CartItem> Items { get; set; } = new List<CartItem>();
+
+        // Terk edilen sepet hatırlatması gönderildi mi?
+        public DateTime? AbandonedReminderSentAt { get; set; }
     }
 }

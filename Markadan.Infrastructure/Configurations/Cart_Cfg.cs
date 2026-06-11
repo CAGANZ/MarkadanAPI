@@ -17,6 +17,8 @@ namespace Markadan.Infrastructure.Configurations
             b.Property(x => x.OrderNumber).HasMaxLength(20);
             b.HasIndex(x => x.OrderNumber).IsUnique();  // NULL birden fazla olabilir; Ordered'da benzersiz
 
+            b.Property(x => x.AbandonedReminderSentAt);
+
             b.Property(x => x.ShippingStreet).HasMaxLength(200);
             b.Property(x => x.ShippingCity).HasMaxLength(100);
             b.Property(x => x.ShippingState).HasMaxLength(100);

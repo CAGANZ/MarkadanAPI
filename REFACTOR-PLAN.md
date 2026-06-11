@@ -407,7 +407,23 @@ Bağımlılık: E1 hepsinden önce; E2 ile E3 paralel; E4, E2+E3'e bağımlı; E
   login + register akışı çalışmalı; `dpkeys` volume'unda `key-*.xml` dosyası görünmeli;
   api loglarında "may not be persisted" uyarısı kaybolmalı.
 
-### F2. POST /me/cart/accept-prices — fiyat değişikliği onayı
+### F2. POST /me/cart/accept-prices — fiyat değişikliği onayı ✅
+
+### G1. Terk edilen sepet e-postası ✅
+- Cart'a `AbandonedReminderSentAt` alanı eklendi.
+- `AbandonedCartBackgroundService`: her 30 dakikada kontrol, 2 saatten eski Active sepetlere
+  ürün listesiyle hatırlatma maili gönderir. Config: `AbandonedCart:ThresholdHours/CheckIntervalMinutes`.
+
+### G2. Favori / İstek listesi ✅
+- `WishlistItem` entity + `IWishlistService` + `MeWishlistController` (GET/POST/DELETE /me/wishlist/items).
+- `ProductCommandService.UpdateAsync` hook'u: fiyat düşünce veya stok sıfırdan artınca favorileyen
+  kullanıcılara otomatik mail.
+
+### Email altyapısı ✅
+- `IEmailService` / `SmtpEmailService` (MailKit); config: `Email:SmtpHost/Port/User/Password/FromAddress`.
+- `.env.example`'a Brevo örnek yapılandırması eklendi.
+
+### F2. POST /me/cart/accept-prices — fiyat değişikliği onayı (önceki F2)
 - **Ne:** `ICartService`'e `AcceptPriceChangesAsync(int userId, CancellationToken)` ekle:
   kullanıcının Active sepetindeki tüm satırların `UnitPriceSnapshot`'ını ürünün güncel
   `Price`'ına eşitler, `UpdatedAt`'i günceller, güncel `CartDTO` döner (`HasPriceChanges`

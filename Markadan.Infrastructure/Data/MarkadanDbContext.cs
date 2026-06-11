@@ -16,6 +16,7 @@ namespace Markadan.Infrastructure.Data
         public DbSet<CartItem> CartItems => Set<CartItem>();
         public DbSet<Address> Addresses => Set<Address>();
         public DbSet<RefreshToken> RefreshTokens => Set<RefreshToken>();
+        public DbSet<WishlistItem> WishlistItems => Set<WishlistItem>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

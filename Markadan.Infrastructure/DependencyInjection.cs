@@ -1,5 +1,7 @@
 ﻿using Markadan.Application.Abstractions;
+using Markadan.Application.Options;
 using Markadan.Domain.Models;
+using Markadan.Infrastructure.BackgroundJobs;
 using Markadan.Infrastructure.Data;
 using Markadan.Infrastructure.Services;
 using Microsoft.AspNetCore.Identity;
@@ -56,7 +58,12 @@ public static class DependencyInjection
         services.AddScoped<IOrderCommandService, OrderCommandService>();
         services.AddScoped<IAdminOrderReadService, AdminOrderReadService>();
         services.AddScoped<IAdminOrderCommandService, AdminOrderCommandService>();
+        services.AddScoped<IWishlistService, WishlistService>();
 
+        services.Configure<EmailOptions>(config.GetSection("Email"));
+        services.AddScoped<IEmailService, SmtpEmailService>();
+
+        services.AddHostedService<AbandonedCartBackgroundService>();
 
         return services;
     }

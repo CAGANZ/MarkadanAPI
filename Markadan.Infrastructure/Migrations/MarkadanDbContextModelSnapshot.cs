@@ -266,6 +266,9 @@ namespace Markadan.Infrastructure.Migrations
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
 
+                    b.Property<DateTime?>("AbandonedReminderSentAt")
+                        .HasColumnType("datetime2");
+
                     b.HasKey("Id");
 
                     b.HasIndex("AppUserId");
@@ -386,6 +389,33 @@ namespace Markadan.Infrastructure.Migrations
                     b.HasIndex("Title");
 
                     b.ToTable("Products", (string)null);
+                });
+
+            modelBuilder.Entity("Markadan.Domain.Models.WishlistItem", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("AppUserId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("AddedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProductId");
+
+                    b.HasIndex("AppUserId", "ProductId")
+                        .IsUnique();
+
+                    b.ToTable("WishlistItems", (string)null);
                 });
 
             modelBuilder.Entity("Markadan.Domain.Models.RefreshToken", b =>
@@ -597,6 +627,24 @@ namespace Markadan.Infrastructure.Migrations
                     b.Navigation("Brand");
 
                     b.Navigation("Category");
+                });
+
+            modelBuilder.Entity("Markadan.Domain.Models.WishlistItem", b =>
+                {
+                    b.HasOne("Markadan.Domain.Models.AppUser", "AppUser")
+                        .WithMany()
+                        .HasForeignKey("AppUserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Markadan.Domain.Models.Product", "Product")
+                        .WithMany()
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("AppUser");
+                    b.Navigation("Product");
                 });
 
             modelBuilder.Entity("Markadan.Domain.Models.RefreshToken", b =>
