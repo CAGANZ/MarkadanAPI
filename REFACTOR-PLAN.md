@@ -255,9 +255,10 @@ D3 ✅ → D2 ✅  (Docker testi geçti: migration, login, JWT doğrulandı)
 D4 ✅ (analiz tamamlandı — bkz. "D4 Analizi" bölümü)
 
 ── Kalan görevler ──────────────────────────────────────────────
-C5   analiz: public uçlarda ID enumeration kararı
-D1   test iskeleti (xUnit)
+C5 ✅  analiz tamamlandı — bkz. Notlar bölümü
+D1     test iskeleti (xUnit) — iskelet var, kapsam genişletilecek
 E1–E7  checkout epiği (D4 analizinde tanımlandı; E4'ten önce D1 şart)
+G3–G13 ürün yol haritası görevleri (bkz. "Ürün Yol Haritası" bölümü)
 ```
 
 ## Delegasyon notu (yönetici → uygulayıcı modeller)
