@@ -582,8 +582,27 @@ Sıra: F1 önce (bağımsız, kritik), sonra F2. Her biri ayrı commit.
   başarılı/başarısız sayısı + hata listesi döner; brand/kategori adıyla eşleştirme)
 - **CSV formatı:** `Title,Description,Price,Stock,ImageUrl,BrandName,CategoryName`
 
-**Tavsiye:** G6, G14 bu oturumda implement edildi. G5, G7, G11 sıradaki hızlı kazanımlardır.
-G9 (kupon) ürün kararı gerektirir; G10 kapsam dışı.
+#### G15. WhatsApp sipariş butonu (frontend görevi)
+- **Kazanım:** Müşteri ürün sayfasında "WhatsApp'tan Sipariş Ver"e tıklayınca mağaza sahibinin
+  numarasına ürün adı + fiyat + link içeren hazır mesaj açılır. Form doldurmak istemeyen ve
+  kapıda ödeme tercih eden müşterileri karşılar — Türkiye'de yaygın kullanım.
+- **Öncelik:** Yüksek
+- **Backend efor:** Sıfır — tamamen frontend. `boutique.js`'te telefon numarası tanımlanır,
+  `https://wa.me/<tel>?text=<ürün bilgisi>` linki oluşturulur.
+- **Atanan:** Frontend ekibi
+
+#### G16. İyzico ödeme entegrasyonu
+- **Kazanım:** Kredi kartıyla online ödeme. Kart bilgisi hiçbir zaman backend'e gelmiyor —
+  müşteri iyzico sayfasında giriyor, sonuç webhook ile backend'e dönüyor.
+- **Öncelik:** Yüksek (ama G15 sonrası — WhatsApp hemen değer üretir, iyzico merchant başvurusu gerektirir)
+- **Backend efor:** Orta (iyzico SDK, ödeme başlatma + webhook handler, sipariş "ödendi" durumu)
+- **Not:** Geliştirme sandbox'ta yapılır, gerçek para gerekmez. Canlıya almak için mağaza
+  sahibinin iyzico'ya merchant başvurusu yapması gerekiyor (vergi levhası, banka hesabı).
+  Credentials `.env`'e girer, instance başına farklı olabilir — multi-instance modele uygun.
+
+**Tavsiye:** G6, G14 bu oturumda implement edildi. G15 (WhatsApp) frontend ekibinde.
+G16 (iyzico) sandbox geliştirmesi başlatılabilir, canlı merchant başvurusu mağaza sahibine ait.
+G5, G7, G11 sıradaki hızlı kazanımlardır. G9 (kupon) ürün kararı gerektirir; G10 kapsam dışı.
 
 ---
 
