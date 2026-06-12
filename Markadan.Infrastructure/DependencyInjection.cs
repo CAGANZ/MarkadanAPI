@@ -64,6 +64,9 @@ public static class DependencyInjection
         services.Configure<EmailOptions>(config.GetSection("Email"));
         services.AddScoped<IEmailService, SmtpEmailService>();
 
+        services.Configure<IyzicoOptions>(config.GetSection("Iyzico"));
+        services.AddHttpClient<IPaymentService, IyzicoPaymentService>();
+
         services.AddHostedService<AbandonedCartBackgroundService>();
 
         return services;

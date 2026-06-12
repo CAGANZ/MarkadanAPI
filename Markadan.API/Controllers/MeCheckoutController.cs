@@ -15,11 +15,22 @@ public sealed class MeCheckoutController : ControllerBase
 
     public MeCheckoutController(ICheckoutService checkout) => _checkout = checkout;
 
-    [HttpPost]
-    public async Task<IActionResult> Checkout([FromBody] CheckoutRequestDTO input)
+    // iyzico popup akışı — adım 1: ödeme başlat, token al
+    [HttpPost("initiate")]
+    public async Task<IActionResult> Initiate([FromBody] CheckoutRequestDTO input)
     {
         if (!TryGetUserId(out var userId)) return Unauthorized();
-        var order = await _checkout.CheckoutAsync(userId, input.AddressId, HttpContext.RequestAborted);
+        var ip = HttpContext.Connection.RemoteIpAddress?.ToString() ?? "127.0.0.1";
+        var result = await _checkout.InitiatePaymentAsync(userId, input.AddressId, ip, HttpContext.RequestAborted);
+        return Ok(result);
+    }
+
+    // iyzico popup akışı — adım 2: popup kapandıktan sonra frontend ödemeyi doğrulat
+    [HttpPost("confirm")]
+    public async Task<IActionResult> Confirm([FromBody] ConfirmPaymentDTO input)
+    {
+        if (!TryGetUserId(out _)) return Unauthorized();
+        var order = await _checkout.ConfirmPaymentAsync(input.Token, HttpContext.RequestAborted);
         return Ok(order);
     }
 
@@ -29,3 +40,5 @@ public sealed class MeCheckoutController : ControllerBase
         return int.TryParse(raw, out userId);
     }
 }
+
+public record ConfirmPaymentDTO(string Token);

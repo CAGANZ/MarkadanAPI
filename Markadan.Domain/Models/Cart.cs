@@ -30,5 +30,10 @@ namespace Markadan.Domain.Models
 
         // Terk edilen sepet hatırlatması gönderildi mi?
         public DateTime? AbandonedReminderSentAt { get; set; }
+
+        // iyzico ödeme alanları
+        public string? IyzicoConversationId { get; set; }  // ödeme başlatınca set edilir
+        public string? IyzicoPaymentId { get; set; }       // ödeme onaylanınca set edilir
+        public DateTime? PaidAtUtc { get; set; }
     }
 }

@@ -19,6 +19,10 @@ namespace Markadan.Infrastructure.Configurations
 
             b.Property(x => x.AbandonedReminderSentAt);
 
+            b.Property(x => x.IyzicoConversationId).HasMaxLength(50);
+            b.Property(x => x.IyzicoPaymentId).HasMaxLength(50);
+            b.Property(x => x.PaidAtUtc);
+
             b.Property(x => x.ShippingStreet).HasMaxLength(200);
             b.Property(x => x.ShippingCity).HasMaxLength(100);
             b.Property(x => x.ShippingState).HasMaxLength(100);

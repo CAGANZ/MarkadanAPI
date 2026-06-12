@@ -269,6 +269,17 @@ namespace Markadan.Infrastructure.Migrations
                     b.Property<DateTime?>("AbandonedReminderSentAt")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("IyzicoConversationId")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("IyzicoPaymentId")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<DateTime?>("PaidAtUtc")
+                        .HasColumnType("datetime2");
+
                     b.HasKey("Id");
 
                     b.HasIndex("AppUserId");
