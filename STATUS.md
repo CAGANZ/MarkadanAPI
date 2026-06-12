@@ -38,7 +38,7 @@ UI ekibi GÖREV I (iyzico frontend) ve GÖREV J (iptal akışı) bekliyor.
 
 ## Devam Eden
 
-- **iyzico sandbox hesabı**: iyzico.com sitesi hata verdi, hesap açılamadı. Tekrar denenecek.
+- **iyzico sandbox testi**: Key'ler `.env`'e eklendi, API ayakta. iyzico.com hesabı açılınca `POST /me/checkout/initiate` ile uçtan uca test edilecek.
 
 ---
 

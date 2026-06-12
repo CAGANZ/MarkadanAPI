@@ -598,18 +598,20 @@ Sıra: F1 önce (bağımsız, kritik), sonra F2. Her biri ayrı commit.
   `https://wa.me/<tel>?text=<ürün bilgisi>` linki oluşturulur.
 - **Atanan:** Frontend ekibi
 
-#### G16. İyzico ödeme entegrasyonu
+#### G16. İyzico ödeme entegrasyonu ✅ (2026-06-12)
 - **Kazanım:** Kredi kartıyla online ödeme. Kart bilgisi hiçbir zaman backend'e gelmiyor —
-  müşteri iyzico sayfasında giriyor, sonuç webhook ile backend'e dönüyor.
-- **Öncelik:** Yüksek (ama G15 sonrası — WhatsApp hemen değer üretir, iyzico merchant başvurusu gerektirir)
-- **Backend efor:** Orta (iyzico SDK, ödeme başlatma + webhook handler, sipariş "ödendi" durumu)
-- **Not:** Geliştirme sandbox'ta yapılır, gerçek para gerekmez. Canlıya almak için mağaza
-  sahibinin iyzico'ya merchant başvurusu yapması gerekiyor (vergi levhası, banka hesabı).
-  Credentials `.env`'e girer, instance başına farklı olabilir — multi-instance modele uygun.
+  iyzico popup'ında girilir, sonuç frontend confirm çağrısıyla doğrulanır.
+- **Durum:** Backend tamamlandı. iyzico sandbox hesabı açılınca test edilecek.
+- **Uçlar:** `POST /me/checkout/initiate`, `POST /me/checkout/confirm`, `POST /payment/iyzico/callback`
+- **Not:** NuGet SDK namespace sorunu nedeniyle HttpClient + REST API ile implement edildi.
+  Credentials `.env`'e girer (`Iyzico__ApiKey`, `Iyzico__SecretKey`).
 
-**Tavsiye:** G6, G14 bu oturumda implement edildi. G15 (WhatsApp) frontend ekibinde.
-G16 (iyzico) sandbox geliştirmesi başlatılabilir, canlı merchant başvurusu mağaza sahibine ait.
-G5, G7, G11 sıradaki hızlı kazanımlardır. G9 (kupon) ürün kararı gerektirir; G10 kapsam dışı.
+#### G16b. Sipariş iptal kuralları güncellendi ✅ (2026-06-12)
+- **Kazanım:** Ödeme entegrasyonuna uygun iptal akışı.
+- **Kurallar:** PaymentPending → serbest; Ordered/Preparing → iyzico iade; Shipped → yasak; Delivered → yasak.
+- **Admin:** Ordered→Preparing→Shipped→Delivered geçiş tablosu, iptal her aşamada mümkün.
+
+**Sıradaki:** iyzico sandbox test, G9 (kupon), G5 (kargo takip), G7 (CSV export).
 
 ---
 
