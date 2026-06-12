@@ -7,42 +7,50 @@
 
 ## Şu an ne durumda
 
-Backend ayakta (Docker, port 8080). 8 migration uygulanmış, DB sağlıklı.
-Frontend ekibi handoff belgesiyle çalışıyor (`docs/DURUM-RAPORU.md`).
-Aktif backend geliştirmesi yok — UI ekibinin GÖREV 7-9'u tamamlaması bekleniyor.
+Backend ayakta (Docker, port 8080). 9 migration uygulanmış, DB sağlıklı.
+iyzico entegrasyonu backend'de tamamlandı. iyzico sandbox hesabı henüz açılamadı (site hatası) — key alınınca `.env`'e eklenir, çalışır.
+UI ekibi GÖREV I (iyzico frontend) ve GÖREV J (iptal akışı) bekliyor.
 
 ---
 
 ## Son oturumda ne yapıldı
 
-**2026-06-11 / 2026-06-12**
-- G1: Terk edilen sepet e-posta bildirimi (BackgroundService, 2 saat eşiği)
-- G2: Favori listesi (WishlistItem) + fiyat/stok düşünce e-posta bildirimi
-- G6: Düşük stok admin e-posta uyarısı (checkout sonrası fire-and-forget)
-- G14: Toplu CSV ürün yükleme (`POST /admin/products/bulk`, max 10MB)
-- G17: Mağaza ayarları (StoreSettings tek satır config tablosu)
-- Bug: Migration Designer.cs yokken `[Migration]` attribute eklenmesi gerekiyor — düzeltildi
-- Bug: Checkout sonrası cart guard yanlış yönlendiriyordu — frontend `ordered` flag ile düzeltti
-- Frontend handoff raporuna GÖREV 7 (CSV), 8 (favori), 9 (mağaza ayarları) eklendi
-- Her şey commit + push edildi
+**2026-06-12**
+- G16: iyzico ödeme entegrasyonu backend'e eklendi
+  - CartStatus'a PaymentPending/Preparing/Shipped/Delivered eklendi
+  - `POST /me/checkout/initiate` → iyzico token döner
+  - `POST /me/checkout/confirm` → ödeme doğrular, sipariş oluşturur
+  - `POST /payment/iyzico/callback` → production server-to-server callback
+  - iyzico SDK yerine HttpClient + REST API (namespace sorunu vardı)
+- İptal kuralları güncellendi:
+  - PaymentPending → serbest iptal
+  - Ordered/Preparing → iyzico iade tetiklenir, stok iade edilir
+  - Shipped → müşteri iptal edemez
+  - Delivered → iptal yok
+- Admin durum geçişleri kısıtlandı (Ordered→Preparing→Shipped→Delivered)
+- Frontend handoff raporuna GÖREV I ve GÖREV J eklendi
+- Migration 20260612100000_G16_IyzicoPayment uygulandı
+
+**2026-06-11**
+- G1, G2, G6, G14, G17 tamamlandı (bkz. önceki kayıt)
 
 ---
 
 ## Devam Eden
 
-Yok — aktif çalışma duraksatıldı, UI ekibi çalışıyor.
+- **iyzico sandbox hesabı**: iyzico.com sitesi hata verdi, hesap açılamadı. Tekrar denenecek.
 
 ---
 
 ## Sıradaki (öncelik sırasıyla)
 
-1. **G16 iyzico ödeme entegrasyonu** — checkout'u tamamlıyor, müşteri talebi
+1. **iyzico sandbox key al** → `.env`'e ekle → test et
 2. **G9 kupon / indirim kodu** — satış arttırıcı
-3. **G5 kargo takip kodu + müşteri bildirimi** — sipariş sonrası UX
-4. **G7 sipariş listesi CSV export** — admin operasyonel ihtiyaç
-5. **Deploy playbook** — 50-100 instance yönetimi için script/dokümantasyon
-6. **F2 `POST /me/cart/accept-prices`** — frontend workaround var, düşük öncelik
-7. **D1 test coverage** — 12 test var, genişletilecek
+3. **G5 kargo takip kodu + müşteri bildirimi**
+4. **G7 sipariş listesi CSV export**
+5. **Deploy playbook** — 50-100 instance yönetimi
+6. **F2 `POST /me/cart/accept-prices`** — düşük öncelik
+7. **D1 test coverage**
 
 ---
 
