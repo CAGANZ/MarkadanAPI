@@ -1,6 +1,6 @@
 # STATUS — Markadan Şu An Neredeyiz
 
-**Son güncelleme:** 2026-06-12
+**Son güncelleme:** 2026-06-13
 **Güncelleyen:** Claude (Çağan ile oturum)
 
 ---
@@ -14,6 +14,16 @@ UI ekibi GÖREV I (iyzico frontend) ve GÖREV J (iptal akışı) bekliyor.
 ---
 
 ## Son oturumda ne yapıldı
+
+**2026-06-13**
+- iyzico sandbox entegrasyon hataları bulundu ve düzeltildi:
+  - `.env`'deki `Iyzico__ApiKey__` yazım hatası → `Iyzico__ApiKey`
+  - `docker-compose.yml`'de iyzico değişkenleri eksikti → eklendi
+  - İmza algoritması yanlıştı (HMAC) → PKI string formatına çevrildi
+  - Endpoint path'ları yanlıştı (`/auth/ecom` suffix) → standart path'lara düzeltildi
+  - Controller'da IPv6→IPv4 dönüşümü eklendi
+- iyzico testi: imza ve path artık doğru, "error 11" hâlâ geliyor — sandbox hesabında "Checkout Form" ürünü aktif edilmemiş
+- Frontend ekibine GÖREV K (dinamik mağaza verisi) ve GÖREV L (middleware auth guard) verildi
 
 **2026-06-12**
 - G16: iyzico ödeme entegrasyonu backend'e eklendi
@@ -38,7 +48,7 @@ UI ekibi GÖREV I (iyzico frontend) ve GÖREV J (iptal akışı) bekliyor.
 
 ## Devam Eden
 
-- **iyzico sandbox testi**: Key'ler `.env`'e eklendi, API ayakta. iyzico.com hesabı açılınca `POST /me/checkout/initiate` ile uçtan uca test edilecek.
+- **iyzico sandbox aktivasyonu**: `sandbox-merchant.iyzipay.com`'a gir → "Checkout Form" ürününü aktif et → `POST /me/checkout/initiate` uçtan uca test edilecek. Teknik düzeltmeler tamam, sadece hesap aktivasyonu bekliyor.
 
 ---
 
