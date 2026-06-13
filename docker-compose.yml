@@ -41,6 +41,10 @@ services:
       Cors__AllowedOrigins__0:  ${Cors__AllowedOrigins__0}
       Seed__AdminEmail:         ${Seed__AdminEmail}
       Seed__AdminPassword:      ${Seed__AdminPassword}
+      Iyzico__ApiKey:           ${Iyzico__ApiKey}
+      Iyzico__SecretKey:        ${Iyzico__SecretKey}
+      Iyzico__BaseUrl:          ${Iyzico__BaseUrl}
+      Iyzico__CallbackUrl:      ${Iyzico__CallbackUrl}
     volumes:
       - dpkeys:/app/dp-keys
     ports:

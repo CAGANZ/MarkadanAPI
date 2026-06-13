@@ -20,7 +20,10 @@ public sealed class MeCheckoutController : ControllerBase
     public async Task<IActionResult> Initiate([FromBody] CheckoutRequestDTO input)
     {
         if (!TryGetUserId(out var userId)) return Unauthorized();
-        var ip = HttpContext.Connection.RemoteIpAddress?.ToString() ?? "127.0.0.1";
+        var rawIp = HttpContext.Connection.RemoteIpAddress;
+        var ip = rawIp?.IsIPv4MappedToIPv6 == true
+            ? rawIp.MapToIPv4().ToString()
+            : rawIp?.ToString() ?? "127.0.0.1";
         var result = await _checkout.InitiatePaymentAsync(userId, input.AddressId, ip, HttpContext.RequestAborted);
         return Ok(result);
     }

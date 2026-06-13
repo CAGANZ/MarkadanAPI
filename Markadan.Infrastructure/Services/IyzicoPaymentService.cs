@@ -84,7 +84,7 @@ public sealed class IyzicoPaymentService : IPaymentService
         try
         {
             var response = await PostAsync<IyzicoCheckoutFormResponse>(
-                "/payment/iyzipos/checkoutform/initialize/auth/ecom", body, ct);
+                "/payment/iyzipos/checkoutform/initialize", body, ct);
 
             if (response?.Status != "success")
             {
@@ -108,7 +108,7 @@ public sealed class IyzicoPaymentService : IPaymentService
         try
         {
             var response = await PostAsync<IyzicoCheckoutFormDetailResponse>(
-                "/payment/iyzipos/checkoutform/auth/ecom/detail", body, ct);
+                "/payment/iyzipos/checkoutform/detail", body, ct);
 
             if (response?.Status != "success" || response.PaymentStatus != "SUCCESS")
             {
@@ -168,30 +168,33 @@ public sealed class IyzicoPaymentService : IPaymentService
 
         using var response = await _http.SendAsync(request, ct);
         var responseBody   = await response.Content.ReadAsStringAsync(ct);
+        _log.LogDebug("iyzico {Path} → HTTP {Status}", path, (int)response.StatusCode);
         return JsonSerializer.Deserialize<T>(responseBody, JsonOpts);
     }
 
     private string BuildAuthorization(string randomString, string requestBody)
     {
-        // IYZWS {apiKey}:{base64(sha256(apiKey + randomString + sha256(requestBody)))}
-        var bodyHash    = ComputeSha256Hex(requestBody);
-        var dataToSign  = _opts.ApiKey + randomString + bodyHash;
-        var signature   = ComputeSha256Base64(dataToSign);
-        return $"{_opts.ApiKey}:{signature}";
+        // iyzico imza: Base64(SHA256(apiKey + secretKey + randomString + PKIString))
+        // PKIString = JSON body'nin [key=value,...] formatına dönüştürülmüş hali (anahtarlar alfabetik)
+        using var doc = JsonDocument.Parse(requestBody);
+        var pki  = ToPKIString(doc.RootElement);
+        var data = _opts.ApiKey + _opts.SecretKey + randomString + pki;
+        var hash = SHA256.HashData(Encoding.UTF8.GetBytes(data));
+        return $"{_opts.ApiKey}:{Convert.ToBase64String(hash)}";
     }
 
-    private static string ComputeSha256Hex(string input)
+    private static string ToPKIString(JsonElement el) => el.ValueKind switch
     {
-        var bytes = SHA256.HashData(Encoding.UTF8.GetBytes(input));
-        return Convert.ToHexString(bytes).ToLowerInvariant();
-    }
+        JsonValueKind.Object => "[" + string.Join(",",
+            el.EnumerateObject().OrderBy(p => p.Name, StringComparer.Ordinal)
+              .Select(p => $"{p.Name}={ToPKIString(p.Value)}")) + "]",
 
-    private string ComputeSha256Base64(string input)
-    {
-        using var hmac = new HMACSHA256(Encoding.UTF8.GetBytes(_opts.SecretKey));
-        var hash = hmac.ComputeHash(Encoding.UTF8.GetBytes(input));
-        return Convert.ToBase64String(hash);
-    }
+        JsonValueKind.Array  => "[" + string.Join(", ",
+            el.EnumerateArray().Select(ToPKIString)) + "]",
+
+        JsonValueKind.String => el.GetString() ?? "",
+        _                    => el.GetRawText()
+    };
 
     private static string FormatPrice(decimal price) =>
         price.ToString("F2", System.Globalization.CultureInfo.InvariantCulture);
