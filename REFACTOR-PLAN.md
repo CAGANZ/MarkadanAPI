@@ -486,14 +486,11 @@ Sıra: F1 önce (bağımsız, kritik), sonra F2. Her biri ayrı commit.
 
 ### ACİ 2 — Operasyonel yük (manuel kargo, fatura, stok takibi)
 
-#### G5. Kargo takip kodu + müşteri bildirimi
-- **Kazanım:** Admin sipariş durumunu "Kargoda" yaparken takip kodu girer; müşteriye otomatik
-  e-posta gider. "Kargom nerede?" soruları müşteri hizmetlerinden %60-80 düşer.
-- **Öncelik:** Yüksek
-- **Backend efor:** Küçük (siparişe `TrackingNumber (string?)` + `TrackingUrl (string?)` alanı;
-  durum güncellemesinde mail tetikle)
-- **Not:** Kargo firması API entegrasyonu bu bölümün dışında tutuldu — kargo firması seçimi
-  mağaza sahibine göre değişir; URL alanı tüm firmalara çalışır.
+#### G5. Kargo takip kodu + müşteri bildirimi ✅ (2026-06-20)
+- `TrackingNumber` + `TrackingUrl` Cart'a eklendi. `PUT /admin/orders/{id}/status` body'si genişletildi.
+- Status `Shipped` olunca müşteriye otomatik kargo bildirimi e-postası gönderilir.
+- `OrderDTO` ve `AdminOrderDTO`'ya tracking alanları eklendi.
+- Frontend görevi: DURUM-RAPORU.md GÖREV N.
 
 #### G6. Stok uyarısı — admin'e e-posta ✅
 - **Kazanım:** Stok eşiğin altına düşünce admin e-posta alır. Stoksuz satış riskini ortadan
@@ -502,11 +499,11 @@ Sıra: F1 önce (bağımsız, kritik), sonra F2. Her biri ayrı commit.
 - **Backend efor:** Küçük — checkout'ta stok düştükten sonra eşik kontrolü + admin'e mail.
   Config: `Inventory:LowStockThreshold` (varsayılan 5), `Inventory:AdminEmail`.
 
-#### G7. Sipariş listesi CSV/Excel export
-- **Kazanım:** Admin tüm siparişleri (tarih aralığıyla) indirir; muhasebeci/muhasebe yazılımına
-  aktarır. "Her siparişi tek tek açıp yazıyorum" acısını sona erdirir.
-- **Öncelik:** Yüksek
-- **Backend efor:** Küçük (`GET /admin/orders/export?from=&to=` → CSV; `CsvHelper` paketi yeterli)
+#### G7. Sipariş listesi CSV/Excel export ✅ (2026-06-20)
+- `GET /admin/orders/export?status=&dateFrom=&dateTo=` → `siparisler_YYYYMMDD.csv`
+- Sütunlar: sipariş no, tarih, durum, müşteri, ürün sayısı, brüt/indirim/net tutar, kupon, kargo, adres.
+- BOM ile UTF-8 — Excel Türkçe karakterleri doğru gösterir. Harici paket kullanılmadı.
+- Frontend görevi: DURUM-RAPORU.md GÖREV O (30 dk).
 
 #### G8. e-Fatura / e-Arşiv entegrasyonu
 - **Kazanım:** Sipariş onaylanınca fatura otomatik kesilir; hem yasal zorunluluk karşılanır hem
@@ -521,12 +518,13 @@ Sıra: F1 önce (bağımsız, kritik), sonra F2. Her biri ayrı commit.
 
 ### ACİ 3 — Rekabet (büyük platformlarla nasıl rekabet eder)
 
-#### G9. Kupon / İndirim kodu
-- **Kazanım:** "İlk alışverişe %10 indirim" gibi kampanyalar mağaza sahibinin en doğrudan
-  müşteri edinme aracıdır. Büyük platformlarda standart; olmayınca mağaza eksik görünür.
-- **Öncelik:** Yüksek
-- **Backend efor:** Orta (`Coupon` entity — kod, tür (yüzde/sabit), min tutar, kullanım limiti,
-  geçerlilik tarihi; checkout'ta uygulama; admin CRUD)
+#### G9. Kupon / İndirim kodu ✅ (2026-06-20)
+- `Coupon` entity (Percentage/FixedAmount, kullanım limiti, geçerlilik tarihi, min tutar).
+- Admin CRUD: `GET/POST/PUT/DELETE /admin/coupons`.
+- Kullanıcı: `POST /me/cart/coupon`, `DELETE /me/cart/coupon`.
+- `CartDTO`'ya `couponCode`, `discountAmount`, `finalTotal` eklendi.
+- Checkout'ta indirim hesaplanır; onay sonrası `UsageCount++`. iyzico basket dağılımı da güncellendi.
+- Frontend görevi: DURUM-RAPORU.md GÖREV M.
 
 #### G10. Ürün yorumları ve puanlama — İSTENMİYOR
 - Ürün sahibi kararı: bu özellik kapsam dışı bırakıldı (2026-06-11).
@@ -560,10 +558,10 @@ Sıra: F1 önce (bağımsız, kritik), sonra F2. Her biri ayrı commit.
 | # | Özellik | Öncelik | Backend Efor |
 |---|---|---|---|
 | G1 | Terk edilen sepet e-postası | Yüksek | Orta |
-| G5 | Kargo takip kodu + bildirim | Yüksek | Küçük |
-| G6 | Stok uyarısı | Yüksek | Küçük |
-| G7 | Sipariş CSV export | Yüksek | Küçük |
-| G9 | Kupon / indirim kodu | Yüksek | Orta |
+| G5 | Kargo takip kodu + bildirim | Yüksek | Küçük | ✅ |
+| G6 | Stok uyarısı | Yüksek | Küçük | ✅ |
+| G7 | Sipariş CSV export | Yüksek | Küçük | ✅ |
+| G9 | Kupon / indirim kodu | Yüksek | Orta | ✅ |
 | G10 | Ürün yorumları | Yüksek | Orta |
 | G11 | SEO slug + meta tag | Yüksek | Küçük |
 | G2 | Favori / istek listesi | Orta | Küçük |

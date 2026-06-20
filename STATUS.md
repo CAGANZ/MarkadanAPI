@@ -7,9 +7,10 @@
 
 ## Şu an ne durumda
 
-Backend ayakta (Docker, port 8080). 9 migration uygulanmış, DB sağlıklı.
-iyzico entegrasyonu backend'de tamamlandı. iyzico sandbox hesabı henüz açılamadı (site hatası) — key alınınca `.env`'e eklenir, çalışır.
-UI ekibi GÖREV I (iyzico frontend) ve GÖREV J (iptal akışı) bekliyor.
+Backend ayakta (Docker, port 8080). **10 migration** uygulanmış, DB sağlıklı.
+iyzico entegrasyonu tamamlandı — sandbox hesabında "Checkout Form" aktif edilmesi bekliyor (Çağan'ın yapacağı).
+Bu oturumda G9 (kupon), G5 (kargo takip), G7 (CSV export) tamamlandı.
+UI ekibi GÖREV K–O için hazır; DURUM-RAPORU.md güncellenmiş durumda.
 
 ---
 
@@ -102,8 +103,8 @@ UI ekibi GÖREV I (iyzico frontend) ve GÖREV J (iptal akışı) bekliyor.
 
 | Kişi / Araç | Sorumluluk | Şu an |
 |-------------|------------|-------|
-| Çağan | Backend mimari + uygulama | Beklemede |
-| Frontend ekibi | Next.js UI | DURUM-RAPORU.md GÖREV 7-9 |
+| Çağan | Backend mimari + uygulama | iyzico sandbox aktivasyonu |
+| Frontend ekibi | Next.js UI | DURUM-RAPORU.md GÖREV M (kupon UI), N (kargo takip), O (CSV buton) |
 | Claude (yüksek model) | Mimari tasarım, karmaşık logic | İstenince |
 | Claude (düşük model) | Rutin kodlama, refaktör | İstenince |
 
@@ -115,4 +116,4 @@ UI ekibi GÖREV I (iyzico frontend) ve GÖREV J (iptal akışı) bekliyor.
 - `dotnet` CLI WSL'de yok — migration'lar elle yazılır
 - Frontend `api()` wrapper'ı FormData ile otomatik `Content-Type` ayarlamıyor olabilir —
   CSV yükleme görevinde frontend ekibi doğrudan fetch kullanabilir
-- Migration geçmişi: `__EFMigrationsHistory` tablosunda 8 kayıt var
+- Migration geçmişi: `__EFMigrationsHistory` tablosunda **10 kayıt** var (son: `20260620010000_G5_TrackingFields`)
