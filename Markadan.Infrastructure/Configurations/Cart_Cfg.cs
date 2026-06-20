@@ -40,6 +40,9 @@ namespace Markadan.Infrastructure.Configurations
              .HasForeignKey(x => x.ShippingAddressId)
              .OnDelete(DeleteBehavior.SetNull);
 
+            b.Property(x => x.TrackingNumber).HasMaxLength(100);
+            b.Property(x => x.TrackingUrl).HasMaxLength(500);
+
             b.Property(x => x.CouponCode).HasMaxLength(50);
             b.Property(x => x.DiscountAmount).HasColumnType("decimal(18,2)");
 

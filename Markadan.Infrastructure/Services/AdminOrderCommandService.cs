@@ -13,7 +13,37 @@ public sealed class AdminOrderCommandService : IAdminOrderCommandService
     private readonly MarkadanDbContext _db;
     private readonly IAdminOrderReadService _orderRead;
     private readonly IPaymentService _payment;
+    private readonly IEmailService _email;
     private readonly ILogger<AdminOrderCommandService> _log;
+
+    private async Task SendShippingEmailAsync(Domain.Models.Cart cart, CancellationToken ct)
+    {
+        var user = cart.AppUser;
+        if (user is null || string.IsNullOrWhiteSpace(user.Email)) return;
+
+        try
+        {
+            var trackingSection = cart.TrackingNumber is not null
+                ? $@"<p><strong>Kargo Takip No:</strong> {cart.TrackingNumber}</p>
+                     {(cart.TrackingUrl is not null ? $"<p><a href='{cart.TrackingUrl}' style='color:#4F46E5'>Kargonuzu Takip Edin →</a></p>" : "")}"
+                : "<p>Kargo takip bilgisi kısa süre içinde güncellenecek.</p>";
+
+            var body = $@"<p>Merhaba {user.Name},</p>
+<p>Siparişiniz kargoya verildi!</p>
+<p><strong>Sipariş No:</strong> {cart.OrderNumber}</p>
+{trackingSection}
+<p>İyi alışverişler.</p>";
+
+            await _email.SendAsync(
+                user.Email, $"{user.Name} {user.Surname}",
+                $"Siparişiniz Kargoya Verildi — {cart.OrderNumber}",
+                body, ct);
+        }
+        catch (Exception ex)
+        {
+            _log.LogWarning(ex, "Kargo bildirimi maili gönderilemedi — sipariş {OrderId}", cart.Id);
+        }
+    }
 
     // İzin verilen admin durum geçişleri
     private static readonly Dictionary<CartStatus, HashSet<CartStatus>> AllowedTransitions = new()
@@ -28,15 +58,20 @@ public sealed class AdminOrderCommandService : IAdminOrderCommandService
         MarkadanDbContext db,
         IAdminOrderReadService orderRead,
         IPaymentService payment,
+        IEmailService email,
         ILogger<AdminOrderCommandService> log)
     {
         _db        = db;
         _orderRead = orderRead;
         _payment   = payment;
+        _email     = email;
         _log       = log;
     }
 
-    public async Task<AdminOrderDTO> UpdateStatusAsync(int orderId, string status, CancellationToken ct = default)
+    public async Task<AdminOrderDTO> UpdateStatusAsync(
+        int orderId, string status,
+        string? trackingNumber = null, string? trackingUrl = null,
+        CancellationToken ct = default)
     {
         if (!Enum.TryParse<CartStatus>(status, ignoreCase: true, out var newStatus))
             throw new BusinessRuleException($"Geçersiz sipariş durumu: '{status}'.");
@@ -47,6 +82,7 @@ public sealed class AdminOrderCommandService : IAdminOrderCommandService
         var cart = await _db.Carts
             .AsTracking()
             .Include(c => c.Items)
+            .Include(c => c.AppUser)
             .Where(c => c.Id == orderId && c.Status != CartStatus.Active)
             .FirstOrDefaultAsync(ct)
             ?? throw new KeyNotFoundException("Sipariş bulunamadı.");
@@ -96,9 +132,20 @@ public sealed class AdminOrderCommandService : IAdminOrderCommandService
             cart.Status    = newStatus;
             cart.UpdatedAt = DateTime.UtcNow;
 
+            if (newStatus == CartStatus.Shipped)
+            {
+                if (!string.IsNullOrWhiteSpace(trackingNumber))
+                    cart.TrackingNumber = trackingNumber.Trim();
+                if (!string.IsNullOrWhiteSpace(trackingUrl))
+                    cart.TrackingUrl = trackingUrl.Trim();
+            }
+
             await _db.SaveChangesAsync(ct);
             await tx.CommitAsync(ct);
         });
+
+        if (newStatus == CartStatus.Shipped)
+            _ = SendShippingEmailAsync(cart, ct);
 
         return await _orderRead.GetOrderAsync(orderId, ct);
     }

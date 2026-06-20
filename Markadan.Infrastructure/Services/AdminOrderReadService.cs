@@ -17,7 +17,7 @@ public sealed class AdminOrderReadService : IAdminOrderReadService
     {
         var query = _db.Carts
             .AsNoTracking()
-            .Where(c => c.Status != CartStatus.Active);
+            .Where(c => c.Status != CartStatus.Active && c.Status != CartStatus.PaymentPending);
 
         if (!string.IsNullOrWhiteSpace(status) && Enum.TryParse<CartStatus>(status, ignoreCase: true, out var parsed))
             query = query.Where(c => c.Status == parsed);
@@ -60,6 +60,8 @@ public sealed class AdminOrderReadService : IAdminOrderReadService
                 c.ShippingPostalCode,
                 c.ShippingCountry,
                 c.AppUserId,
+                c.TrackingNumber,
+                c.TrackingUrl,
                 UserEmail = c.AppUser.Email!,
                 Items = c.Items.Select(i => new OrderItemDTO(
                     i.ProductId,
@@ -86,7 +88,9 @@ public sealed class AdminOrderReadService : IAdminOrderReadService
             order.ShippingPostalCode,
             order.ShippingCountry,
             order.AppUserId,
-            order.UserEmail
+            order.UserEmail,
+            order.TrackingNumber,
+            order.TrackingUrl
         );
     }
 }

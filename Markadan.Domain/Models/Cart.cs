@@ -36,6 +36,10 @@ namespace Markadan.Domain.Models
         public string? IyzicoPaymentId { get; set; }       // ödeme onaylanınca set edilir
         public DateTime? PaidAtUtc { get; set; }
 
+        // Kargo takip
+        public string? TrackingNumber { get; set; }  // kargo takip numarası
+        public string? TrackingUrl { get; set; }     // kargo firması takip linki
+
         // Kupon / İndirim
         public int? CouponId { get; set; }
         public Coupon? Coupon { get; set; }

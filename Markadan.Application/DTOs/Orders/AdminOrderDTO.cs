@@ -13,5 +13,7 @@ public record AdminOrderDTO(
     string? ShippingPostalCode,
     string? ShippingCountry,
     int UserId,
-    string UserEmail
+    string UserEmail,
+    string? TrackingNumber = null,
+    string? TrackingUrl = null
 );

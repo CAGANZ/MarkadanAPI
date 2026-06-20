@@ -11,5 +11,7 @@ public record OrderDTO(
     string? ShippingCity,
     string? ShippingState,
     string? ShippingPostalCode,
-    string? ShippingCountry
+    string? ShippingCountry,
+    string? TrackingNumber = null,
+    string? TrackingUrl = null
 );

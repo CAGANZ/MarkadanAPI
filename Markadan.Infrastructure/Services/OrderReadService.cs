@@ -16,7 +16,7 @@ public sealed class OrderReadService : IOrderReadService
     {
         return await _db.Carts
             .AsNoTracking()
-            .Where(c => c.AppUserId == userId && c.Status != CartStatus.Active)
+            .Where(c => c.AppUserId == userId && c.Status != CartStatus.Active && c.Status != CartStatus.PaymentPending)
             .OrderByDescending(c => c.OrderedAtUtc)
             .Select(c => new OrderSummaryDTO(
                 c.Id,
@@ -45,6 +45,8 @@ public sealed class OrderReadService : IOrderReadService
                 c.ShippingState,
                 c.ShippingPostalCode,
                 c.ShippingCountry,
+                c.TrackingNumber,
+                c.TrackingUrl,
                 Items = c.Items.Select(i => new OrderItemDTO(
                     i.ProductId,
                     i.Product.Title,
@@ -68,7 +70,9 @@ public sealed class OrderReadService : IOrderReadService
             order.ShippingCity,
             order.ShippingState,
             order.ShippingPostalCode,
-            order.ShippingCountry
+            order.ShippingCountry,
+            order.TrackingNumber,
+            order.TrackingUrl
         );
     }
 }

@@ -39,7 +39,9 @@ public sealed class AdminOrdersController : ControllerBase
     [HttpPut("{id:int}/status")]
     public async Task<IActionResult> UpdateStatus(int id, [FromBody] UpdateOrderStatusDTO input)
     {
-        var order = await _orderCommand.UpdateStatusAsync(id, input.Status, HttpContext.RequestAborted);
+        var order = await _orderCommand.UpdateStatusAsync(
+            id, input.Status, input.TrackingNumber, input.TrackingUrl,
+            HttpContext.RequestAborted);
         return Ok(order);
     }
 }

@@ -335,6 +335,14 @@ namespace Markadan.Infrastructure.Migrations
                     b.Property<int?>("CouponId")
                         .HasColumnType("int");
 
+                    b.Property<string>("TrackingNumber")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("TrackingUrl")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
                     b.Property<string>("CouponCode")
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
