@@ -8,4 +8,7 @@ public interface IAdminOrderReadService
         string? status, DateTime? dateFrom, DateTime? dateTo, CancellationToken ct = default);
 
     Task<AdminOrderDTO> GetOrderAsync(int orderId, CancellationToken ct = default);
+
+    Task<byte[]> ExportCsvAsync(
+        string? status, DateTime? dateFrom, DateTime? dateTo, CancellationToken ct = default);
 }

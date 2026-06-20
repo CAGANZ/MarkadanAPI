@@ -36,6 +36,17 @@ public sealed class AdminOrdersController : ControllerBase
         return Ok(order);
     }
 
+    [HttpGet("export")]
+    public async Task<IActionResult> Export(
+        [FromQuery] string? status,
+        [FromQuery] DateTime? dateFrom,
+        [FromQuery] DateTime? dateTo)
+    {
+        var bytes = await _orderRead.ExportCsvAsync(status, dateFrom, dateTo, HttpContext.RequestAborted);
+        var filename = $"siparisler_{DateTime.UtcNow:yyyyMMdd}.csv";
+        return File(bytes, "text/csv; charset=utf-8", filename);
+    }
+
     [HttpPut("{id:int}/status")]
     public async Task<IActionResult> UpdateStatus(int id, [FromBody] UpdateOrderStatusDTO input)
     {
