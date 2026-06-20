@@ -1,6 +1,6 @@
 # STATUS — Markadan Şu An Neredeyiz
 
-**Son güncelleme:** 2026-06-13
+**Son güncelleme:** 2026-06-20
 **Güncelleyen:** Claude (Çağan ile oturum)
 
 ---
@@ -14,6 +14,16 @@ UI ekibi GÖREV I (iyzico frontend) ve GÖREV J (iptal akışı) bekliyor.
 ---
 
 ## Son oturumda ne yapıldı
+
+**2026-06-20**
+- G9: Kupon / indirim kodu sistemi tamamlandı
+  - `Coupon` entity + `CouponType` enum (Percentage / FixedAmount)
+  - Admin CRUD: `GET/POST/PUT/DELETE /admin/coupons`
+  - Kullanıcı uçları: `POST /me/cart/coupon`, `DELETE /me/cart/coupon`
+  - `CartDTO` güncellendi: `couponCode`, `discountAmount`, `FinalTotal` (computed)
+  - Checkout'ta kupon tutarı düşülür; sipariş onaylanınca `UsageCount++`
+  - iyzico'ya gönderilen tutar indirim sonrası; basket item'lar orantılı dağıtılır
+  - Migration: `20260620000000_G9_Coupons`
 
 **2026-06-13**
 - iyzico sandbox entegrasyon hataları bulundu ve düzeltildi:
@@ -55,12 +65,11 @@ UI ekibi GÖREV I (iyzico frontend) ve GÖREV J (iptal akışı) bekliyor.
 ## Sıradaki (öncelik sırasıyla)
 
 1. **iyzico sandbox key al** → `.env`'e ekle → test et
-2. **G9 kupon / indirim kodu** — satış arttırıcı
-3. **G5 kargo takip kodu + müşteri bildirimi**
-4. **G7 sipariş listesi CSV export**
-5. **Deploy playbook** — 50-100 instance yönetimi
-6. **F2 `POST /me/cart/accept-prices`** — düşük öncelik
-7. **D1 test coverage**
+2. **G5 kargo takip kodu + müşteri bildirimi**
+3. **G7 sipariş listesi CSV export**
+4. **Deploy playbook** — 50-100 instance yönetimi
+5. **F2 `POST /me/cart/accept-prices`** — düşük öncelik
+6. **D1 test coverage**
 
 ---
 
@@ -68,6 +77,7 @@ UI ekibi GÖREV I (iyzico frontend) ve GÖREV J (iptal akışı) bekliyor.
 
 | Tarih | Görev | Notlar |
 |-------|-------|--------|
+| 2026-06-20 | G9 Kupon / indirim kodu | Coupon CRUD admin, sepete uygula/kaldır, checkout entegrasyonu |
 | 2026-06-12 | G17 Mağaza ayarları | StoreSettings, `GET /store-settings` public, `PUT /admin/settings` |
 | 2026-06-11 | G14 CSV toplu yükleme | `POST /admin/products/bulk`, satır bazlı hata raporu |
 | 2026-06-11 | G2 Favori listesi | WishlistItem, fiyat/stok düşünce bildirim e-postası |
