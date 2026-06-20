@@ -18,6 +18,7 @@ namespace Markadan.Infrastructure.Data
         public DbSet<RefreshToken> RefreshTokens => Set<RefreshToken>();
         public DbSet<WishlistItem> WishlistItems => Set<WishlistItem>();
         public DbSet<StoreSettings> StoreSettings => Set<StoreSettings>();
+        public DbSet<Coupon> Coupons => Set<Coupon>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

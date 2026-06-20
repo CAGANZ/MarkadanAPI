@@ -35,5 +35,11 @@ namespace Markadan.Domain.Models
         public string? IyzicoConversationId { get; set; }  // ödeme başlatınca set edilir
         public string? IyzicoPaymentId { get; set; }       // ödeme onaylanınca set edilir
         public DateTime? PaidAtUtc { get; set; }
+
+        // Kupon / İndirim
+        public int? CouponId { get; set; }
+        public Coupon? Coupon { get; set; }
+        public string? CouponCode { get; set; }     // sipariş geçmişi için snapshot
+        public decimal DiscountAmount { get; set; } // checkout anında hesaplanır
     }
 }

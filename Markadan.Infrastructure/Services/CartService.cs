@@ -152,6 +152,8 @@ public sealed class CartService : ICartService
             {
                 c.Id,
                 c.Status,
+                c.CouponCode,
+                c.DiscountAmount,
                 Items = c.Items.Select(i => new
                 {
                     i.Id,
@@ -187,7 +189,9 @@ public sealed class CartService : ICartService
             Status:          cart.Status.ToString(),
             Items:           items,
             Total:           items.Sum(i => i.Subtotal),
-            HasPriceChanges: items.Any(i => i.PriceChanged)
+            HasPriceChanges: items.Any(i => i.PriceChanged),
+            CouponCode:      cart.CouponCode,
+            DiscountAmount:  cart.DiscountAmount
         );
     }
 }

@@ -63,11 +63,15 @@ public sealed class CheckoutService : ICheckoutService
         cart.IyzicoConversationId = conversationId;
         await _db.SaveChangesAsync(ct);
 
-        var total = cart.Items.Sum(i => i.UnitPriceSnapshot * i.Quantity);
+        var grossTotal  = cart.Items.Sum(i => i.UnitPriceSnapshot * i.Quantity);
+        var finalTotal  = Math.Max(0, grossTotal - cart.DiscountAmount);
+
+        // Kupon indirimi basket item'larına orantılı dağıtılır (iyzico toplamla eşleşmeli)
+        var basketItems = BuildBasketItems(cart.Items.ToList(), grossTotal, finalTotal);
 
         var initiateReq = new PaymentInitiateRequest(
             ConversationId:     conversationId,
-            TotalAmount:        total,
+            TotalAmount:        finalTotal,
             UserId:             user.Id,
             UserName:           user.Name,
             UserSurname:        user.Surname,
@@ -77,12 +81,7 @@ public sealed class CheckoutService : ICheckoutService
             ShippingCity:       address.City,
             ShippingCountry:    address.Country,
             ShippingAddress:    $"{address.Street}, {address.State}",
-            Items:              cart.Items.Select(i => new PaymentBasketItem(
-                Id:       i.Id.ToString(),
-                Name:     i.Product.Title,
-                Category: "Ürün",
-                Price:    i.UnitPriceSnapshot * i.Quantity
-            )).ToList()
+            Items:              basketItems
         );
 
         var result = await _payment.InitiateAsync(initiateReq, ct);
@@ -131,6 +130,12 @@ public sealed class CheckoutService : ICheckoutService
             cart.IyzicoPaymentId   = confirmResult.PaymentId;
             cart.PaidAtUtc         = DateTime.UtcNow;
 
+            // Kupon kullanım sayısını artır
+            if (cart.CouponId.HasValue)
+                await _db.Coupons
+                    .Where(c => c.Id == cart.CouponId.Value)
+                    .ExecuteUpdateAsync(s => s.SetProperty(c => c.UsageCount, c => c.UsageCount + 1), ct);
+
             await _db.SaveChangesAsync(ct);
             await tx.CommitAsync(ct);
         });
@@ -173,6 +178,11 @@ public sealed class CheckoutService : ICheckoutService
             cart.ShippingState      = address.State;
             cart.ShippingPostalCode = address.PostalCode;
             cart.ShippingCountry    = address.Country;
+
+            if (cart.CouponId.HasValue)
+                await _db.Coupons
+                    .Where(c => c.Id == cart.CouponId.Value)
+                    .ExecuteUpdateAsync(s => s.SetProperty(c => c.UsageCount, c => c.UsageCount + 1), ct);
 
             await _db.SaveChangesAsync(ct);
             await tx.CommitAsync(ct);
@@ -275,6 +285,29 @@ public sealed class CheckoutService : ICheckoutService
                 ct);
         }
         catch (Exception ex) { _log.LogWarning(ex, "Stok uyarısı maili gönderilemedi"); }
+    }
+
+    // iyzico: basket item'ların toplamı TotalAmount ile eşleşmeli.
+    // Kupon indirimi orantılı dağıtılır; yuvarlama farkı son kaleme eklenir.
+    private static List<PaymentBasketItem> BuildBasketItems(
+        List<CartItem> items, decimal grossTotal, decimal finalTotal)
+    {
+        if (grossTotal == 0)
+            return items.Select(i => new PaymentBasketItem(
+                i.Id.ToString(), i.Product.Title, "Ürün", 0)).ToList();
+
+        var result = items.Select(i =>
+        {
+            var itemGross   = i.UnitPriceSnapshot * i.Quantity;
+            var itemFinal   = Math.Round(finalTotal * itemGross / grossTotal, 2);
+            return new PaymentBasketItem(i.Id.ToString(), i.Product.Title, "Ürün", itemFinal);
+        }).ToList();
+
+        var diff = finalTotal - result.Sum(x => x.Price);
+        if (diff != 0 && result.Count > 0)
+            result[^1] = result[^1] with { Price = result[^1].Price + diff };
+
+        return result;
     }
 
     private static string GenerateOrderNumber()

@@ -12,8 +12,13 @@ namespace Markadan.API.Controllers;
 public sealed class MeCartController : ControllerBase
 {
     private readonly ICartService _cart;
+    private readonly ICouponService _coupon;
 
-    public MeCartController(ICartService cart) => _cart = cart;
+    public MeCartController(ICartService cart, ICouponService coupon)
+    {
+        _cart   = cart;
+        _coupon = coupon;
+    }
 
     [HttpGet]
     public async Task<IActionResult> Get()
@@ -52,6 +57,22 @@ public sealed class MeCartController : ControllerBase
     {
         if (!TryGetUserId(out var userId)) return Unauthorized();
         var dto = await _cart.ClearAsync(userId, HttpContext.RequestAborted);
+        return Ok(dto);
+    }
+
+    [HttpPost("coupon")]
+    public async Task<IActionResult> ApplyCoupon([FromBody] ApplyCouponDTO input)
+    {
+        if (!TryGetUserId(out var userId)) return Unauthorized();
+        var dto = await _coupon.ApplyCouponAsync(userId, input.Code, HttpContext.RequestAborted);
+        return Ok(dto);
+    }
+
+    [HttpDelete("coupon")]
+    public async Task<IActionResult> RemoveCoupon()
+    {
+        if (!TryGetUserId(out var userId)) return Unauthorized();
+        var dto = await _coupon.RemoveCouponAsync(userId, HttpContext.RequestAborted);
         return Ok(dto);
     }
 

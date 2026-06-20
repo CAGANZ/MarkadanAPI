@@ -39,6 +39,15 @@ namespace Markadan.Infrastructure.Configurations
              .WithMany()
              .HasForeignKey(x => x.ShippingAddressId)
              .OnDelete(DeleteBehavior.SetNull);
+
+            b.Property(x => x.CouponCode).HasMaxLength(50);
+            b.Property(x => x.DiscountAmount).HasColumnType("decimal(18,2)");
+
+            // SetNull: kupon silinirse sipariş kaydı bozulmaz, snapshot CouponCode korunur
+            b.HasOne(x => x.Coupon)
+             .WithMany()
+             .HasForeignKey(x => x.CouponId)
+             .OnDelete(DeleteBehavior.SetNull);
         }
     }
 }
