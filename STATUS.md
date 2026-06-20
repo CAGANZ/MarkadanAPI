@@ -16,6 +16,14 @@ UI ekibi GÖREV I (iyzico frontend) ve GÖREV J (iptal akışı) bekliyor.
 ## Son oturumda ne yapıldı
 
 **2026-06-20**
+- G7: Sipariş listesi CSV export
+  - `GET /admin/orders/export?status=&dateFrom=&dateTo=` → CSV dosyası
+  - Türkçe karakter desteği (BOM), RFC 4180 escape, harici paket yok
+- G5: Kargo takip kodu + müşteri bildirimi
+  - `TrackingNumber` / `TrackingUrl` Cart'a eklendi
+  - `PUT /admin/orders/{id}/status` → status=Shipped iken tracking kabul eder
+  - Shipped olunca müşteriye otomatik e-posta
+  - Sipariş listesi sorguları PaymentPending'i artık filtreler (bug fix)
 - G9: Kupon / indirim kodu sistemi tamamlandı
   - `Coupon` entity + `CouponType` enum (Percentage / FixedAmount)
   - Admin CRUD: `GET/POST/PUT/DELETE /admin/coupons`
@@ -65,11 +73,9 @@ UI ekibi GÖREV I (iyzico frontend) ve GÖREV J (iptal akışı) bekliyor.
 ## Sıradaki (öncelik sırasıyla)
 
 1. **iyzico sandbox key al** → `.env`'e ekle → test et
-2. **G5 kargo takip kodu + müşteri bildirimi**
-3. **G7 sipariş listesi CSV export**
-4. **Deploy playbook** — 50-100 instance yönetimi
-5. **F2 `POST /me/cart/accept-prices`** — düşük öncelik
-6. **D1 test coverage**
+2. **Deploy playbook** — 50-100 instance yönetimi
+3. **F2 `POST /me/cart/accept-prices`** — düşük öncelik
+4. **D1 test coverage**
 
 ---
 
@@ -77,6 +83,8 @@ UI ekibi GÖREV I (iyzico frontend) ve GÖREV J (iptal akışı) bekliyor.
 
 | Tarih | Görev | Notlar |
 |-------|-------|--------|
+| 2026-06-20 | G7 CSV export | `GET /admin/orders/export`, filtreli, BOM, RFC 4180 |
+| 2026-06-20 | G5 Kargo takip | TrackingNumber/URL, Shipped e-postası, PaymentPending filtre bug fix |
 | 2026-06-20 | G9 Kupon / indirim kodu | Coupon CRUD admin, sepete uygula/kaldır, checkout entegrasyonu |
 | 2026-06-12 | G17 Mağaza ayarları | StoreSettings, `GET /store-settings` public, `PUT /admin/settings` |
 | 2026-06-11 | G14 CSV toplu yükleme | `POST /admin/products/bulk`, satır bazlı hata raporu |
