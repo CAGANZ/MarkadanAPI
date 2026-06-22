@@ -3,6 +3,7 @@
 public record AdminProductListDTO(
     int Id,
     string Title,
+    string Slug,
     decimal Price,
     string? ImageUrl,
     int BrandId,

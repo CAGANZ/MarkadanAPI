@@ -3,6 +3,8 @@
     public record ProductDetailDTO(
         int Id,
         string Title,
+        string Slug,
+        string? MetaDescription,
         decimal Price,
         string? ImageUrl,
         int BrandId,

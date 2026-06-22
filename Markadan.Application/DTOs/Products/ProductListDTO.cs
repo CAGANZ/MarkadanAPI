@@ -3,11 +3,12 @@
     public record ProductListDTO(
         int Id,
         string Title,
+        string Slug,
         decimal Price,
         string? ImageUrl,
-        int BrandId, 
+        int BrandId,
         string BrandName,
-        int CategoryId, 
+        int CategoryId,
         string CategoryName
     );
 }

@@ -14,7 +14,15 @@ namespace Markadan.Infrastructure.Configurations
             b.Property(x => x.Title)
              .IsRequired()
              .HasMaxLength(200)
-             .UseCollation("Turkish_100_CI_AI"); 
+             .UseCollation("Turkish_100_CI_AI");
+
+            b.Property(x => x.Slug)
+             .IsRequired()
+             .HasMaxLength(200)
+             .UseCollation("Turkish_100_CI_AI");
+
+            b.Property(x => x.MetaDescription)
+             .HasMaxLength(500);
 
             b.Property(x => x.Price)
              .HasColumnType("decimal(18,2)")
@@ -38,6 +46,7 @@ namespace Markadan.Infrastructure.Configurations
              .OnDelete(DeleteBehavior.Restrict);
 
             b.HasIndex(x => x.Title);
+            b.HasIndex(x => x.Slug).IsUnique();
             b.HasIndex(x => x.BrandId);
             b.HasIndex(x => x.CategoryId);
             b.HasIndex(x => x.Price);

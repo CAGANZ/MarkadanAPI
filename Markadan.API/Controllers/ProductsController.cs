@@ -47,4 +47,11 @@ public class ProductsController : ControllerBase
         var dto = await _products.GetDetailAsync(id, HttpContext.RequestAborted);
         return dto is null ? NotFound() : Ok(dto);
     }
+
+    [HttpGet("{slug}")]
+    public async Task<IActionResult> GetBySlug([FromRoute] string slug)
+    {
+        var dto = await _products.GetDetailBySlugAsync(slug, HttpContext.RequestAborted);
+        return dto is null ? NotFound() : Ok(dto);
+    }
 }

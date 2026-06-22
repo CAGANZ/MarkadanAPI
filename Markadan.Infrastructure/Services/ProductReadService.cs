@@ -55,6 +55,7 @@ public sealed class ProductReadService : IProductReadService
             .Select(p => new AdminProductListDTO(
                 p.Id,
                 p.Title,
+                p.Slug,
                 p.Price,
                 p.ImageUrl,
                 p.BrandId,
@@ -76,6 +77,8 @@ public sealed class ProductReadService : IProductReadService
             .Select(p => new AdminProductDetailDTO(
                 p.Id,
                 p.Title,
+                p.Slug,
+                p.MetaDescription,
                 p.Price,
                 p.ImageUrl,
                 p.BrandId,
@@ -98,6 +101,29 @@ public sealed class ProductReadService : IProductReadService
             .Select(p => new ProductDetailDTO(
                 p.Id,
                 p.Title,
+                p.Slug,
+                p.MetaDescription,
+                p.Price,
+                p.ImageUrl,
+                p.BrandId,
+                p.Brand!.Name,
+                p.CategoryId,
+                p.Category!.Name,
+                p.Description
+            ))
+            .SingleOrDefaultAsync(ct);
+    }
+
+    public async Task<ProductDetailDTO?> GetDetailBySlugAsync(string slug, CancellationToken ct = default)
+    {
+        return await _db.Products
+            .AsNoTracking()
+            .Where(p => p.Slug == slug)
+            .Select(p => new ProductDetailDTO(
+                p.Id,
+                p.Title,
+                p.Slug,
+                p.MetaDescription,
                 p.Price,
                 p.ImageUrl,
                 p.BrandId,
@@ -148,6 +174,7 @@ public sealed class ProductReadService : IProductReadService
             .Select(p => new ProductListDTO(
                 p.Id,
                 p.Title,
+                p.Slug,
                 p.Price,
                 p.ImageUrl,
                 p.BrandId,

@@ -1,4 +1,6 @@
-﻿using Markadan.Application.Abstractions;
+﻿using System.Globalization;
+using System.Text;
+using Markadan.Application.Abstractions;
 using Markadan.Application.DTOs.Products;
 using Markadan.Domain.Models;
 using Markadan.Infrastructure.Data;
@@ -28,9 +30,16 @@ namespace Markadan.Infrastructure.Services
             if (!await _db.Categories.AnyAsync(c => c.Id == dto.CategoryId, ct))
                 throw new KeyNotFoundException($"Category {dto.CategoryId} not found.");
 
+            var baseSlug = string.IsNullOrWhiteSpace(dto.Slug)
+                ? GenerateSlug(dto.Title)
+                : GenerateSlug(dto.Slug);
+            var slug = await EnsureUniqueSlugAsync(baseSlug, excludeId: null, ct);
+
             var entity = new Product
             {
                 Title = dto.Title,
+                Slug = slug,
+                MetaDescription = dto.MetaDescription,
                 Description = dto.Description,
                 Price = dto.Price,
                 Stock = dto.Stock,
@@ -48,6 +57,8 @@ namespace Markadan.Infrastructure.Services
             .Select(p => new ProductDetailDTO(
                 p.Id,
                 p.Title,
+                p.Slug,
+                p.MetaDescription,
                 p.Price,
                 p.ImageUrl,
                 p.BrandId,
@@ -73,6 +84,19 @@ namespace Markadan.Infrastructure.Services
                 if (t.Length == 0) throw new ArgumentException("Title cannot be empty.");
                 entity.Title = t;
             }
+
+            if (dto.Slug is not null)
+            {
+                var baseSlug = GenerateSlug(dto.Slug);
+                entity.Slug = await EnsureUniqueSlugAsync(baseSlug, excludeId: entity.Id, ct);
+            }
+            else if (dto.Title is not null)
+            {
+                // Title değişince slug otomatik güncellenmez — admin açıkça slug göndermeli
+            }
+
+            if (dto.MetaDescription is not null)
+                entity.MetaDescription = string.IsNullOrWhiteSpace(dto.MetaDescription) ? null : dto.MetaDescription.Trim();
 
             if (dto.Description is not null)
                 entity.Description = string.IsNullOrWhiteSpace(dto.Description) ? null : dto.Description.Trim();
@@ -115,6 +139,8 @@ namespace Markadan.Infrastructure.Services
                 .Select(p => new ProductDetailDTO(
                     p.Id,
                     p.Title,
+                    p.Slug,
+                    p.MetaDescription,
                     p.Price,
                     p.ImageUrl,
                     p.BrandId,
@@ -140,6 +166,11 @@ namespace Markadan.Infrastructure.Services
             // Tüm brand/kategori isim→id eşlemesini tek sorguda çek
             var brands     = await _db.Brands.AsNoTracking().ToDictionaryAsync(b => b.Name.ToUpperInvariant(), b => b.Id, ct);
             var categories = await _db.Categories.AsNoTracking().ToDictionaryAsync(c => c.Name.ToUpperInvariant(), c => c.Id, ct);
+
+            // Mevcut slug'ları çek — batch içinde + DB'deki çakışmaları önlemek için
+            var existingSlugs = new HashSet<string>(
+                await _db.Products.AsNoTracking().Select(p => p.Slug).ToListAsync(ct),
+                StringComparer.OrdinalIgnoreCase);
 
             var errors    = new List<BulkUploadErrorDTO>();
             var toInsert  = new List<Product>();
@@ -171,7 +202,7 @@ namespace Markadan.Infrastructure.Services
                 var catName     = cols[6].Trim();
 
                 if (string.IsNullOrEmpty(title))          { errors.Add(new(rowNumber, "Title boş olamaz")); continue; }
-                if (!decimal.TryParse(priceStr, System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, out var price) || price < 0)
+                if (!decimal.TryParse(priceStr, NumberStyles.Any, CultureInfo.InvariantCulture, out var price) || price < 0)
                                                            { errors.Add(new(rowNumber, $"Geçersiz fiyat: {priceStr}")); continue; }
                 if (!int.TryParse(stockStr, out var stock) || stock < 0)
                                                            { errors.Add(new(rowNumber, $"Geçersiz stok: {stockStr}")); continue; }
@@ -180,9 +211,16 @@ namespace Markadan.Infrastructure.Services
                 if (!categories.TryGetValue(catName.ToUpperInvariant(), out var categoryId))
                                                            { errors.Add(new(rowNumber, $"Kategori bulunamadı: {catName}")); continue; }
 
+                var baseSlug = GenerateSlug(title);
+                var slug = baseSlug;
+                int suffix = 2;
+                while (existingSlugs.Contains(slug)) slug = $"{baseSlug}-{suffix++}";
+                existingSlugs.Add(slug);
+
                 toInsert.Add(new Product
                 {
                     Title       = title,
+                    Slug        = slug,
                     Description = string.IsNullOrWhiteSpace(description) ? null : description,
                     Price       = price,
                     Stock       = stock,
@@ -199,6 +237,46 @@ namespace Markadan.Infrastructure.Services
             }
 
             return new BulkUploadResultDTO(toInsert.Count, errors.Count, errors);
+        }
+
+        private static string GenerateSlug(string input)
+        {
+            // Türkçe karakter dönüşümü
+            var s = input
+                .Replace('ı', 'i').Replace('İ', 'i')
+                .Replace('ğ', 'g').Replace('Ğ', 'g')
+                .Replace('ü', 'u').Replace('Ü', 'u')
+                .Replace('ş', 's').Replace('Ş', 's')
+                .Replace('ö', 'o').Replace('Ö', 'o')
+                .Replace('ç', 'c').Replace('Ç', 'c');
+
+            var normalized = s.Normalize(NormalizationForm.FormD);
+            var sb = new StringBuilder(normalized.Length);
+            foreach (char c in normalized)
+            {
+                if (CharUnicodeInfo.GetUnicodeCategory(c) == UnicodeCategory.NonSpacingMark) continue;
+                char lower = char.ToLowerInvariant(c);
+                if (char.IsLetterOrDigit(lower))
+                    sb.Append(lower);
+                else if (sb.Length > 0 && sb[sb.Length - 1] != '-')
+                    sb.Append('-');
+            }
+            while (sb.Length > 0 && sb[sb.Length - 1] == '-') sb.Length--;
+            var result = sb.Length > 0 ? sb.ToString() : "urun";
+            return result.Length > 200 ? result[..200] : result;
+        }
+
+        private async Task<string> EnsureUniqueSlugAsync(string baseSlug, int? excludeId, CancellationToken ct)
+        {
+            var slug = baseSlug;
+            int suffix = 2;
+            while (true)
+            {
+                var exists = await _db.Products.AnyAsync(
+                    p => p.Slug == slug && (excludeId == null || p.Id != excludeId), ct);
+                if (!exists) return slug;
+                slug = $"{baseSlug}-{suffix++}";
+            }
         }
 
         private async Task NotifyWishlistUsersAsync(Product product, bool priceDropped, bool stockRestored, CancellationToken ct)

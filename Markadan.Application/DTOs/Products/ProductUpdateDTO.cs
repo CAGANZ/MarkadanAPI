@@ -10,6 +10,8 @@ namespace Markadan.Application.DTOs.Products
         [Range(0, int.MaxValue)] int? Stock = null,
         string? ImageUrl = null,
         [Range(1, int.MaxValue)] int? BrandId = null,
-        [Range(1, int.MaxValue)] int? CategoryId = null
+        [Range(1, int.MaxValue)] int? CategoryId = null,
+        [MaxLength(200)] string? Slug = null,
+        [MaxLength(500)] string? MetaDescription = null
     );
 }

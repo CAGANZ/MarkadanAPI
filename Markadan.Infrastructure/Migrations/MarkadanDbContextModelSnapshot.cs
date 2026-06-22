@@ -450,8 +450,18 @@ namespace Markadan.Infrastructure.Migrations
                         .HasMaxLength(1024)
                         .HasColumnType("nvarchar(1024)");
 
+                    b.Property<string>("MetaDescription")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
                     b.Property<decimal>("Price")
                         .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("Slug")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)")
+                        .UseCollation("Turkish_100_CI_AI");
 
                     b.Property<int>("Stock")
                         .HasColumnType("int");
@@ -469,6 +479,9 @@ namespace Markadan.Infrastructure.Migrations
                     b.HasIndex("CategoryId");
 
                     b.HasIndex("Price");
+
+                    b.HasIndex("Slug")
+                        .IsUnique();
 
                     b.HasIndex("Title");
 
