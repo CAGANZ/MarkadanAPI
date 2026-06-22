@@ -540,6 +540,37 @@ namespace Markadan.Infrastructure.Migrations
                     b.ToTable("WishlistItems", (string)null);
                 });
 
+            modelBuilder.Entity("Markadan.Domain.Models.StockNotification", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<string>("Name")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProductId", "Email")
+                        .IsUnique();
+
+                    b.ToTable("StockNotifications", (string)null);
+                });
+
             modelBuilder.Entity("Markadan.Domain.Models.RefreshToken", b =>
                 {
                     b.Property<int>("Id")
@@ -773,6 +804,17 @@ namespace Markadan.Infrastructure.Migrations
                         .IsRequired();
 
                     b.Navigation("AppUser");
+                    b.Navigation("Product");
+                });
+
+            modelBuilder.Entity("Markadan.Domain.Models.StockNotification", b =>
+                {
+                    b.HasOne("Markadan.Domain.Models.Product", "Product")
+                        .WithMany()
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("Product");
                 });
 

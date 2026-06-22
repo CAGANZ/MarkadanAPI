@@ -1,4 +1,5 @@
 ﻿using Markadan.Application.Abstractions;
+using Markadan.Application.DTOs.Products;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
 
@@ -10,10 +11,13 @@ namespace Markadan.API.Controllers;
 public class ProductsController : ControllerBase
 {
     private readonly IProductReadService _products;
-    public ProductsController(IProductReadService products)
+    private readonly IProductCommandService _productCmd;
+
+    public ProductsController(IProductReadService products, IProductCommandService productCmd)
     {
         ArgumentNullException.ThrowIfNull(products);
-        _products = products;
+        _products   = products;
+        _productCmd = productCmd;
     }
 
     [HttpGet]
@@ -53,5 +57,19 @@ public class ProductsController : ControllerBase
     {
         var dto = await _products.GetDetailBySlugAsync(slug, HttpContext.RequestAborted);
         return dto is null ? NotFound() : Ok(dto);
+    }
+
+    [HttpPost("{id:int}/notify-stock")]
+    public async Task<IActionResult> SubscribeStockNotification([FromRoute] int id, [FromBody] StockNotifyRequestDTO input)
+    {
+        try
+        {
+            await _productCmd.SubscribeStockNotificationAsync(id, input.Email, input.Name, HttpContext.RequestAborted);
+            return Ok(new { message = "Stok geldiğinde e-posta ile bildirileceksiniz." });
+        }
+        catch (KeyNotFoundException)
+        {
+            return NotFound();
+        }
     }
 }

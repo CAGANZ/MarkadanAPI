@@ -133,6 +133,9 @@ namespace Markadan.Infrastructure.Services
             if (priceDropped || stockRestored)
                 _ = NotifyWishlistUsersAsync(entity, priceDropped, stockRestored, ct);
 
+            if (stockRestored)
+                _ = NotifyAndClearStockSubscribersAsync(entity, ct);
+
             return await _db.Products
                 .AsNoTracking()
                 .Where(p => p.Id == entity.Id)
@@ -277,6 +280,52 @@ namespace Markadan.Infrastructure.Services
                 if (!exists) return slug;
                 slug = $"{baseSlug}-{suffix++}";
             }
+        }
+
+        public async Task SubscribeStockNotificationAsync(int productId, string email, string? name, CancellationToken ct = default)
+        {
+            bool productExists = await _db.Products.AnyAsync(p => p.Id == productId, ct);
+            if (!productExists) throw new KeyNotFoundException($"Product {productId} not found.");
+
+            bool alreadySubscribed = await _db.StockNotifications
+                .AnyAsync(n => n.ProductId == productId && n.Email == email, ct);
+            if (alreadySubscribed) return;
+
+            _db.StockNotifications.Add(new Domain.Models.StockNotification
+            {
+                ProductId = productId,
+                Email     = email,
+                Name      = name,
+            });
+            await _db.SaveChangesAsync(ct);
+        }
+
+        private async Task NotifyAndClearStockSubscribersAsync(Product product, CancellationToken ct)
+        {
+            var subscribers = await _db.StockNotifications
+                .Where(n => n.ProductId == product.Id)
+                .ToListAsync(ct);
+
+            if (subscribers.Count == 0) return;
+
+            foreach (var sub in subscribers)
+            {
+                try
+                {
+                    string displayName = sub.Name ?? sub.Email;
+                    string body = $"<p>Merhaba {displayName},</p>" +
+                                  $"<p>Stok bildirimi almak istediğiniz <strong>{product.Title}</strong> ürünü tekrar stokta!</p>" +
+                                  $"<p>Hemen sipariş vermek için mağazamızı ziyaret edin.</p>";
+                    await _email.SendAsync(sub.Email, displayName, $"Stok geldi: {product.Title}", body, ct);
+                }
+                catch (Exception ex)
+                {
+                    _log.LogWarning(ex, "Stok bildirimi gönderilemedi: {Email}", sub.Email);
+                }
+            }
+
+            _db.StockNotifications.RemoveRange(subscribers);
+            await _db.SaveChangesAsync(ct);
         }
 
         private async Task NotifyWishlistUsersAsync(Product product, bool priceDropped, bool stockRestored, CancellationToken ct)

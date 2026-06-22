@@ -7,16 +7,23 @@
 
 ## Şu an ne durumda
 
-Backend ayakta (Docker, port 8080). **11 migration** uygulanmış, DB sağlıklı.
+Backend ayakta (Docker, port 8080). **13 migration** uygulanmış, DB sağlıklı.
 iyzico entegrasyonu tamamlandı — sandbox hesabında "Checkout Form" aktif edilmesi bekliyor (Çağan'ın yapacağı).
-Bu oturumda G9 (kupon), G5 (kargo takip), G7 (CSV export) tamamlandı.
-UI ekibi GÖREV K–O için hazır; DURUM-RAPORU.md güncellenmiş durumda.
+Bu oturumda G3 (stok bildirimi) tamamlandı.
+UI ekibi GÖREV K–Q için hazır; DURUM-RAPORU.md güncellenmiş durumda.
 
 ---
 
 ## Son oturumda ne yapıldı
 
-**2026-06-22**
+**2026-06-22 (devam)**
+- G3: Stok gelince haber ver
+  - `StockNotification` entity + `StockNotifications` tablosu eklendi
+  - `POST /products/{id}/notify-stock` — giriş gerektirmez, email + opsiyonel isim
+  - Aynı email ile tekrar kayıt idempotent (hata vermez)
+  - Admin ürün stokunu 0→pozitif güncellediğinde tüm abonelere mail → kayıt silinir
+  - Migration: `20260622010000_G3_StockNotifications`
+  - Frontend görevi: DURUM-RAPORU.md GÖREV Q
 - G11: Ürün SEO slug + meta description
   - `Product`'a `Slug` (unique, Turkish collation) + `MetaDescription` alanları eklendi
   - `GET /products/{slug}` route'u eklendi (`GET /products/{id:int}` çalışmaya devam eder)
@@ -85,8 +92,8 @@ UI ekibi GÖREV K–O için hazır; DURUM-RAPORU.md güncellenmiş durumda.
 ## Sıradaki (öncelik sırasıyla)
 
 1. **iyzico sandbox key al** → `.env`'e ekle → test et
-2. **G3 Stok gelince haber ver** — `StockNotification` entity + stok artışında mail
-3. **G4 Tekrar sipariş ver** — `POST /me/orders/{id}/reorder`
+2. **G4 Tekrar sipariş ver** — `POST /me/orders/{id}/reorder`
+3. **Deploy playbook** — 50-100 instance yönetimi
 4. **Deploy playbook** — 50-100 instance yönetimi
 5. **D1 test coverage**
 
@@ -96,6 +103,7 @@ UI ekibi GÖREV K–O için hazır; DURUM-RAPORU.md güncellenmiş durumda.
 
 | Tarih | Görev | Notlar |
 |-------|-------|--------|
+| 2026-06-22 | G3 Stok bildirimi | `POST /products/{id}/notify-stock`, mail on restore, auto-clear |
 | 2026-06-22 | G11 SEO slug + meta | Slug, MetaDescription, `GET /products/{slug}`, auto-generate |
 | 2026-06-20 | G7 CSV export | `GET /admin/orders/export`, filtreli, BOM, RFC 4180 |
 | 2026-06-20 | G5 Kargo takip | TrackingNumber/URL, Shipped e-postası, PaymentPending filtre bug fix |
@@ -129,4 +137,4 @@ UI ekibi GÖREV K–O için hazır; DURUM-RAPORU.md güncellenmiş durumda.
 - `dotnet` CLI WSL'de yok — migration'lar elle yazılır
 - Frontend `api()` wrapper'ı FormData ile otomatik `Content-Type` ayarlamıyor olabilir —
   CSV yükleme görevinde frontend ekibi doğrudan fetch kullanabilir
-- Migration geçmişi: `__EFMigrationsHistory` tablosunda **11 kayıt** var (son: `20260622000000_G11_ProductSlug`)
+- Migration geçmişi: `__EFMigrationsHistory` tablosunda **13 kayıt** var (son: `20260622010000_G3_StockNotifications`)
