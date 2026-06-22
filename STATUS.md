@@ -1,13 +1,13 @@
 # STATUS — Markadan Şu An Neredeyiz
 
-**Son güncelleme:** 2026-06-20
+**Son güncelleme:** 2026-06-22
 **Güncelleyen:** Claude (Çağan ile oturum)
 
 ---
 
 ## Şu an ne durumda
 
-Backend ayakta (Docker, port 8080). **10 migration** uygulanmış, DB sağlıklı.
+Backend ayakta (Docker, port 8080). **11 migration** uygulanmış, DB sağlıklı.
 iyzico entegrasyonu tamamlandı — sandbox hesabında "Checkout Form" aktif edilmesi bekliyor (Çağan'ın yapacağı).
 Bu oturumda G9 (kupon), G5 (kargo takip), G7 (CSV export) tamamlandı.
 UI ekibi GÖREV K–O için hazır; DURUM-RAPORU.md güncellenmiş durumda.
@@ -15,6 +15,17 @@ UI ekibi GÖREV K–O için hazır; DURUM-RAPORU.md güncellenmiş durumda.
 ---
 
 ## Son oturumda ne yapıldı
+
+**2026-06-22**
+- G11: Ürün SEO slug + meta description
+  - `Product`'a `Slug` (unique, Turkish collation) + `MetaDescription` alanları eklendi
+  - `GET /products/{slug}` route'u eklendi (`GET /products/{id:int}` çalışmaya devam eder)
+  - Create/Update'te başlıktan otomatik slug üretilir (Türkçe char dönüşümü + benzersizlik)
+  - `Slug?` / `MetaDescription?` admin form alanları eklendi (isteğe bağlı)
+  - Tüm DTO'lara (`ProductDetailDTO`, `ProductListDTO`, admin DTOları) slug eklendi
+  - BulkUpload'da her satır için de otomatik slug üretilir
+  - Migration: `20260622000000_G11_ProductSlug` — mevcut ürünlere geçici slug = CAST(Id)
+  - Frontend görevi: DURUM-RAPORU.md GÖREV P
 
 **2026-06-20**
 - G7: Sipariş listesi CSV export
@@ -74,9 +85,10 @@ UI ekibi GÖREV K–O için hazır; DURUM-RAPORU.md güncellenmiş durumda.
 ## Sıradaki (öncelik sırasıyla)
 
 1. **iyzico sandbox key al** → `.env`'e ekle → test et
-2. **Deploy playbook** — 50-100 instance yönetimi
-3. **F2 `POST /me/cart/accept-prices`** — düşük öncelik
-4. **D1 test coverage**
+2. **G3 Stok gelince haber ver** — `StockNotification` entity + stok artışında mail
+3. **G4 Tekrar sipariş ver** — `POST /me/orders/{id}/reorder`
+4. **Deploy playbook** — 50-100 instance yönetimi
+5. **D1 test coverage**
 
 ---
 
@@ -84,6 +96,7 @@ UI ekibi GÖREV K–O için hazır; DURUM-RAPORU.md güncellenmiş durumda.
 
 | Tarih | Görev | Notlar |
 |-------|-------|--------|
+| 2026-06-22 | G11 SEO slug + meta | Slug, MetaDescription, `GET /products/{slug}`, auto-generate |
 | 2026-06-20 | G7 CSV export | `GET /admin/orders/export`, filtreli, BOM, RFC 4180 |
 | 2026-06-20 | G5 Kargo takip | TrackingNumber/URL, Shipped e-postası, PaymentPending filtre bug fix |
 | 2026-06-20 | G9 Kupon / indirim kodu | Coupon CRUD admin, sepete uygula/kaldır, checkout entegrasyonu |
@@ -116,4 +129,4 @@ UI ekibi GÖREV K–O için hazır; DURUM-RAPORU.md güncellenmiş durumda.
 - `dotnet` CLI WSL'de yok — migration'lar elle yazılır
 - Frontend `api()` wrapper'ı FormData ile otomatik `Content-Type` ayarlamıyor olabilir —
   CSV yükleme görevinde frontend ekibi doğrudan fetch kullanabilir
-- Migration geçmişi: `__EFMigrationsHistory` tablosunda **10 kayıt** var (son: `20260620010000_G5_TrackingFields`)
+- Migration geçmişi: `__EFMigrationsHistory` tablosunda **11 kayıt** var (son: `20260622000000_G11_ProductSlug`)
