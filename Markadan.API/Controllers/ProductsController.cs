@@ -59,6 +59,14 @@ public class ProductsController : ControllerBase
         return dto is null ? NotFound() : Ok(dto);
     }
 
+    [HttpGet("{id:int}/related")]
+    public async Task<IActionResult> GetRelated([FromRoute] int id, [FromQuery] int limit = 6)
+    {
+        if (limit is < 1 or > 20) limit = 6;
+        var items = await _products.GetRelatedAsync(id, limit, HttpContext.RequestAborted);
+        return Ok(items);
+    }
+
     [HttpPost("{id:int}/notify-stock")]
     public async Task<IActionResult> SubscribeStockNotification([FromRoute] int id, [FromBody] StockNotifyRequestDTO input)
     {

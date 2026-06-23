@@ -15,6 +15,8 @@ namespace Markadan.Application.Abstractions
 
         Task<ProductDetailDTO?> GetDetailBySlugAsync(string slug, CancellationToken ct = default);
 
+        Task<List<ProductListDTO>> GetRelatedAsync(int productId, int limit = 6, CancellationToken ct = default);
+
 
         Task<PagedResult<ProductListDTO>> ListAsync(
         int? categoryId,

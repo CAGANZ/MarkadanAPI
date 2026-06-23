@@ -186,4 +186,28 @@ public sealed class ProductReadService : IProductReadService
 
         return new PagedResult<ProductListDTO>(total, page, pageSize, items);
     }
+
+    public async Task<List<ProductListDTO>> GetRelatedAsync(int productId, int limit = 6, CancellationToken ct = default)
+    {
+        var product = await _db.Products
+            .AsNoTracking()
+            .Where(p => p.Id == productId)
+            .Select(p => new { p.CategoryId, p.Price })
+            .FirstOrDefaultAsync(ct);
+
+        if (product is null) return [];
+
+        // Aynı kategoriden, stokta olan, fiyata göre en yakın ürünler
+        return await _db.Products
+            .AsNoTracking()
+            .Where(p => p.CategoryId == product.CategoryId
+                     && p.Id != productId
+                     && p.Stock > 0)
+            .OrderBy(p => Math.Abs((double)(p.Price - product.Price)))
+            .Take(limit)
+            .Select(p => new ProductListDTO(
+                p.Id, p.Title, p.Slug, p.Price, p.ImageUrl,
+                p.BrandId, p.Brand!.Name, p.CategoryId, p.Category!.Name))
+            .ToListAsync(ct);
+    }
 }
