@@ -45,6 +45,7 @@ services:
       Iyzico__SecretKey:        ${Iyzico__SecretKey}
       Iyzico__BaseUrl:          ${Iyzico__BaseUrl}
       Iyzico__CallbackUrl:      ${Iyzico__CallbackUrl}
+      Iyzico__MockSuccess:      ${Iyzico__MockSuccess:-false}
     volumes:
       - dpkeys:/app/dp-keys
     ports:

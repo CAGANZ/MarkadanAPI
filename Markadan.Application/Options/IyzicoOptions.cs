@@ -6,4 +6,5 @@ public class IyzicoOptions
     public string SecretKey { get; set; } = "";
     public string BaseUrl { get; set; } = "https://sandbox-api.iyzipay.com";
     public string CallbackUrl { get; set; } = "";
+    public bool MockSuccess { get; set; } = false;
 }

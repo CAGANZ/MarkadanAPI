@@ -33,6 +33,13 @@ public sealed class IyzicoPaymentService : IPaymentService
 
     public async Task<PaymentInitiateResult> InitiateAsync(PaymentInitiateRequest req, CancellationToken ct = default)
     {
+        if (_opts.MockSuccess)
+        {
+            _log.LogWarning("iyzico MOCK modu aktif — gerçek ödeme yapılmıyor.");
+            var mockToken = $"mock-token-{req.ConversationId}-{Guid.NewGuid():N}";
+            return new PaymentInitiateResult(true, mockToken, "<p>MOCK ÖDEME — gerçek kart bilgisi girme</p>", null);
+        }
+
         var body = new
         {
             locale              = "tr",
@@ -103,6 +110,14 @@ public sealed class IyzicoPaymentService : IPaymentService
 
     public async Task<PaymentConfirmResult> ConfirmAsync(string token, CancellationToken ct = default)
     {
+        if (_opts.MockSuccess && token.StartsWith("mock-token-cart-"))
+        {
+            // "mock-token-cart-{cartId}-{guid}" → conversationId = "cart-{cartId}"
+            var parts = token.Split('-');
+            var conversationId = $"cart-{parts[3]}";
+            return new PaymentConfirmResult(true, $"mock-payment-{Guid.NewGuid():N}", conversationId, null);
+        }
+
         var body = new { locale = "tr", token };
 
         try
