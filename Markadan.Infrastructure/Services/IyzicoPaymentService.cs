@@ -171,14 +171,14 @@ public sealed class IyzicoPaymentService : IPaymentService
 
     private async Task<T?> PostAsync<T>(string path, object body, CancellationToken ct)
     {
-        var json           = JsonSerializer.Serialize(body, JsonOpts);
-        var randomString   = Guid.NewGuid().ToString("N")[..8];
-        var authorization  = BuildAuthorization(randomString, json);
+        var json         = JsonSerializer.Serialize(body, JsonOpts);
+        var randomKey    = Guid.NewGuid().ToString("N")[..8];
+        var authorization = BuildAuthorizationV2(randomKey, path, json);
 
-        using var request  = new HttpRequestMessage(HttpMethod.Post, _opts.BaseUrl.TrimEnd('/') + path);
-        request.Content    = new StringContent(json, Encoding.UTF8, "application/json");
-        request.Headers.Authorization = new AuthenticationHeaderValue("IYZWS", authorization);
-        request.Headers.Add("x-iyzi-rnd", randomString);
+        using var request = new HttpRequestMessage(HttpMethod.Post, _opts.BaseUrl.TrimEnd('/') + path);
+        request.Content   = new StringContent(json, Encoding.UTF8, "application/json");
+        request.Headers.Authorization = new AuthenticationHeaderValue("IYZWSv2", authorization);
+        request.Headers.Add("x-iyzi-rnd", randomKey);
         request.Headers.Add("x-iyzi-client-version", "iyzipay-dotnet-custom");
 
         using var response = await _http.SendAsync(request, ct);
@@ -187,29 +187,18 @@ public sealed class IyzicoPaymentService : IPaymentService
         return JsonSerializer.Deserialize<T>(responseBody, JsonOpts);
     }
 
-    private string BuildAuthorization(string randomString, string requestBody)
+    private string BuildAuthorizationV2(string randomKey, string path, string requestBody)
     {
-        // iyzico imza: Base64(SHA256(apiKey + secretKey + randomString + PKIString))
-        // PKIString = JSON body'nin [key=value,...] formatına dönüştürülmüş hali (anahtarlar alfabetik)
-        using var doc = JsonDocument.Parse(requestBody);
-        var pki  = ToPKIString(doc.RootElement);
-        var data = _opts.ApiKey + _opts.SecretKey + randomString + pki;
-        var hash = SHA256.HashData(Encoding.UTF8.GetBytes(data));
-        return $"{_opts.ApiKey}:{Convert.ToBase64String(hash)}";
+        // IYZWSv2: HMACSHA256(randomKey + path + body, secretKey) → base64
+        var data      = randomKey + path + requestBody;
+        var keyBytes  = Encoding.UTF8.GetBytes(_opts.SecretKey);
+        var dataBytes = Encoding.UTF8.GetBytes(data);
+        using var hmac = new HMACSHA256(keyBytes);
+        var signature  = Convert.ToBase64String(hmac.ComputeHash(dataBytes));
+
+        var raw = $"apiKey:{_opts.ApiKey}&randomKey:{randomKey}&signature:{signature}";
+        return Convert.ToBase64String(Encoding.UTF8.GetBytes(raw));
     }
-
-    private static string ToPKIString(JsonElement el) => el.ValueKind switch
-    {
-        JsonValueKind.Object => "[" + string.Join(",",
-            el.EnumerateObject().OrderBy(p => p.Name, StringComparer.Ordinal)
-              .Select(p => $"{p.Name}={ToPKIString(p.Value)}")) + "]",
-
-        JsonValueKind.Array  => "[" + string.Join(", ",
-            el.EnumerateArray().Select(ToPKIString)) + "]",
-
-        JsonValueKind.String => el.GetString() ?? "",
-        _                    => el.GetRawText()
-    };
 
     private static string FormatPrice(decimal price) =>
         price.ToString("F2", System.Globalization.CultureInfo.InvariantCulture);
