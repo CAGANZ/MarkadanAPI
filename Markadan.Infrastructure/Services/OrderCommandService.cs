@@ -1,6 +1,8 @@
 using Markadan.Application.Abstractions;
+using Markadan.Application.DTOs.Carts;
 using Markadan.Application.DTOs.Orders;
 using Markadan.Application.Exceptions;
+using Markadan.Domain.Models;
 using Markadan.Domain.Models.Enums;
 using Markadan.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
@@ -12,17 +14,20 @@ public sealed class OrderCommandService : IOrderCommandService
 {
     private readonly MarkadanDbContext _db;
     private readonly IOrderReadService _orderRead;
+    private readonly ICartService _cart;
     private readonly IPaymentService _payment;
     private readonly ILogger<OrderCommandService> _log;
 
     public OrderCommandService(
         MarkadanDbContext db,
         IOrderReadService orderRead,
+        ICartService cart,
         IPaymentService payment,
         ILogger<OrderCommandService> log)
     {
         _db        = db;
         _orderRead = orderRead;
+        _cart      = cart;
         _payment   = payment;
         _log       = log;
     }
@@ -71,6 +76,70 @@ public sealed class OrderCommandService : IOrderCommandService
         await _db.SaveChangesAsync(ct);
 
         return await _orderRead.GetOrderAsync(userId, orderId, ct);
+    }
+
+    public async Task<CartDTO> ReorderAsync(int userId, int orderId, CancellationToken ct = default)
+    {
+        var order = await _db.Carts
+            .AsNoTracking()
+            .Include(c => c.Items)
+            .Where(c => c.Id == orderId && c.AppUserId == userId && c.Status != CartStatus.Active)
+            .FirstOrDefaultAsync(ct)
+            ?? throw new KeyNotFoundException("Sipariş bulunamadı.");
+
+        // Aktif sepeti bul veya oluştur
+        var cart = await _db.Carts
+            .AsTracking()
+            .Where(c => c.AppUserId == userId && c.Status == CartStatus.Active)
+            .FirstOrDefaultAsync(ct);
+
+        if (cart is null)
+        {
+            cart = new Cart { AppUserId = userId, AppUser = default!, Status = CartStatus.Active, CreatedAt = DateTime.UtcNow };
+            _db.Carts.Add(cart);
+            await _db.SaveChangesAsync(ct);
+        }
+
+        // Siparişteki her ürünü güncel fiyat ve stok kontrolüyle sepete ekle
+        var productIds = order.Items.Select(i => i.ProductId).ToList();
+        var products = await _db.Products
+            .Where(p => productIds.Contains(p.Id))
+            .ToDictionaryAsync(p => p.Id, ct);
+
+        var skipped = new List<string>();
+
+        foreach (var item in order.Items)
+        {
+            if (!products.TryGetValue(item.ProductId, out var product) || product.Stock <= 0)
+            {
+                skipped.Add(product?.Title ?? $"#{item.ProductId}");
+                continue;
+            }
+
+            var existing = await _db.CartItems
+                .Where(i => i.CartId == cart.Id && i.ProductId == item.ProductId)
+                .FirstOrDefaultAsync(ct);
+
+            if (existing is not null)
+                existing.Quantity += item.Quantity;
+            else
+                _db.CartItems.Add(new CartItem
+                {
+                    CartId            = cart.Id,
+                    ProductId         = item.ProductId,
+                    Quantity          = item.Quantity,
+                    UnitPriceSnapshot = product.Price
+                });
+        }
+
+        cart.UpdatedAt = DateTime.UtcNow;
+        await _db.SaveChangesAsync(ct);
+
+        // Stokta olmayan ürünler varsa mesajı logla (isteğe bağlı frontend bildirimi için header)
+        if (skipped.Count > 0)
+            _log.LogInformation("Reorder: stokta olmayan ürünler atlandı: {Items}", string.Join(", ", skipped));
+
+        return await _cart.GetActiveCartAsync(userId, ct);
     }
 
     private async Task RefundStockAsync(Markadan.Domain.Models.Cart cart, CancellationToken ct)

@@ -43,6 +43,14 @@ public sealed class MeOrdersController : ControllerBase
         return Ok(order);
     }
 
+    [HttpPost("{id:int}/reorder")]
+    public async Task<IActionResult> Reorder(int id)
+    {
+        if (!TryGetUserId(out var userId)) return Unauthorized();
+        var cart = await _orderCommand.ReorderAsync(userId, id, HttpContext.RequestAborted);
+        return Ok(cart);
+    }
+
     private bool TryGetUserId(out int userId)
     {
         var raw = User.FindFirstValue(ClaimTypes.NameIdentifier);
