@@ -23,6 +23,7 @@ public sealed class CheckoutServiceTests : IDisposable
             _db,
             Substitute.For<IEmailService>(),
             Substitute.For<IPaymentService>(),
+            Substitute.For<IWhatsAppService>(),
             Substitute.For<ILogger<CheckoutService>>(),
             new ConfigurationBuilder().Build());
     }

@@ -46,6 +46,9 @@ services:
       Iyzico__BaseUrl:          ${Iyzico__BaseUrl}
       Iyzico__CallbackUrl:      ${Iyzico__CallbackUrl}
       Iyzico__MockSuccess:      ${Iyzico__MockSuccess:-false}
+      WhatsApp__Enabled:        ${WhatsApp__Enabled:-false}
+      WhatsApp__ApiKey:         ${WhatsApp__ApiKey:-}
+      WhatsApp__FromNumber:     ${WhatsApp__FromNumber:-}
     volumes:
       - dpkeys:/app/dp-keys
     ports:

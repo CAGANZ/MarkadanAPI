@@ -19,6 +19,7 @@ public sealed class CheckoutService : ICheckoutService
     private readonly MarkadanDbContext _db;
     private readonly IEmailService _email;
     private readonly IPaymentService _payment;
+    private readonly IWhatsAppService _whatsApp;
     private readonly ILogger<CheckoutService> _log;
     private readonly int _lowStockThreshold;
     private readonly string? _adminEmail;
@@ -27,12 +28,14 @@ public sealed class CheckoutService : ICheckoutService
         MarkadanDbContext db,
         IEmailService email,
         IPaymentService payment,
+        IWhatsAppService whatsApp,
         ILogger<CheckoutService> log,
         IConfiguration config)
     {
         _db                = db;
         _email             = email;
         _payment           = payment;
+        _whatsApp          = whatsApp;
         _log               = log;
         _lowStockThreshold = config.GetValue<int>("Inventory:LowStockThreshold", 5);
         _adminEmail        = config["Inventory:AdminEmail"];
@@ -102,6 +105,7 @@ public sealed class CheckoutService : ICheckoutService
 
         var cart = await _db.Carts
             .AsTracking()
+            .Include(c => c.AppUser)
             .Include(c => c.Items)
                 .ThenInclude(i => i.Product)
             .Where(c => c.Id == cartId && c.Status == CartStatus.PaymentPending)
@@ -141,6 +145,7 @@ public sealed class CheckoutService : ICheckoutService
         });
 
         _ = NotifyLowStockAsync(cart.Items.Select(i => i.ProductId).ToList(), CancellationToken.None);
+        _ = SendOrderWhatsAppAsync(cart, CancellationToken.None);
 
         return BuildOrderDTO(cart);
     }
@@ -189,6 +194,7 @@ public sealed class CheckoutService : ICheckoutService
         });
 
         _ = NotifyLowStockAsync(cart.Items.Select(i => i.ProductId).ToList(), CancellationToken.None);
+        _ = SendOrderWhatsAppAsync(cart, CancellationToken.None);
 
         var items = cart.Items.Select(i => new CartItemDTO(
             Id: i.Id, ProductId: i.ProductId, Title: i.Product.Title,
@@ -261,6 +267,27 @@ public sealed class CheckoutService : ICheckoutService
             cart.ShippingStreet, cart.ShippingCity, cart.ShippingState,
             cart.ShippingPostalCode, cart.ShippingCountry
         );
+    }
+
+    private async Task SendOrderWhatsAppAsync(Cart cart, CancellationToken ct)
+    {
+        var phone = cart.AppUser?.PhoneNumber;
+        if (string.IsNullOrWhiteSpace(phone)) return;
+
+        var itemLines = string.Join("\n", cart.Items.Select(i =>
+            $"• {i.Product.Title} x{i.Quantity} — {i.UnitPriceSnapshot * i.Quantity:F2} TL"));
+
+        var total    = cart.Items.Sum(i => i.UnitPriceSnapshot * i.Quantity);
+        var message  =
+            $"Merhaba {cart.AppUser!.Name} 👋\n" +
+            $"Siparişiniz alındı! 🎉\n\n" +
+            $"Sipariş No: {cart.OrderNumber}\n\n" +
+            $"{itemLines}\n\n" +
+            $"Toplam: {total:F2} TL\n\n" +
+            $"Siparişinizi takip etmek için uygulamayı açabilirsiniz.";
+
+        try { await _whatsApp.SendAsync(phone, message, ct); }
+        catch (Exception ex) { _log.LogWarning(ex, "WhatsApp bildirimi gönderilemedi"); }
     }
 
     private async Task NotifyLowStockAsync(List<int> productIds, CancellationToken ct)

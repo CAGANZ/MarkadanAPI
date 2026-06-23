@@ -68,6 +68,9 @@ public static class DependencyInjection
         services.Configure<IyzicoOptions>(config.GetSection("Iyzico"));
         services.AddHttpClient<IPaymentService, IyzicoPaymentService>();
 
+        services.Configure<WhatsAppOptions>(config.GetSection("WhatsApp"));
+        services.AddHttpClient<IWhatsAppService, TelnyxWhatsAppService>();
+
         services.AddHostedService<AbandonedCartBackgroundService>();
 
         return services;
