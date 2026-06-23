@@ -1,9 +1,12 @@
+using Markadan.Application.Abstractions;
 using Markadan.Application.Exceptions;
 using Markadan.Domain.Models;
 using Markadan.Domain.Models.Enums;
 using Markadan.Infrastructure.Services;
 using Markadan.Tests.Helpers;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 
 namespace Markadan.Tests.Checkout;
 
@@ -16,7 +19,12 @@ public sealed class CheckoutServiceTests : IDisposable
     public CheckoutServiceTests()
     {
         (_db, _conn) = TestDbFactory.Create();
-        _svc = new CheckoutService(_db);
+        _svc = new CheckoutService(
+            _db,
+            Substitute.For<IEmailService>(),
+            Substitute.For<IPaymentService>(),
+            Substitute.For<ILogger<CheckoutService>>(),
+            new ConfigurationBuilder().Build());
     }
 
     public void Dispose()

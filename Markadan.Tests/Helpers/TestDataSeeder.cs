@@ -44,6 +44,7 @@ public static class TestDataSeeder
         var product = new Product
         {
             Title      = "Test Ürün",
+            Slug       = $"test-urun-{userSuffix}-{Guid.NewGuid():N}",
             Price      = productPrice,
             Stock      = productStock,
             BrandId    = brand.Id,
