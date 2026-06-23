@@ -1,6 +1,6 @@
 # STATUS — Markadan Şu An Neredeyiz
 
-**Son güncelleme:** 2026-06-22
+**Son güncelleme:** 2026-06-23
 **Güncelleyen:** Claude (Çağan ile oturum)
 
 ---
@@ -8,15 +8,37 @@
 ## Şu an ne durumda
 
 Backend ayakta (Docker, port 8080). **13 migration** uygulanmış, DB sağlıklı.
-iyzico entegrasyonu tamamlandı — sandbox hesabında "Checkout Form" aktif edilmesi bekliyor (Çağan'ın yapacağı).
-Bu oturumda G3 (stok bildirimi) tamamlandı.
-UI ekibi GÖREV K–Q için hazır; DURUM-RAPORU.md güncellenmiş durumda.
+iyzico entegrasyonu tamamlandı (IYZWSv2 imza formatı düzeltildi) — sandbox hesabında "Checkout Form" aktif edilmesi bekliyor (Çağan'ın yapacağı). MockSuccess=true ile geliştirme devam ediyor.
+Bu oturumda G3, G4, G12, G13, D1 tamamlandı.
+UI ekibi DURUM-RAPORU.md GÖREV K–S için hazır.
 
 ---
 
 ## Son oturumda ne yapıldı
 
+**2026-06-23**
+- iyzico: IYZWSv2 imza formatına geçildi
+  - Eski IYZWS/SHA256 yerine IYZWSv2: HMACSHA256(randomKey+path+body, secretKey)
+  - Authorization header: `IYZWSv2 base64(apiKey:X&randomKey:X&signature:X)`
+  - Error 11 hâlâ geliyor — imza doğru, sorun sandbox Checkout Form aktivasyonu
+- G13: WhatsApp sipariş bildirimi (Telnyx)
+  - `IWhatsAppService` + `TelnyxWhatsAppService` eklendi
+  - Sipariş onaylandığında (CheckoutAsync ve ConfirmPaymentAsync) WhatsApp bildirimi gönderilir
+  - `WhatsApp__Enabled=false` iken yalnızca log — gerçek mesaj gönderilmez
+  - Telnyx hesabı hazır olunca `.env`'de `Enabled=true` yeterli
+  - Frontend görevi: DURUM-RAPORU.md GÖREV S
+
 **2026-06-22 (devam)**
+- G4: Tekrar sipariş ver
+  - `POST /me/orders/{id}/reorder` — tamamlanan siparişin ürünlerini aktif sepete kopyalar
+  - Güncel fiyat snapshot alınır; stokta olmayan ürünler atlanır
+  - Frontend görevi: DURUM-RAPORU.md GÖREV R
+- G12: Benzer ürünler
+  - `GET /products/{id}/related?limit=6` — aynı kategoriden, fiyata yakın, stokta olan ürünler
+  - Frontend görevi: DURUM-RAPORU.md GÖREV S içinde veya bağımsız bölüm
+- D1: Test iskeleti yeşile geçirildi
+  - NSubstitute eklendi; CheckoutServiceTests constructor'ı güncellendi
+  - `dotnet test` → 12/12 yeşil
 - G3: Stok gelince haber ver
   - `StockNotification` entity + `StockNotifications` tablosu eklendi
   - `POST /products/{id}/notify-stock` — giriş gerektirmez, email + opsiyonel isim
@@ -85,17 +107,16 @@ UI ekibi GÖREV K–Q için hazır; DURUM-RAPORU.md güncellenmiş durumda.
 
 ## Devam Eden
 
-- **iyzico sandbox aktivasyonu**: `sandbox-merchant.iyzipay.com`'a gir → "Checkout Form" ürününü aktif et → `POST /me/checkout/initiate` uçtan uca test edilecek. Teknik düzeltmeler tamam, sadece hesap aktivasyonu bekliyor.
+- **iyzico sandbox aktivasyonu**: iyzico desteğine yaz → "Checkout Form" ürününü aktif ettir → `POST /me/checkout/initiate` uçtan uca test edilecek. `MockSuccess=true` ile geliştirme devam ediyor.
 
 ---
 
 ## Sıradaki (öncelik sırasıyla)
 
-1. **iyzico sandbox key al** → `.env`'e ekle → test et
-2. **G4 Tekrar sipariş ver** — `POST /me/orders/{id}/reorder`
-3. **Deploy playbook** — 50-100 instance yönetimi
-4. **Deploy playbook** — 50-100 instance yönetimi
-5. **D1 test coverage**
+1. **iyzico sandbox aktivasyonu** — iyzico desteğine yaz
+2. **Deploy playbook** — 50-100 instance yönetimi
+3. **G8 e-Fatura** — büyük efor, gerektiğinde
+4. **D2+ test coverage** — happy-path testleri genişletmek
 
 ---
 
@@ -103,6 +124,11 @@ UI ekibi GÖREV K–Q için hazır; DURUM-RAPORU.md güncellenmiş durumda.
 
 | Tarih | Görev | Notlar |
 |-------|-------|--------|
+| 2026-06-23 | G13 WhatsApp bildirimi | Telnyx, `IWhatsAppService`, sipariş onayında fire-and-forget |
+| 2026-06-23 | iyzico IYZWSv2 | Auth header ve imza formatı güncellendi |
+| 2026-06-22 | G4 Tekrar sipariş ver | `POST /me/orders/{id}/reorder`, güncel fiyat snapshot, stok kontrolü |
+| 2026-06-22 | G12 Benzer ürünler | `GET /products/{id}/related`, aynı kategori, fiyata yakın |
+| 2026-06-22 | D1 Test iskeleti | NSubstitute, 12/12 yeşil |
 | 2026-06-22 | G3 Stok bildirimi | `POST /products/{id}/notify-stock`, mail on restore, auto-clear |
 | 2026-06-22 | G11 SEO slug + meta | Slug, MetaDescription, `GET /products/{slug}`, auto-generate |
 | 2026-06-20 | G7 CSV export | `GET /admin/orders/export`, filtreli, BOM, RFC 4180 |
@@ -124,8 +150,8 @@ UI ekibi GÖREV K–Q için hazır; DURUM-RAPORU.md güncellenmiş durumda.
 
 | Kişi / Araç | Sorumluluk | Şu an |
 |-------------|------------|-------|
-| Çağan | Backend mimari + uygulama | iyzico sandbox aktivasyonu |
-| Frontend ekibi | Next.js UI | DURUM-RAPORU.md GÖREV M (kupon UI), N (kargo takip), O (CSV buton) |
+| Çağan | Backend mimari + uygulama | iyzico sandbox aktivasyonu (desteğe yaz) |
+| Frontend ekibi | Next.js UI | DURUM-RAPORU.md GÖREV K–S |
 | Claude (yüksek model) | Mimari tasarım, karmaşık logic | İstenince |
 | Claude (düşük model) | Rutin kodlama, refaktör | İstenince |
 
@@ -138,3 +164,4 @@ UI ekibi GÖREV K–Q için hazır; DURUM-RAPORU.md güncellenmiş durumda.
 - Frontend `api()` wrapper'ı FormData ile otomatik `Content-Type` ayarlamıyor olabilir —
   CSV yükleme görevinde frontend ekibi doğrudan fetch kullanabilir
 - Migration geçmişi: `__EFMigrationsHistory` tablosunda **13 kayıt** var (son: `20260622010000_G3_StockNotifications`)
+- iyzico `MockSuccess=true` — `.env`'de; sandbox aktivasyonu sonrası `false` yapılacak
