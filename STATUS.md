@@ -1,6 +1,6 @@
 # STATUS — Markadan Şu An Neredeyiz
 
-**Son güncelleme:** 2026-06-23
+**Son güncelleme:** 2026-06-25
 **Güncelleyen:** Claude (Çağan ile oturum)
 
 ---
@@ -15,6 +15,32 @@ UI ekibi DURUM-RAPORU.md GÖREV K–S için hazır.
 ---
 
 ## Son oturumda ne yapıldı
+
+**2026-06-25**
+- F2: `POST /me/cart/accept-prices` — fiyat değişen tüm item snapshot'larını güncel fiyata eşitler
+  - UI'ın workaround'u (sil+yeniden ekle) artık gerek yok; atomik tek istek
+- T4: `Product.IsActive` alanı
+  - `PATCH /admin/products/{id}/active` — toggle endpoint
+  - Pasif ürünler public katalogda (`ListAsync`, `GetDetailAsync`, `GetDetailBySlugAsync`, `GetRelatedAsync`) görünmez
+  - Admin panel hepsini listeler (`ListAdminAsync` filtre yok)
+  - Migration: `20260625000000_T4_ProductIsActive`
+  - UI toggle'ı zaten hazırdı — BFF route eklenince aktive olur
+- T6: Bulk yükleme güvenlik iyileştirmeleri
+  - Satır limiti: maks 5.000 satır (aşılırsa erken 400)
+  - Binary içerik kontrolü (MIME sniffing) — controller'da
+  - `ImageUrl` şema doğrulaması: yalnızca http/https (SSRF koruması)
+  - Rate limit: `bulk-upload` policy, dakikada 5 istek
+- T3: Bulk yükleme UPSERT semantiği
+  - Eşleştirme: `Title+BrandName` (case-insensitive)
+  - Eşleşen ürün güncellenir; eşleşmeyen eklenir; dosyada olmayan silinmez
+  - Boş `Description` mevcut açıklamayı silmez
+- T2: `GET /admin/products/export` — CSV dışa aktarma
+  - `q` ve `sort` parametreli; tüm ürünler (aktif+pasif)
+  - BOM'lu UTF-8, formül enjeksiyonu sanitizasyonu
+  - T1'in N×detay-çağrısı workaround'unu ortadan kaldırır
+  - UI'da tek satır BFF route + `<a download>` yeterli
+
+## Son oturumda ne yapıldı (önceki)
 
 **2026-06-23**
 - iyzico: IYZWSv2 imza formatına geçildi
@@ -113,6 +139,13 @@ UI ekibi DURUM-RAPORU.md GÖREV K–S için hazır.
 
 ## Sıradaki (öncelik sırasıyla)
 
+**UI ekibi için:**
+1. T4: BFF route `src/app/api/admin/products/[id]/active/route.js` (PATCH passthrough) — UI toggle zaten hazır
+2. T2: BFF route `src/app/api/admin/products/export/route.js` + `<a download>` butonu
+3. T5: Ürün varyantları — **önce backend mimari kararı bekleniyor** (büyük iş)
+4. F2: `POST /me/cart/accept-prices` BFF route + UI güncelleme
+
+**Backend için:**
 1. **iyzico sandbox aktivasyonu** — iyzico desteğine yaz
 2. **Deploy playbook** — 50-100 instance yönetimi
 3. **G8 e-Fatura** — büyük efor, gerektiğinde
@@ -124,6 +157,11 @@ UI ekibi DURUM-RAPORU.md GÖREV K–S için hazır.
 
 | Tarih | Görev | Notlar |
 |-------|-------|--------|
+| 2026-06-25 | F2 accept-prices | `POST /me/cart/accept-prices`, snapshot'ları atomik günceller |
+| 2026-06-25 | T4 IsActive | `PATCH /admin/products/{id}/active`, pasif ürün public katalogda gizli |
+| 2026-06-25 | T6 Bulk güvenlik | Satır limiti, MIME check, ImageUrl şema, rate limit |
+| 2026-06-25 | T3 Bulk UPSERT | Title+Brand eşleşmesi, güncelle/ekle/silme |
+| 2026-06-25 | T2 Ürün export | `GET /admin/products/export`, BOM'lu CSV |
 | 2026-06-23 | G13 WhatsApp bildirimi | Telnyx, `IWhatsAppService`, sipariş onayında fire-and-forget |
 | 2026-06-23 | iyzico IYZWSv2 | Auth header ve imza formatı güncellendi |
 | 2026-06-22 | G4 Tekrar sipariş ver | `POST /me/orders/{id}/reorder`, güncel fiyat snapshot, stok kontrolü |
