@@ -28,5 +28,8 @@ namespace Markadan.Application.Abstractions
         int page = 1,
         int pageSize = 12,
         CancellationToken ct = default);
+
+        // Admin ürün export — tüm ürünler (aktif+pasif), CSV için
+        Task<IReadOnlyList<AdminProductExportRow>> ExportAdminAsync(string? q, string? sort, CancellationToken ct = default);
     }
 }
