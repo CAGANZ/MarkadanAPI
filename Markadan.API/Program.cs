@@ -104,6 +104,14 @@ builder.Services.AddRateLimiter(options =>
         o.QueueProcessingOrder = QueueProcessingOrder.OldestFirst;
         o.QueueLimit           = 0;
     });
+    // Bulk yükleme — dakikada 5 istek (DoS koruması)
+    options.AddFixedWindowLimiter("bulk-upload", o =>
+    {
+        o.PermitLimit          = 5;
+        o.Window               = TimeSpan.FromMinutes(1);
+        o.QueueProcessingOrder = QueueProcessingOrder.OldestFirst;
+        o.QueueLimit           = 0;
+    });
     options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
 });
 
