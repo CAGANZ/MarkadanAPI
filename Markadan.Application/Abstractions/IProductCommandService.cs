@@ -14,5 +14,7 @@ namespace Markadan.Application.Abstractions
         Task<BulkUploadResultDTO> BulkUploadAsync(Stream csvStream, CancellationToken ct = default);
 
         Task SubscribeStockNotificationAsync(int productId, string email, string? name, CancellationToken ct = default);
+
+        Task<bool> SetActiveAsync(int id, bool isActive, CancellationToken ct = default);
     }
 }

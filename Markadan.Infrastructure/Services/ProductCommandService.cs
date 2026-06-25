@@ -170,23 +170,36 @@ namespace Markadan.Infrastructure.Services
             var brands     = await _db.Brands.AsNoTracking().ToDictionaryAsync(b => b.Name.ToUpperInvariant(), b => b.Id, ct);
             var categories = await _db.Categories.AsNoTracking().ToDictionaryAsync(c => c.Name.ToUpperInvariant(), c => c.Id, ct);
 
+            // Mevcut ürünleri title+brandId anahtarıyla yükle — upsert eşleştirmesi için
+            var existingProducts = await _db.Products
+                .ToDictionaryAsync(
+                    p => $"{p.Title.ToUpperInvariant()}|{p.BrandId}",
+                    p => p, ct);
+
             // Mevcut slug'ları çek — batch içinde + DB'deki çakışmaları önlemek için
             var existingSlugs = new HashSet<string>(
-                await _db.Products.AsNoTracking().Select(p => p.Slug).ToListAsync(ct),
+                existingProducts.Values.Select(p => p.Slug),
                 StringComparer.OrdinalIgnoreCase);
 
             var errors    = new List<BulkUploadErrorDTO>();
             var toInsert  = new List<Product>();
+            int updated   = 0;
             int rowNumber = 1; // başlık satırı
 
             using var reader = new StreamReader(csvStream);
             var header = await reader.ReadLineAsync(ct); // başlık atla
 
+            const int MaxRows = 5000;
             string? line;
             while ((line = await reader.ReadLineAsync(ct)) is not null)
             {
                 rowNumber++;
                 if (string.IsNullOrWhiteSpace(line)) continue;
+
+                if (rowNumber > MaxRows + 1)
+                    return new BulkUploadResultDTO(0, 1,
+                        [new(rowNumber, $"Maksimum {MaxRows} satır yüklenebilir.")]);
+
 
                 // Basit CSV parse — tırnaklı alan desteği yok; değerlerde virgül geçmemeli
                 var cols = line.Split(',');
@@ -214,32 +227,58 @@ namespace Markadan.Infrastructure.Services
                 if (!categories.TryGetValue(catName.ToUpperInvariant(), out var categoryId))
                                                            { errors.Add(new(rowNumber, $"Kategori bulunamadı: {catName}")); continue; }
 
-                var baseSlug = GenerateSlug(title);
-                var slug = baseSlug;
-                int suffix = 2;
-                while (existingSlugs.Contains(slug)) slug = $"{baseSlug}-{suffix++}";
-                existingSlugs.Add(slug);
-
-                toInsert.Add(new Product
+                if (!string.IsNullOrEmpty(imageUrl)
+                    && !(imageUrl.StartsWith("http://", StringComparison.OrdinalIgnoreCase)
+                      || imageUrl.StartsWith("https://", StringComparison.OrdinalIgnoreCase)))
                 {
-                    Title       = title,
-                    Slug        = slug,
-                    Description = string.IsNullOrWhiteSpace(description) ? null : description,
-                    Price       = price,
-                    Stock       = stock,
-                    ImageUrl    = string.IsNullOrWhiteSpace(imageUrl) ? null : imageUrl,
-                    BrandId     = brandId,
-                    CategoryId  = categoryId,
-                });
+                    errors.Add(new(rowNumber, $"ImageUrl yalnızca http/https şemasına izin verir: {imageUrl}"));
+                    continue;
+                }
+
+                var matchKey = $"{title.ToUpperInvariant()}|{brandId}";
+                if (existingProducts.TryGetValue(matchKey, out var existing))
+                {
+                    // Upsert — mevcut ürünü güncelle
+                    existing.Price     = price;
+                    existing.Stock     = stock;
+                    if (!string.IsNullOrWhiteSpace(imageUrl))
+                        existing.ImageUrl = imageUrl;
+                    if (!string.IsNullOrWhiteSpace(description))
+                        existing.Description = description;
+                    existing.CategoryId = categoryId;
+                    updated++;
+                }
+                else
+                {
+                    var baseSlug = GenerateSlug(title);
+                    var slug = baseSlug;
+                    int suffix = 2;
+                    while (existingSlugs.Contains(slug)) slug = $"{baseSlug}-{suffix++}";
+                    existingSlugs.Add(slug);
+
+                    var newProduct = new Product
+                    {
+                        Title       = title,
+                        Slug        = slug,
+                        Description = string.IsNullOrWhiteSpace(description) ? null : description,
+                        Price       = price,
+                        Stock       = stock,
+                        ImageUrl    = string.IsNullOrWhiteSpace(imageUrl) ? null : imageUrl,
+                        BrandId     = brandId,
+                        CategoryId  = categoryId,
+                    };
+                    toInsert.Add(newProduct);
+                    existingProducts[matchKey] = newProduct; // aynı satır dosyada tekrarlanırsa
+                }
             }
 
             if (toInsert.Count > 0)
-            {
                 _db.Products.AddRange(toInsert);
-                await _db.SaveChangesAsync(ct);
-            }
 
-            return new BulkUploadResultDTO(toInsert.Count, errors.Count, errors);
+            if (toInsert.Count > 0 || updated > 0)
+                await _db.SaveChangesAsync(ct);
+
+            return new BulkUploadResultDTO(toInsert.Count + updated, errors.Count, errors);
         }
 
         private static string GenerateSlug(string input)
@@ -280,6 +319,14 @@ namespace Markadan.Infrastructure.Services
                 if (!exists) return slug;
                 slug = $"{baseSlug}-{suffix++}";
             }
+        }
+
+        public async Task<bool> SetActiveAsync(int id, bool isActive, CancellationToken ct = default)
+        {
+            var affected = await _db.Products
+                .Where(p => p.Id == id)
+                .ExecuteUpdateAsync(s => s.SetProperty(p => p.IsActive, isActive), ct);
+            return affected > 0;
         }
 
         public async Task SubscribeStockNotificationAsync(int productId, string email, string? name, CancellationToken ct = default)

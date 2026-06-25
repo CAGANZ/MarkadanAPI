@@ -62,7 +62,8 @@ public sealed class ProductReadService : IProductReadService
                 p.Brand!.Name,
                 p.CategoryId,
                 p.Category!.Name,
-                p.Stock
+                p.Stock,
+                p.IsActive
             ))
             .ToListAsync(ct);
 
@@ -86,7 +87,8 @@ public sealed class ProductReadService : IProductReadService
                 p.CategoryId,
                 p.Category!.Name,
                 p.Description,
-                p.Stock
+                p.Stock,
+                p.IsActive
             ))
             .SingleOrDefaultAsync(ct);
     }
@@ -97,7 +99,7 @@ public sealed class ProductReadService : IProductReadService
     {
         return await _db.Products
             .AsNoTracking()
-            .Where(p => p.Id == id)
+            .Where(p => p.Id == id && p.IsActive)
             .Select(p => new ProductDetailDTO(
                 p.Id,
                 p.Title,
@@ -118,7 +120,7 @@ public sealed class ProductReadService : IProductReadService
     {
         return await _db.Products
             .AsNoTracking()
-            .Where(p => p.Slug == slug)
+            .Where(p => p.Slug == slug && p.IsActive)
             .Select(p => new ProductDetailDTO(
                 p.Id,
                 p.Title,
@@ -150,7 +152,7 @@ public sealed class ProductReadService : IProductReadService
         if (page < 1) page = 1;
         if (pageSize <= 0) pageSize = 12;
 
-        var query = _db.Products.AsNoTracking();
+        var query = _db.Products.AsNoTracking().Where(p => p.IsActive);
 
         if (categoryId.HasValue) query = query.Where(p => p.CategoryId == categoryId.Value);
         if (brandId.HasValue) query = query.Where(p => p.BrandId == brandId.Value);
@@ -187,6 +189,39 @@ public sealed class ProductReadService : IProductReadService
         return new PagedResult<ProductListDTO>(total, page, pageSize, items);
     }
 
+    public async Task<IReadOnlyList<AdminProductExportRow>> ExportAdminAsync(string? q, string? sort, CancellationToken ct = default)
+    {
+        var query = _db.Products
+            .AsNoTracking()
+            .Include(p => p.Brand)
+            .Include(p => p.Category)
+            .AsQueryable();
+
+        if (!string.IsNullOrWhiteSpace(q))
+            query = query.Where(p => p.Title.Contains(q) || p.Brand!.Name.Contains(q) || p.Category!.Name.Contains(q));
+
+        query = sort switch
+        {
+            "price_asc"  => query.OrderBy(p => p.Price),
+            "price_desc" => query.OrderByDescending(p => p.Price),
+            "name_asc"   => query.OrderBy(p => p.Title),
+            "name_desc"  => query.OrderByDescending(p => p.Title),
+            "newest"     => query.OrderByDescending(p => p.Id),
+            _            => query.OrderBy(p => p.Id)
+        };
+
+        return await query
+            .Select(p => new AdminProductExportRow(
+                p.Title,
+                p.Description,
+                p.Price,
+                p.Stock,
+                p.ImageUrl,
+                p.Brand!.Name,
+                p.Category!.Name))
+            .ToListAsync(ct);
+    }
+
     public async Task<List<ProductListDTO>> GetRelatedAsync(int productId, int limit = 6, CancellationToken ct = default)
     {
         var product = await _db.Products
@@ -202,7 +237,8 @@ public sealed class ProductReadService : IProductReadService
             .AsNoTracking()
             .Where(p => p.CategoryId == product.CategoryId
                      && p.Id != productId
-                     && p.Stock > 0)
+                     && p.Stock > 0
+                     && p.IsActive)
             .OrderBy(p => Math.Abs((double)(p.Price - product.Price)))
             .Take(limit)
             .Select(p => new ProductListDTO(

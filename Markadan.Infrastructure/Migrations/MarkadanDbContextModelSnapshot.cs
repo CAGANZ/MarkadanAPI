@@ -450,6 +450,11 @@ namespace Markadan.Infrastructure.Migrations
                         .HasMaxLength(1024)
                         .HasColumnType("nvarchar(1024)");
 
+                    b.Property<bool>("IsActive")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true);
+
                     b.Property<string>("MetaDescription")
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)");

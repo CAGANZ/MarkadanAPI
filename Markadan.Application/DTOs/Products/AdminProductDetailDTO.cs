@@ -12,5 +12,6 @@ public record AdminProductDetailDTO(
     int CategoryId,
     string CategoryName,
     string? Description,
-    int Stock
+    int Stock,
+    bool IsActive
 );
