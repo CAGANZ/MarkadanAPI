@@ -68,6 +68,14 @@ public sealed class MeCartController : ControllerBase
         return Ok(dto);
     }
 
+    [HttpPost("accept-prices")]
+    public async Task<IActionResult> AcceptPriceChanges()
+    {
+        if (!TryGetUserId(out var userId)) return Unauthorized();
+        var dto = await _cart.AcceptPriceChangesAsync(userId, HttpContext.RequestAborted);
+        return Ok(dto);
+    }
+
     [HttpDelete("coupon")]
     public async Task<IActionResult> RemoveCoupon()
     {

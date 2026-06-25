@@ -18,4 +18,7 @@ public interface ICartService
 
     // Tüm satırları temizler (sepet kalır, boş olur)
     Task<CartDTO> ClearAsync(int userId, CancellationToken ct = default);
+
+    // Fiyat değişen tüm satırların snapshot'ını güncel fiyata eşitler
+    Task<CartDTO> AcceptPriceChangesAsync(int userId, CancellationToken ct = default);
 }

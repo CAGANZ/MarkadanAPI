@@ -104,6 +104,34 @@ public sealed class CartService : ICartService
         return await BuildCartDTOAsync(cartId, ct);
     }
 
+    public async Task<CartDTO> AcceptPriceChangesAsync(int userId, CancellationToken ct = default)
+    {
+        var cart = await GetOrCreateActiveCartAsync(userId, ct);
+
+        var items = await _db.CartItems
+            .Where(i => i.CartId == cart.Id)
+            .Include(i => i.Product)
+            .ToListAsync(ct);
+
+        bool changed = false;
+        foreach (var item in items)
+        {
+            if (item.UnitPriceSnapshot != item.Product.Price)
+            {
+                item.UnitPriceSnapshot = item.Product.Price;
+                changed = true;
+            }
+        }
+
+        if (changed)
+        {
+            cart.UpdatedAt = DateTime.UtcNow;
+            await _db.SaveChangesAsync(ct);
+        }
+
+        return await BuildCartDTOAsync(cart.Id, ct);
+    }
+
     // ── Private helpers ──────────────────────────────────────────────────────
 
     private async Task<Cart> GetOrCreateActiveCartAsync(int userId, CancellationToken ct)
