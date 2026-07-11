@@ -1,20 +1,37 @@
 # STATUS — Markadan Şu An Neredeyiz
 
-**Son güncelleme:** 2026-06-25
+**Son güncelleme:** 2026-07-11
 **Güncelleyen:** Claude (Çağan ile oturum)
 
 ---
 
 ## Şu an ne durumda
 
-Backend ayakta (Docker, port 8080). **13 migration** uygulanmış, DB sağlıklı.
+Backend ayakta (Docker, port 8080). **14 migration** uygulanmış, DB sağlıklı.
 iyzico entegrasyonu tamamlandı (IYZWSv2 imza formatı düzeltildi) — sandbox hesabında "Checkout Form" aktif edilmesi bekliyor (Çağan'ın yapacağı). MockSuccess=true ile geliştirme devam ediyor.
-Bu oturumda G3, G4, G12, G13, D1 tamamlandı.
-UI ekibi DURUM-RAPORU.md GÖREV K–S için hazır.
+Bu oturumda T5 (ürün varyantları) tamamlandı — 2026-06-25'te yarım kalan implementasyon bulunup bitirildi, build+test+uçtan uca doğrulandı, commit edildi.
+UI ekibi DURUM-RAPORU.md GÖREV K–T5 için hazır.
+
+**Not:** `dotnet`/`dotnet-ef` CLI artık bu makinede kurulu (önceki not — "WSL'de yok" — güncelliğini kaybetti). Migration'lar yine elle yazılıyor (proje kuralı) ama artık `dotnet ef migrations has-pending-model-changes` ile doğrulanabiliyor.
 
 ---
 
 ## Son oturumda ne yapıldı
+
+**2026-07-11**
+- T5: Jenerik ürün varyantları/opsiyonları (2026-06-25'te başlanmış, bugün bitirildi)
+  - Model: `ProductOption` (eksen, örn. "Beden") → `ProductOptionValue` (değer, örn. "M") → `ProductVariant` (kombinasyon, kendi stok/fiyat/SKU/görseli) → `ProductVariantValue` (M:N join)
+  - Varyantsız ürün eski akışla çalışmaya devam ediyor (stok/fiyat `Product` düzeyinde); varyantlı üründe sepete eklerken `productVariantId` zorunlu
+  - `CartItem`/`OrderItem`'a `ProductVariantId` + `VariantLabel` ("Kırmızı / M") eklendi; stok düşme/iade artık varyant bazında (basit ürün → `Products.Stock`, varyantlı → `ProductVariants.Stock`)
+  - Admin: `GET/POST /admin/products/{id}/options`, `DELETE /admin/products/{id}/options/{optionId}`, `POST /admin/products/{id}/options/{optionId}/values`, `DELETE /admin/products/{id}/option-values/{valueId}`, `GET/POST /admin/products/{id}/variants`, `PUT/DELETE /admin/products/{id}/variants/{variantId}`
+  - Aynı ürün+eksende tekrar isim, aynı eksende tekrar değer, aynı seçenek kombinasyonuyla iki varyant — hepsi engelleniyor (409)
+  - Sepette/siparişte kullanılan varyant/opsiyon değeri silinemez (409, "pasife alın" mesajı) — FK `Restrict`
+  - Public `GET /products/{id|slug}` yanıtına `options[]` + `variants[]` eklendi (varyant fiyatı boşsa ürün fiyatı döner — "etkin fiyat")
+  - Migration: `20260625120050_T5_ProductVariants` — `dotnet ef migrations has-pending-model-changes` ile model/migration tutarlılığı doğrulandı
+  - Uçtan uca test edildi: admin varyant CRUD, sepete varyantlı ürün ekleme, checkout'ta varyant stok düşümü (5→3), sipariş geçmişinde varyant etiketi, kullanılan varyantın silinememesi — hepsi doğru çalıştı
+  - Frontend görevi: DURUM-RAPORU.md T5 bölümü güncellendi (uç listesi + model)
+
+## Son oturumda ne yapıldı (önceki)
 
 **2026-06-25**
 - F2: `POST /me/cart/accept-prices` — fiyat değişen tüm item snapshot'larını güncel fiyata eşitler
@@ -142,7 +159,7 @@ UI ekibi DURUM-RAPORU.md GÖREV K–S için hazır.
 **UI ekibi için:**
 1. T4: BFF route `src/app/api/admin/products/[id]/active/route.js` (PATCH passthrough) — UI toggle zaten hazır
 2. T2: BFF route `src/app/api/admin/products/export/route.js` + `<a download>` butonu
-3. T5: Ürün varyantları — **önce backend mimari kararı bekleniyor** (büyük iş)
+3. T5: Ürün varyantları — **backend hazır**, uç listesi DURUM-RAPORU.md'de; admin opsiyon/varyant editörü + ürün detayında seçici + sepette varyant gösterimi frontend'de yapılacak
 4. F2: `POST /me/cart/accept-prices` BFF route + UI güncelleme
 
 **Backend için:**
@@ -157,6 +174,7 @@ UI ekibi DURUM-RAPORU.md GÖREV K–S için hazır.
 
 | Tarih | Görev | Notlar |
 |-------|-------|--------|
+| 2026-07-11 | T5 Ürün varyantları | Opsiyon+varyant modeli, admin CRUD, sepet/checkout/sipariş varyant bazlı stok+fiyat |
 | 2026-06-25 | F2 accept-prices | `POST /me/cart/accept-prices`, snapshot'ları atomik günceller |
 | 2026-06-25 | T4 IsActive | `PATCH /admin/products/{id}/active`, pasif ürün public katalogda gizli |
 | 2026-06-25 | T6 Bulk güvenlik | Satır limiti, MIME check, ImageUrl şema, rate limit |
@@ -198,8 +216,10 @@ UI ekibi DURUM-RAPORU.md GÖREV K–S için hazır.
 ## Dikkat — Unutma
 
 - Elle yazılan her migration'a `[Migration("...")]` + `[DbContext(...)]` attribute'u ekle
-- `dotnet` CLI WSL'de yok — migration'lar elle yazılır
+- Migration'lar proje kuralı olarak elle yazılır; `dotnet`/`dotnet-ef` artık kurulu, yazdıktan sonra
+  `ConnectionStrings__DefaultConnection` env'ini set edip `dotnet ef migrations has-pending-model-changes`
+  ile model/migration tutarlılığı doğrulanabilir
 - Frontend `api()` wrapper'ı FormData ile otomatik `Content-Type` ayarlamıyor olabilir —
   CSV yükleme görevinde frontend ekibi doğrudan fetch kullanabilir
-- Migration geçmişi: `__EFMigrationsHistory` tablosunda **13 kayıt** var (son: `20260622010000_G3_StockNotifications`)
+- Migration geçmişi: `__EFMigrationsHistory` tablosunda **14 kayıt** var (son: `20260625120050_T5_ProductVariants`)
 - iyzico `MockSuccess=true` — `.env`'de; sandbox aktivasyonu sonrası `false` yapılacak
