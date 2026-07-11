@@ -186,58 +186,6 @@ namespace Markadan.Infrastructure.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
-            modelBuilder.Entity("Markadan.Domain.Models.Coupon", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Code")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
-
-                    b.Property<string>("Type")
-                        .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
-
-                    b.Property<decimal>("Value")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<decimal?>("MinOrderAmount")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<int?>("UsageLimit")
-                        .HasColumnType("int");
-
-                    b.Property<int>("UsageCount")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime?>("ExpiresAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("Code")
-                        .IsUnique();
-
-                    b.ToTable("Coupons", (string)null);
-                });
-
             modelBuilder.Entity("Markadan.Domain.Models.Brand", b =>
                 {
                     b.Property<int>("Id")
@@ -276,17 +224,41 @@ namespace Markadan.Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<DateTime?>("AbandonedReminderSentAt")
+                        .HasColumnType("datetime2");
+
                     b.Property<int>("AppUserId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("CouponCode")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<int?>("CouponId")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
+
+                    b.Property<decimal>("DiscountAmount")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("IyzicoConversationId")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("IyzicoPaymentId")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<string>("OrderNumber")
                         .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)");
 
                     b.Property<DateTime?>("OrderedAtUtc")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("PaidAtUtc")
                         .HasColumnType("datetime2");
 
                     b.Property<int?>("ShippingAddressId")
@@ -315,26 +287,6 @@ namespace Markadan.Infrastructure.Migrations
                     b.Property<byte>("Status")
                         .HasColumnType("tinyint");
 
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime?>("AbandonedReminderSentAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("IyzicoConversationId")
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.Property<string>("IyzicoPaymentId")
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.Property<DateTime?>("PaidAtUtc")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int?>("CouponId")
-                        .HasColumnType("int");
-
                     b.Property<string>("TrackingNumber")
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
@@ -343,13 +295,8 @@ namespace Markadan.Infrastructure.Migrations
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)");
 
-                    b.Property<string>("CouponCode")
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.Property<decimal>("DiscountAmount")
-                        .HasColumnType("decimal(18,2)");
-
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
 
                     b.HasKey("Id");
 
@@ -380,6 +327,9 @@ namespace Markadan.Infrastructure.Migrations
                     b.Property<int>("ProductId")
                         .HasColumnType("int");
 
+                    b.Property<int?>("ProductVariantId")
+                        .HasColumnType("int");
+
                     b.Property<int>("Quantity")
                         .HasColumnType("int");
 
@@ -392,7 +342,9 @@ namespace Markadan.Infrastructure.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.HasIndex("CartId", "ProductId")
+                    b.HasIndex("ProductVariantId");
+
+                    b.HasIndex("CartId", "ProductId", "ProductVariantId")
                         .IsUnique();
 
                     b.ToTable("CartItems", (string)null);
@@ -426,6 +378,58 @@ namespace Markadan.Infrastructure.Migrations
                         .IsUnique();
 
                     b.ToTable("Categories", (string)null);
+                });
+
+            modelBuilder.Entity("Markadan.Domain.Models.Coupon", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<DateTime?>("ExpiresAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<decimal?>("MinOrderAmount")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<int>("UsageCount")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("UsageLimit")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("Value")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Code")
+                        .IsUnique();
+
+                    b.ToTable("Coupons");
                 });
 
             modelBuilder.Entity("Markadan.Domain.Models.Product", b =>
@@ -493,7 +497,7 @@ namespace Markadan.Infrastructure.Migrations
                     b.ToTable("Products", (string)null);
                 });
 
-            modelBuilder.Entity("Markadan.Domain.Models.StoreSettings", b =>
+            modelBuilder.Entity("Markadan.Domain.Models.ProductOption", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -501,51 +505,29 @@ namespace Markadan.Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("StoreName").IsRequired().HasMaxLength(100).HasColumnType("nvarchar(100)");
-                    b.Property<string>("LogoUrl").HasMaxLength(500).HasColumnType("nvarchar(500)");
-                    b.Property<string>("Description").HasMaxLength(500).HasColumnType("nvarchar(500)");
-                    b.Property<string>("WhatsAppPhone").HasMaxLength(20).HasColumnType("nvarchar(20)");
-                    b.Property<string>("ContactPhone").HasMaxLength(20).HasColumnType("nvarchar(20)");
-                    b.Property<string>("ContactEmail").HasMaxLength(200).HasColumnType("nvarchar(200)");
-                    b.Property<string>("InstagramUrl").HasMaxLength(200).HasColumnType("nvarchar(200)");
-                    b.Property<string>("FacebookUrl").HasMaxLength(200).HasColumnType("nvarchar(200)");
-                    b.Property<string>("PrimaryColor").HasMaxLength(7).HasColumnType("nvarchar(7)");
-                    b.Property<string>("AccentColor").HasMaxLength(7).HasColumnType("nvarchar(7)");
-                    b.Property<string>("MetaDescription").HasMaxLength(300).HasColumnType("nvarchar(300)");
-                    b.Property<DateTime>("UpdatedAt").HasColumnType("datetime2");
-
-                    b.HasKey("Id");
-                    b.ToTable("StoreSettings", (string)null);
-                });
-
-            modelBuilder.Entity("Markadan.Domain.Models.WishlistItem", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("AppUserId")
-                        .HasColumnType("int");
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)")
+                        .UseCollation("Turkish_100_CI_AI");
 
                     b.Property<int>("ProductId")
                         .HasColumnType("int");
 
-                    b.Property<DateTime>("AddedAt")
-                        .HasColumnType("datetime2");
+                    b.Property<int>("SortOrder")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
                     b.HasIndex("ProductId");
 
-                    b.HasIndex("AppUserId", "ProductId")
+                    b.HasIndex("ProductId", "Name")
                         .IsUnique();
 
-                    b.ToTable("WishlistItems", (string)null);
+                    b.ToTable("ProductOptions", (string)null);
                 });
 
-            modelBuilder.Entity("Markadan.Domain.Models.StockNotification", b =>
+            modelBuilder.Entity("Markadan.Domain.Models.ProductOptionValue", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -553,27 +535,78 @@ namespace Markadan.Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("ProductId")
+                    b.Property<int>("OptionId")
                         .HasColumnType("int");
 
-                    b.Property<string>("Email")
+                    b.Property<int>("SortOrder")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Value")
                         .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
-
-                    b.Property<string>("Name")
                         .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("nvarchar(100)")
+                        .UseCollation("Turkish_100_CI_AI");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ProductId", "Email")
+                    b.HasIndex("OptionId");
+
+                    b.HasIndex("OptionId", "Value")
                         .IsUnique();
 
-                    b.ToTable("StockNotifications", (string)null);
+                    b.ToTable("ProductOptionValues", (string)null);
+                });
+
+            modelBuilder.Entity("Markadan.Domain.Models.ProductVariant", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("ImageUrl")
+                        .HasMaxLength(1024)
+                        .HasColumnType("nvarchar(1024)");
+
+                    b.Property<bool>("IsActive")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(true);
+
+                    b.Property<decimal?>("Price")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Sku")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<int>("Stock")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProductId");
+
+                    b.ToTable("ProductVariants", (string)null);
+                });
+
+            modelBuilder.Entity("Markadan.Domain.Models.ProductVariantValue", b =>
+                {
+                    b.Property<int>("VariantId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("OptionValueId")
+                        .HasColumnType("int");
+
+                    b.HasKey("VariantId", "OptionValueId");
+
+                    b.HasIndex("OptionValueId");
+
+                    b.ToTable("ProductVariantValues", (string)null);
                 });
 
             modelBuilder.Entity("Markadan.Domain.Models.RefreshToken", b =>
@@ -615,6 +648,125 @@ namespace Markadan.Infrastructure.Migrations
                         .IsUnique();
 
                     b.ToTable("RefreshTokens", (string)null);
+                });
+
+            modelBuilder.Entity("Markadan.Domain.Models.StockNotification", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<string>("Name")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProductId", "Email")
+                        .IsUnique();
+
+                    b.ToTable("StockNotifications", (string)null);
+                });
+
+            modelBuilder.Entity("Markadan.Domain.Models.StoreSettings", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("AccentColor")
+                        .HasMaxLength(7)
+                        .HasColumnType("nvarchar(7)");
+
+                    b.Property<string>("ContactEmail")
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<string>("ContactPhone")
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("FacebookUrl")
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<string>("InstagramUrl")
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<string>("LogoUrl")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("MetaDescription")
+                        .HasMaxLength(300)
+                        .HasColumnType("nvarchar(300)");
+
+                    b.Property<string>("PrimaryColor")
+                        .HasMaxLength(7)
+                        .HasColumnType("nvarchar(7)");
+
+                    b.Property<string>("StoreName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("WhatsAppPhone")
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("StoreSettings", (string)null);
+                });
+
+            modelBuilder.Entity("Markadan.Domain.Models.WishlistItem", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("AddedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("AppUserId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProductId");
+
+                    b.HasIndex("AppUserId", "ProductId")
+                        .IsUnique();
+
+                    b.ToTable("WishlistItems", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>
@@ -739,21 +891,21 @@ namespace Markadan.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("Markadan.Domain.Models.Address", "ShippingAddress")
-                        .WithMany()
-                        .HasForeignKey("ShippingAddressId")
-                        .OnDelete(DeleteBehavior.SetNull);
-
                     b.HasOne("Markadan.Domain.Models.Coupon", "Coupon")
                         .WithMany()
                         .HasForeignKey("CouponId")
                         .OnDelete(DeleteBehavior.SetNull);
 
+                    b.HasOne("Markadan.Domain.Models.Address", "ShippingAddress")
+                        .WithMany()
+                        .HasForeignKey("ShippingAddressId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
                     b.Navigation("AppUser");
 
-                    b.Navigation("ShippingAddress");
-
                     b.Navigation("Coupon");
+
+                    b.Navigation("ShippingAddress");
                 });
 
             modelBuilder.Entity("Markadan.Domain.Models.CartItem", b =>
@@ -770,9 +922,16 @@ namespace Markadan.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
+                    b.HasOne("Markadan.Domain.Models.ProductVariant", "ProductVariant")
+                        .WithMany()
+                        .HasForeignKey("ProductVariantId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
                     b.Navigation("Cart");
 
                     b.Navigation("Product");
+
+                    b.Navigation("ProductVariant");
                 });
 
             modelBuilder.Entity("Markadan.Domain.Models.Product", b =>
@@ -794,6 +953,80 @@ namespace Markadan.Infrastructure.Migrations
                     b.Navigation("Category");
                 });
 
+            modelBuilder.Entity("Markadan.Domain.Models.ProductOption", b =>
+                {
+                    b.HasOne("Markadan.Domain.Models.Product", "Product")
+                        .WithMany("Options")
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Product");
+                });
+
+            modelBuilder.Entity("Markadan.Domain.Models.ProductOptionValue", b =>
+                {
+                    b.HasOne("Markadan.Domain.Models.ProductOption", "Option")
+                        .WithMany("Values")
+                        .HasForeignKey("OptionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Option");
+                });
+
+            modelBuilder.Entity("Markadan.Domain.Models.ProductVariant", b =>
+                {
+                    b.HasOne("Markadan.Domain.Models.Product", "Product")
+                        .WithMany("Variants")
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Product");
+                });
+
+            modelBuilder.Entity("Markadan.Domain.Models.ProductVariantValue", b =>
+                {
+                    b.HasOne("Markadan.Domain.Models.ProductOptionValue", "OptionValue")
+                        .WithMany("VariantValues")
+                        .HasForeignKey("OptionValueId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Markadan.Domain.Models.ProductVariant", "Variant")
+                        .WithMany("SelectedValues")
+                        .HasForeignKey("VariantId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("OptionValue");
+
+                    b.Navigation("Variant");
+                });
+
+            modelBuilder.Entity("Markadan.Domain.Models.RefreshToken", b =>
+                {
+                    b.HasOne("Markadan.Domain.Models.AppUser", "AppUser")
+                        .WithMany()
+                        .HasForeignKey("AppUserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("AppUser");
+                });
+
+            modelBuilder.Entity("Markadan.Domain.Models.StockNotification", b =>
+                {
+                    b.HasOne("Markadan.Domain.Models.Product", "Product")
+                        .WithMany()
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Product");
+                });
+
             modelBuilder.Entity("Markadan.Domain.Models.WishlistItem", b =>
                 {
                     b.HasOne("Markadan.Domain.Models.AppUser", "AppUser")
@@ -809,29 +1042,8 @@ namespace Markadan.Infrastructure.Migrations
                         .IsRequired();
 
                     b.Navigation("AppUser");
-                    b.Navigation("Product");
-                });
-
-            modelBuilder.Entity("Markadan.Domain.Models.StockNotification", b =>
-                {
-                    b.HasOne("Markadan.Domain.Models.Product", "Product")
-                        .WithMany()
-                        .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
 
                     b.Navigation("Product");
-                });
-
-            modelBuilder.Entity("Markadan.Domain.Models.RefreshToken", b =>
-                {
-                    b.HasOne("Markadan.Domain.Models.AppUser", "AppUser")
-                        .WithMany()
-                        .HasForeignKey("AppUserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("AppUser");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>
@@ -905,6 +1117,28 @@ namespace Markadan.Infrastructure.Migrations
             modelBuilder.Entity("Markadan.Domain.Models.Category", b =>
                 {
                     b.Navigation("Products");
+                });
+
+            modelBuilder.Entity("Markadan.Domain.Models.Product", b =>
+                {
+                    b.Navigation("Options");
+
+                    b.Navigation("Variants");
+                });
+
+            modelBuilder.Entity("Markadan.Domain.Models.ProductOption", b =>
+                {
+                    b.Navigation("Values");
+                });
+
+            modelBuilder.Entity("Markadan.Domain.Models.ProductOptionValue", b =>
+                {
+                    b.Navigation("VariantValues");
+                });
+
+            modelBuilder.Entity("Markadan.Domain.Models.ProductVariant", b =>
+                {
+                    b.Navigation("SelectedValues");
                 });
 #pragma warning restore 612, 618
         }

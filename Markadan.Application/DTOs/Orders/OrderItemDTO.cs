@@ -6,5 +6,7 @@ public record OrderItemDTO(
     string? ImageUrl,
     decimal UnitPriceSnapshot,
     int Quantity,
-    decimal Subtotal
+    decimal Subtotal,
+    int? VariantId = null,
+    string? VariantLabel = null
 );

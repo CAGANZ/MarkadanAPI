@@ -100,19 +100,7 @@ public sealed class ProductReadService : IProductReadService
         return await _db.Products
             .AsNoTracking()
             .Where(p => p.Id == id && p.IsActive)
-            .Select(p => new ProductDetailDTO(
-                p.Id,
-                p.Title,
-                p.Slug,
-                p.MetaDescription,
-                p.Price,
-                p.ImageUrl,
-                p.BrandId,
-                p.Brand!.Name,
-                p.CategoryId,
-                p.Category!.Name,
-                p.Description
-            ))
+            .Select(ProductDetailProjection())
             .SingleOrDefaultAsync(ct);
     }
 
@@ -121,21 +109,44 @@ public sealed class ProductReadService : IProductReadService
         return await _db.Products
             .AsNoTracking()
             .Where(p => p.Slug == slug && p.IsActive)
-            .Select(p => new ProductDetailDTO(
-                p.Id,
-                p.Title,
-                p.Slug,
-                p.MetaDescription,
-                p.Price,
-                p.ImageUrl,
-                p.BrandId,
-                p.Brand!.Name,
-                p.CategoryId,
-                p.Category!.Name,
-                p.Description
-            ))
+            .Select(ProductDetailProjection())
             .SingleOrDefaultAsync(ct);
     }
+
+    // Ürün detay projeksiyonu — options + variants dahil; varyant fiyatı yoksa ürün fiyatı (etkin fiyat)
+    private static System.Linq.Expressions.Expression<Func<Markadan.Domain.Models.Product, ProductDetailDTO>> ProductDetailProjection()
+        => p => new ProductDetailDTO(
+            p.Id,
+            p.Title,
+            p.Slug,
+            p.MetaDescription,
+            p.Price,
+            p.ImageUrl,
+            p.BrandId,
+            p.Brand!.Name,
+            p.CategoryId,
+            p.Category!.Name,
+            p.Description,
+            p.Options
+                .OrderBy(o => o.SortOrder)
+                .Select(o => new ProductOptionDTO(
+                    o.Id,
+                    o.Name,
+                    o.Values
+                        .OrderBy(v => v.SortOrder)
+                        .Select(v => new ProductOptionValueDTO(v.Id, v.Value))
+                        .ToList()))
+                .ToList(),
+            p.Variants
+                .Where(v => v.IsActive)
+                .Select(v => new ProductVariantDTO(
+                    v.Id,
+                    v.Sku,
+                    v.Price ?? p.Price,
+                    v.Stock,
+                    v.ImageUrl,
+                    v.SelectedValues.Select(sv => sv.OptionValueId).ToList()))
+                .ToList());
 
     public async Task<PagedResult<ProductListDTO>> ListAsync(
         int? categoryId,
@@ -232,13 +243,13 @@ public sealed class ProductReadService : IProductReadService
 
         if (product is null) return [];
 
-        // Aynı kategoriden, stokta olan, fiyata göre en yakın ürünler
+        // Aynı kategoriden, stokta olan (basit ürün stoğu veya aktif varyant stoğu), fiyata göre en yakın
         return await _db.Products
             .AsNoTracking()
             .Where(p => p.CategoryId == product.CategoryId
                      && p.Id != productId
-                     && p.Stock > 0
-                     && p.IsActive)
+                     && p.IsActive
+                     && (p.Stock > 0 || p.Variants.Any(v => v.IsActive && v.Stock > 0)))
             .OrderBy(p => Math.Abs((double)(p.Price - product.Price)))
             .Take(limit)
             .Select(p => new ProductListDTO(

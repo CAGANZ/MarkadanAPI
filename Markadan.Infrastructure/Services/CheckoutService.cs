@@ -108,6 +108,11 @@ public sealed class CheckoutService : ICheckoutService
             .Include(c => c.AppUser)
             .Include(c => c.Items)
                 .ThenInclude(i => i.Product)
+            .Include(c => c.Items)
+                .ThenInclude(i => i.ProductVariant)
+                    .ThenInclude(v => v!.SelectedValues)
+                        .ThenInclude(sv => sv.OptionValue)
+                            .ThenInclude(ov => ov.Option)
             .Where(c => c.Id == cartId && c.Status == CartStatus.PaymentPending)
             .FirstOrDefaultAsync(ct)
             ?? throw new BusinessRuleException("Ödeme beklenen sipariş bulunamadı.");
@@ -119,9 +124,7 @@ public sealed class CheckoutService : ICheckoutService
 
             foreach (var item in cart.Items)
             {
-                var affected = await _db.Products
-                    .Where(p => p.Id == item.ProductId && p.Stock >= item.Quantity)
-                    .ExecuteUpdateAsync(s => s.SetProperty(p => p.Stock, p => p.Stock - item.Quantity), ct);
+                var affected = await DecrementStockAsync(item, ct);
 
                 if (affected == 0)
                     throw new BusinessRuleException($"'{item.Product.Title}' için yeterli stok yok.");
@@ -165,9 +168,7 @@ public sealed class CheckoutService : ICheckoutService
 
             foreach (var item in cart.Items)
             {
-                var affected = await _db.Products
-                    .Where(p => p.Id == item.ProductId && p.Stock >= item.Quantity)
-                    .ExecuteUpdateAsync(s => s.SetProperty(p => p.Stock, p => p.Stock - item.Quantity), ct);
+                var affected = await DecrementStockAsync(item, ct);
 
                 if (affected == 0)
                     throw new BusinessRuleException($"'{item.Product.Title}' için yeterli stok yok.");
@@ -198,9 +199,11 @@ public sealed class CheckoutService : ICheckoutService
 
         var items = cart.Items.Select(i => new CartItemDTO(
             Id: i.Id, ProductId: i.ProductId, Title: i.Product.Title,
-            ImageUrl: i.Product.ImageUrl, UnitPriceSnapshot: i.UnitPriceSnapshot,
-            CurrentPrice: i.Product.Price, PriceChanged: false,
-            Quantity: i.Quantity, Subtotal: i.UnitPriceSnapshot * i.Quantity
+            ImageUrl: i.ProductVariant?.ImageUrl ?? i.Product.ImageUrl,
+            UnitPriceSnapshot: i.UnitPriceSnapshot,
+            CurrentPrice: EffectiveCurrentPrice(i), PriceChanged: false,
+            Quantity: i.Quantity, Subtotal: i.UnitPriceSnapshot * i.Quantity,
+            VariantId: i.ProductVariantId, VariantLabel: VariantLabel(i)
         )).ToList();
 
         return new CartDTO(cart.Id, cart.Status.ToString(), items, items.Sum(i => i.Subtotal), false);
@@ -215,10 +218,47 @@ public sealed class CheckoutService : ICheckoutService
             .Include(c => c.AppUser)
             .Include(c => c.Items)
                 .ThenInclude(i => i.Product)
+            .Include(c => c.Items)
+                .ThenInclude(i => i.ProductVariant)
+                    .ThenInclude(v => v!.SelectedValues)
+                        .ThenInclude(sv => sv.OptionValue)
+                            .ThenInclude(ov => ov.Option)
             .Where(c => c.AppUserId == userId &&
                         (c.Status == CartStatus.Active || c.Status == CartStatus.PaymentPending))
             .FirstOrDefaultAsync(ct)
             ?? throw new BusinessRuleException("Aktif sepet bulunamadı.");
+    }
+
+    // Stok düşme — varyantlı satırda ProductVariants, basit satırda Products tablosuna koşullu UPDATE
+    private async Task<int> DecrementStockAsync(CartItem item, CancellationToken ct)
+    {
+        if (item.ProductVariantId is not null)
+        {
+            return await _db.ProductVariants
+                .Where(v => v.Id == item.ProductVariantId.Value && v.Stock >= item.Quantity)
+                .ExecuteUpdateAsync(s => s.SetProperty(v => v.Stock, v => v.Stock - item.Quantity), ct);
+        }
+
+        return await _db.Products
+            .Where(p => p.Id == item.ProductId && p.Stock >= item.Quantity)
+            .ExecuteUpdateAsync(s => s.SetProperty(p => p.Stock, p => p.Stock - item.Quantity), ct);
+    }
+
+    // Bir sepet satırının etkin güncel fiyatı (varyant fiyatı yoksa ürün fiyatı)
+    private static decimal EffectiveCurrentPrice(CartItem item)
+        => item.ProductVariant is not null
+            ? (item.ProductVariant.Price ?? item.Product.Price)
+            : item.Product.Price;
+
+    // Bir sepet satırının varyant etiketi ("Kırmızı / M") — yoksa null
+    private static string? VariantLabel(CartItem item)
+    {
+        if (item.ProductVariant is null || item.ProductVariant.SelectedValues.Count == 0)
+            return null;
+        var values = item.ProductVariant.SelectedValues
+            .OrderBy(sv => sv.OptionValue.Option.SortOrder)
+            .Select(sv => sv.OptionValue.Value);
+        return string.Join(" / ", values);
     }
 
     private static void ValidateCartForCheckout(Cart cart)
@@ -227,7 +267,7 @@ public sealed class CheckoutService : ICheckoutService
             throw new BusinessRuleException("Sepet boş.");
 
         var changedItems = cart.Items
-            .Where(i => i.UnitPriceSnapshot != i.Product.Price)
+            .Where(i => i.UnitPriceSnapshot != EffectiveCurrentPrice(i))
             .Select(i => i.Product.Title)
             .ToList();
 
@@ -257,8 +297,10 @@ public sealed class CheckoutService : ICheckoutService
     private static OrderDTO BuildOrderDTO(Cart cart)
     {
         var items = cart.Items.Select(i => new OrderItemDTO(
-            i.ProductId, i.Product.Title, i.Product.ImageUrl,
-            i.UnitPriceSnapshot, i.Quantity, i.UnitPriceSnapshot * i.Quantity
+            i.ProductId, i.Product.Title,
+            i.ProductVariant?.ImageUrl ?? i.Product.ImageUrl,
+            i.UnitPriceSnapshot, i.Quantity, i.UnitPriceSnapshot * i.Quantity,
+            i.ProductVariantId, VariantLabel(i)
         )).ToList();
 
         return new OrderDTO(

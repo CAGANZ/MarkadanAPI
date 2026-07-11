@@ -20,6 +20,10 @@ namespace Markadan.Infrastructure.Data
         public DbSet<StoreSettings> StoreSettings => Set<StoreSettings>();
         public DbSet<Coupon> Coupons => Set<Coupon>();
         public DbSet<StockNotification> StockNotifications => Set<StockNotification>();
+        public DbSet<ProductOption> ProductOptions => Set<ProductOption>();
+        public DbSet<ProductOptionValue> ProductOptionValues => Set<ProductOptionValue>();
+        public DbSet<ProductVariant> ProductVariants => Set<ProductVariant>();
+        public DbSet<ProductVariantValue> ProductVariantValues => Set<ProductVariantValue>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

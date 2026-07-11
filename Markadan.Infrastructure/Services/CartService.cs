@@ -24,14 +24,47 @@ public sealed class CartService : ICartService
     {
         var cart = await GetOrCreateActiveCartAsync(userId, ct);
 
-        var product = await _db.Products.FindAsync([dto.ProductId], ct)
+        var product = await _db.Products
+            .Where(p => p.Id == dto.ProductId)
+            .Select(p => new { p.Id, p.Price, p.Stock, HasVariants = p.Variants.Any() })
+            .FirstOrDefaultAsync(ct)
             ?? throw new BusinessRuleException("Ürün bulunamadı.");
 
-        if (product.Stock <= 0)
-            throw new BusinessRuleException("Ürün stokta yok.");
+        decimal snapshotPrice;
+        int? variantId = null;
+
+        if (product.HasVariants)
+        {
+            // Varyantlı ürün — varyant seçimi zorunlu
+            if (dto.ProductVariantId is null)
+                throw new BusinessRuleException("Bu ürün için bir seçenek (varyant) belirtmelisiniz.");
+
+            var variant = await _db.ProductVariants
+                .Where(v => v.Id == dto.ProductVariantId.Value && v.ProductId == dto.ProductId && v.IsActive)
+                .Select(v => new { v.Id, v.Price, v.Stock })
+                .FirstOrDefaultAsync(ct)
+                ?? throw new BusinessRuleException("Seçilen varyant bulunamadı.");
+
+            if (variant.Stock <= 0)
+                throw new BusinessRuleException("Seçilen varyant stokta yok.");
+
+            variantId      = variant.Id;
+            snapshotPrice  = variant.Price ?? product.Price;  // varyant özel fiyatı yoksa ürün fiyatı
+        }
+        else
+        {
+            // Basit ürün — varyant gönderilmemeli
+            if (dto.ProductVariantId is not null)
+                throw new BusinessRuleException("Bu ürünün varyantı yok.");
+
+            if (product.Stock <= 0)
+                throw new BusinessRuleException("Ürün stokta yok.");
+
+            snapshotPrice = product.Price;
+        }
 
         var existing = await _db.CartItems
-            .Where(i => i.CartId == cart.Id && i.ProductId == dto.ProductId)
+            .Where(i => i.CartId == cart.Id && i.ProductId == dto.ProductId && i.ProductVariantId == variantId)
             .FirstOrDefaultAsync(ct);
 
         if (existing is not null)
@@ -44,8 +77,9 @@ public sealed class CartService : ICartService
             {
                 CartId             = cart.Id,
                 ProductId          = dto.ProductId,
+                ProductVariantId   = variantId,
                 Quantity           = dto.Quantity,
-                UnitPriceSnapshot  = product.Price   // sepete eklendiğindeki fiyat kilitlenir
+                UnitPriceSnapshot  = snapshotPrice   // sepete eklendiğindeki fiyat kilitlenir
             });
         }
 
@@ -111,14 +145,20 @@ public sealed class CartService : ICartService
         var items = await _db.CartItems
             .Where(i => i.CartId == cart.Id)
             .Include(i => i.Product)
+            .Include(i => i.ProductVariant)
             .ToListAsync(ct);
 
         bool changed = false;
         foreach (var item in items)
         {
-            if (item.UnitPriceSnapshot != item.Product.Price)
+            // Etkin güncel fiyat: varyant varsa varyant fiyatı (yoksa ürün fiyatı)
+            var currentPrice = item.ProductVariant is not null
+                ? (item.ProductVariant.Price ?? item.Product.Price)
+                : item.Product.Price;
+
+            if (item.UnitPriceSnapshot != currentPrice)
             {
-                item.UnitPriceSnapshot = item.Product.Price;
+                item.UnitPriceSnapshot = currentPrice;
                 changed = true;
             }
         }
@@ -186,10 +226,22 @@ public sealed class CartService : ICartService
                 {
                     i.Id,
                     i.ProductId,
+                    i.ProductVariantId,
                     ProductTitle    = i.Product.Title,
                     ProductImageUrl = i.Product.ImageUrl,
+                    VariantImageUrl = i.ProductVariant != null ? i.ProductVariant.ImageUrl : null,
                     i.UnitPriceSnapshot,
-                    CurrentPrice    = i.Product.Price,
+                    // Güncel etkin fiyat: varyant varsa varyant fiyatı (yoksa ürün fiyatı), değilse ürün fiyatı
+                    CurrentPrice    = i.ProductVariant != null
+                        ? (i.ProductVariant.Price ?? i.Product.Price)
+                        : i.Product.Price,
+                    // Varyant etiketi: seçili değerler (Kırmızı / M)
+                    VariantValues   = i.ProductVariant != null
+                        ? i.ProductVariant.SelectedValues
+                            .OrderBy(sv => sv.OptionValue.Option.SortOrder)
+                            .Select(sv => sv.OptionValue.Value)
+                            .ToList()
+                        : null,
                     i.Quantity
                 }).ToList()
             })
@@ -203,12 +255,16 @@ public sealed class CartService : ICartService
                 Id:                i.Id,
                 ProductId:         i.ProductId,
                 Title:             i.ProductTitle,
-                ImageUrl:          i.ProductImageUrl,
+                ImageUrl:          i.VariantImageUrl ?? i.ProductImageUrl,
                 UnitPriceSnapshot: i.UnitPriceSnapshot,
                 CurrentPrice:      i.CurrentPrice,
                 PriceChanged:      priceChanged,
                 Quantity:          i.Quantity,
-                Subtotal:          i.UnitPriceSnapshot * i.Quantity
+                Subtotal:          i.UnitPriceSnapshot * i.Quantity,
+                VariantId:         i.ProductVariantId,
+                VariantLabel:      i.VariantValues != null && i.VariantValues.Count > 0
+                                       ? string.Join(" / ", i.VariantValues)
+                                       : null
             );
         }).ToList();
 

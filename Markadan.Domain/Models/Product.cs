@@ -18,5 +18,9 @@
 
         public int CategoryId { get; set; }
         public Category? Category { get; set; }
+
+        // Varyant desteği — boşsa ürün "basit" (stok/fiyat Product düzeyinde)
+        public ICollection<ProductOption> Options { get; set; } = new List<ProductOption>();
+        public ICollection<ProductVariant> Variants { get; set; } = new List<ProductVariant>();
     }
 }

@@ -47,25 +47,44 @@ public sealed class OrderReadService : IOrderReadService
                 c.ShippingCountry,
                 c.TrackingNumber,
                 c.TrackingUrl,
-                Items = c.Items.Select(i => new OrderItemDTO(
+                Items = c.Items.Select(i => new
+                {
                     i.ProductId,
-                    i.Product.Title,
-                    i.Product.ImageUrl,
+                    Title           = i.Product.Title,
+                    ProductImageUrl = i.Product.ImageUrl,
+                    VariantImageUrl = i.ProductVariant != null ? i.ProductVariant.ImageUrl : null,
                     i.UnitPriceSnapshot,
                     i.Quantity,
-                    i.UnitPriceSnapshot * i.Quantity
-                )).ToList()
+                    i.ProductVariantId,
+                    VariantValues   = i.ProductVariant != null
+                        ? i.ProductVariant.SelectedValues
+                            .OrderBy(sv => sv.OptionValue.Option.SortOrder)
+                            .Select(sv => sv.OptionValue.Value)
+                            .ToList()
+                        : null
+                }).ToList()
             })
             .FirstOrDefaultAsync(ct)
             ?? throw new KeyNotFoundException("Sipariş bulunamadı.");
+
+        var items = order.Items.Select(i => new OrderItemDTO(
+            i.ProductId,
+            i.Title,
+            i.VariantImageUrl ?? i.ProductImageUrl,
+            i.UnitPriceSnapshot,
+            i.Quantity,
+            i.UnitPriceSnapshot * i.Quantity,
+            i.ProductVariantId,
+            i.VariantValues != null && i.VariantValues.Count > 0 ? string.Join(" / ", i.VariantValues) : null
+        )).ToList();
 
         return new OrderDTO(
             order.Id,
             order.OrderNumber!,
             order.Status.ToString(),
             order.OrderedAtUtc!.Value,
-            order.Items.Sum(i => i.Subtotal),
-            order.Items,
+            items.Sum(i => i.Subtotal),
+            items,
             order.ShippingStreet,
             order.ShippingCity,
             order.ShippingState,

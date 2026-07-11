@@ -34,6 +34,9 @@ namespace Markadan.Infrastructure.Configurations
             b.Property(x => x.Description)
              .HasMaxLength(2000);
 
+            b.Property(x => x.IsActive)
+             .HasDefaultValue(true);
+
 
             b.HasOne(x => x.Brand)
              .WithMany(bd => bd.Products)

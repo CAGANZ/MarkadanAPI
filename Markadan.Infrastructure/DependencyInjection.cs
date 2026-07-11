@@ -43,6 +43,7 @@ public static class DependencyInjection
 
         services.AddScoped<IProductReadService, ProductReadService>();
         services.AddScoped<IProductCommandService, ProductCommandService>();
+        services.AddScoped<IProductVariantService, ProductVariantService>();
 
         services.AddScoped<IBrandReadService, BrandReadService>();
         services.AddScoped<IBrandCommandService, BrandCommandService>();

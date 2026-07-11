@@ -65,7 +65,21 @@ namespace Markadan.Infrastructure.Services
                 p.Brand!.Name,
                 p.CategoryId,
                 p.Category!.Name,
-                p.Description
+                p.Description,
+                p.Options
+                    .OrderBy(o => o.SortOrder)
+                    .Select(o => new ProductOptionDTO(
+                        o.Id,
+                        o.Name,
+                        o.Values.OrderBy(v => v.SortOrder)
+                            .Select(v => new ProductOptionValueDTO(v.Id, v.Value)).ToList()))
+                    .ToList(),
+                p.Variants
+                    .Where(v => v.IsActive)
+                    .Select(v => new ProductVariantDTO(
+                        v.Id, v.Sku, v.Price ?? p.Price, v.Stock, v.ImageUrl,
+                        v.SelectedValues.Select(sv => sv.OptionValueId).ToList()))
+                    .ToList()
             ))
             .SingleAsync(ct);
         }
@@ -150,7 +164,21 @@ namespace Markadan.Infrastructure.Services
                     p.Brand!.Name,
                     p.CategoryId,
                     p.Category!.Name,
-                    p.Description
+                    p.Description,
+                    p.Options
+                        .OrderBy(o => o.SortOrder)
+                        .Select(o => new ProductOptionDTO(
+                            o.Id,
+                            o.Name,
+                            o.Values.OrderBy(v => v.SortOrder)
+                                .Select(v => new ProductOptionValueDTO(v.Id, v.Value)).ToList()))
+                        .ToList(),
+                    p.Variants
+                        .Where(v => v.IsActive)
+                        .Select(v => new ProductVariantDTO(
+                            v.Id, v.Sku, v.Price ?? p.Price, v.Stock, v.ImageUrl,
+                            v.SelectedValues.Select(sv => sv.OptionValueId).ToList()))
+                        .ToList()
                 ))
                 .SingleAsync(ct);
         }

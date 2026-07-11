@@ -106,18 +106,48 @@ public sealed class OrderCommandService : IOrderCommandService
             .Where(p => productIds.Contains(p.Id))
             .ToDictionaryAsync(p => p.Id, ct);
 
+        var variantIds = order.Items.Where(i => i.ProductVariantId != null)
+            .Select(i => i.ProductVariantId!.Value).ToList();
+        var variants = await _db.ProductVariants
+            .Where(v => variantIds.Contains(v.Id))
+            .ToDictionaryAsync(v => v.Id, ct);
+
         var skipped = new List<string>();
 
         foreach (var item in order.Items)
         {
-            if (!products.TryGetValue(item.ProductId, out var product) || product.Stock <= 0)
+            if (!products.TryGetValue(item.ProductId, out var product))
             {
-                skipped.Add(product?.Title ?? $"#{item.ProductId}");
+                skipped.Add($"#{item.ProductId}");
                 continue;
             }
 
+            decimal snapshotPrice;
+
+            if (item.ProductVariantId is not null)
+            {
+                // Varyantlı satır — varyant hâlâ var, aktif ve stokta mı?
+                if (!variants.TryGetValue(item.ProductVariantId.Value, out var variant)
+                    || !variant.IsActive || variant.Stock <= 0)
+                {
+                    skipped.Add(product.Title);
+                    continue;
+                }
+                snapshotPrice = variant.Price ?? product.Price;
+            }
+            else
+            {
+                if (product.Stock <= 0)
+                {
+                    skipped.Add(product.Title);
+                    continue;
+                }
+                snapshotPrice = product.Price;
+            }
+
             var existing = await _db.CartItems
-                .Where(i => i.CartId == cart.Id && i.ProductId == item.ProductId)
+                .Where(i => i.CartId == cart.Id && i.ProductId == item.ProductId
+                            && i.ProductVariantId == item.ProductVariantId)
                 .FirstOrDefaultAsync(ct);
 
             if (existing is not null)
@@ -127,8 +157,9 @@ public sealed class OrderCommandService : IOrderCommandService
                 {
                     CartId            = cart.Id,
                     ProductId         = item.ProductId,
+                    ProductVariantId  = item.ProductVariantId,
                     Quantity          = item.Quantity,
-                    UnitPriceSnapshot = product.Price
+                    UnitPriceSnapshot = snapshotPrice
                 });
         }
 
@@ -150,9 +181,14 @@ public sealed class OrderCommandService : IOrderCommandService
             await using var tx = await _db.Database.BeginTransactionAsync(ct);
             foreach (var item in cart.Items)
             {
-                await _db.Products
-                    .Where(p => p.Id == item.ProductId)
-                    .ExecuteUpdateAsync(s => s.SetProperty(p => p.Stock, p => p.Stock + item.Quantity), ct);
+                if (item.ProductVariantId is not null)
+                    await _db.ProductVariants
+                        .Where(v => v.Id == item.ProductVariantId.Value)
+                        .ExecuteUpdateAsync(s => s.SetProperty(v => v.Stock, v => v.Stock + item.Quantity), ct);
+                else
+                    await _db.Products
+                        .Where(p => p.Id == item.ProductId)
+                        .ExecuteUpdateAsync(s => s.SetProperty(p => p.Stock, p => p.Stock + item.Quantity), ct);
             }
             await tx.CommitAsync(ct);
         });

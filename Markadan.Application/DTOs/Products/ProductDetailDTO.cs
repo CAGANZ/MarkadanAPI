@@ -11,6 +11,8 @@
         string BrandName,
         int CategoryId,
         string CategoryName,
-        string? Description
+        string? Description,
+        IReadOnlyList<ProductOptionDTO> Options,
+        IReadOnlyList<ProductVariantDTO> Variants
     );
 }

@@ -9,5 +9,7 @@ public record CartItemDTO(
     decimal CurrentPrice,       // Product.Price (şu anki fiyat)
     bool PriceChanged,          // frontend uyarı gösterir
     int Quantity,
-    decimal Subtotal            // UnitPriceSnapshot * Quantity
+    decimal Subtotal,           // UnitPriceSnapshot * Quantity
+    int? VariantId = null,      // varyantlı satırda dolu
+    string? VariantLabel = null // ör. "Kırmızı / M"
 );
